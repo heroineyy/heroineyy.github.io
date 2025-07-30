@@ -1,0 +1,28 @@
+.info-icon .fa-github-square,
+.info-icon .fa-zhihu-square,
+.info-icon .fa-segmentfault-square {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 5px;
+  position: relative;
+  text-align: center;
+}
+.info-icon .fa-zhihu-square,
+.info-icon .fa-segmentfault-square {
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+.info-icon .fa-zhihu-square {
+  background-image: url("../img/zhihu.png");
+}
+.info-icon .fa-segmentfault-square {
+  background-image: url("../img/segmentfault.png");
+}
+.info-icon .fa-github-square {
+  background-image: none;
+  font-size: 20px;
+  line-height: 22px;
+}
