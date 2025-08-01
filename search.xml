@@ -67,6 +67,22 @@
       </tags>
   </entry>
   <entry>
+    <title></title>
+    <url>/posts/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0Go%E7%A8%8B%E5%BA%8F%E7%83%AD%E5%90%AF%E5%8A%A8/</url>
+    <content><![CDATA[<blockquote>
+<p>热启动的意义在于，当你更改了代码，不用自己手动的编译，系统检查到代码的变化，自动重启，大大提高开发效率！下面是安装步骤，非常简单~<br>1、安装 air</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/air-verse/air</span><br></pre></td></tr></table></figure>
+<p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure>
+<p>3、根据实际项目，调整.air.toml 中的内容，air 将按照下面规则热重启，建议理解每个参数的意思</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root = &quot;D:/project/your-project-name&quot;  # 项目根目录位置</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line">  pre_cmd = [&quot;source pre_env.sh&quot;,&quot;bee generate docs&quot;] # 在 go buid 前的命令，这里第一个是导入环境变量，第二个是更新 swagger 接口文档和路由</span><br><span class="line">  args_bin = []</span><br><span class="line">  bin = &quot;./tmp/main.exe&quot;  # 运行编译好的文件命令</span><br><span class="line">  cmd = &quot;go build -o ./tmp/main.exe your-project-name&quot; #构建项目命令</span><br><span class="line">  delay = 1000</span><br><span class="line">  exclude_dir = [&quot;tmp&quot;, &quot;vendor&quot;, &quot;testdata&quot; ,&quot;logs&quot; ,&quot;.idea&quot;,&quot;.git&quot;,&quot;docker&quot;] # 排除这些文件</span><br><span class="line">  exclude_file = []</span><br><span class="line">  exclude_regex = [&quot;_test.go&quot;]</span><br><span class="line">  exclude_unchanged = false</span><br><span class="line">  follow_symlink = false</span><br><span class="line">  full_bin = &quot;&quot;</span><br><span class="line">  include_dir = []</span><br><span class="line">  include_ext = [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot; ,&quot;ini&quot; ,&quot;conf&quot;] # 这些文件一旦变化并保存就会触发重新构建并启动</span><br><span class="line">  include_file = []</span><br><span class="line">  kill_delay = &quot;1s&quot;</span><br><span class="line">  log = &quot;build-errors.log&quot;  #生成的日志名</span><br><span class="line">  poll = false</span><br><span class="line">  poll_interval = 0</span><br><span class="line">  post_cmd = []</span><br><span class="line">  pre_cmd = []</span><br><span class="line">  rerun = false</span><br><span class="line">  rerun_delay = 500</span><br><span class="line">  send_interrupt = false</span><br><span class="line">  stop_on_error = false</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>4、在项目根目录下，终端执行 air，便可实现使用 Air 实现 Go 程序热启动</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">air</span></span><br></pre></td></tr></table></figure>
+<p><a href="https://www.liwenzhou.com/posts/Go/live-reload-with-air/">参考</a></p>
+]]></content>
+  </entry>
+  <entry>
     <title>十大排序算法-go语言实现</title>
     <url>/posts/%E5%8D%81%E5%A4%A7%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<blockquote>
