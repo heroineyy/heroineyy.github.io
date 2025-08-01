@@ -8,8 +8,9 @@ toggle.addEventListener('click', () => {
 localStorage.dark = !(html.dataset.dark == 'true');
 html.dataset.dark = localStorage.dark;
 });</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">使用 Air 实现 Go 程序热启动</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">使用 Air 实现 Go 程序热启动</h1><div class="post-meta">2025-08-01<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 374</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 1</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div></div></div><div class="post-content"><blockquote>
-<p>热启动的意义在于，当你更改了代码，不用自己手动的编译，系统检查到代码的变化，自动重启，大大提高开发效率！下面是安装步骤，非常简单~<br>1、安装 air</p>
+<p>热启动的意义在于，当你更改了代码，不用自己手动的编译，系统检查到代码的变化，自动重启，大大提高开发效率！下面是安装步骤，非常简单~</p>
 </blockquote>
+<p>1、安装 air</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get -u github.com/air-verse/air</span><br></pre></td></tr></table></figure>
 <p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure>
