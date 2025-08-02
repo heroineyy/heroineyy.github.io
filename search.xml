@@ -81,8 +81,8 @@
 <p><code>master 节点</code> 用于存储集群的所有数据、常规的 api 请求操作、后台任务调度、pod 的调度。<code>work 节点</code> 用于管理容器给容器提供工作环境。</p>
 <p>再为具体一点：</p>
 <p>Master 节点（控制台）用于管理容器：</p>
-<p>API Server：处理 REST 操作，提供集群的管理接口。</p>
 <ul>
+<li>API Server：处理 REST 操作，提供集群的管理接口。</li>
 <li>etcd：分布式键值存储，用于存储集群的所有数据。</li>
 <li>Controller Manager：负责集群的常规后台任务。</li>
 <li>Scheduler：负责将 Pod 调度到合适的节点上。</li>
@@ -93,13 +93,16 @@
 <li>Kube-proxy：负责网络代理和负载均衡。</li>
 <li>Container Runtime：如 Docker、containerd，负责运行容器。</li>
 </ul>
-<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="img"></p>
-<p>图片来源：小白 debug</p>
+<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
+<center>图片来源：小白 debug</center>
+ 
+
 <h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
 <p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
 <h2><span id="k8s-怎么使用">K8s 怎么使用？</span></h2><p>先写一个 yaml 文件，这个文件用来告诉 k8s 应该创建和管理哪容器，容器上的文件映射、端口映射、持久化位置、最多可以有多少个副本、可占有的资源等等，这个文件将通过 kubectl 命令行工具执行：<code>kubectl apply -f xx.yaml</code>，k8s 控制台会暴露接口让 kubectl 对齐操控。</p>
-<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="img"></p>
-<p>图片来源：小白 debug</p>
+<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="kubectl操控k8s示例"></p>
+<center>图片来源：小白 debug</center>
+
 <p>下面的概率会在撰写 yaml 文件时经常接触到，建议熟悉并背诵：</p>
 <ul>
 <li>namespace：虚拟集群，将 k8s 集群的资源分隔</li>
