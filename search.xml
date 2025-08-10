@@ -152,7 +152,7 @@
 </blockquote>
 <p>ProtoBuf(协议缓冲区)，wiki上解释，是一种免费的开源跨平台数据格式，用于序列化结构化数据。<strong>该方法涉及一种描述某些数据结构的接口描述语言，以及一个根据该描述生成源代码的程序，用于生成或解析表示结构化数据的字节流</strong>。它在开发通过网络相互通信或存储数据的程序时非常有用。</p>
 <p>本质上他也是一种语言，可以理解为不同编译语言的中间语言，它类似于json，每个语言都认识，我们可以通过 ProtoBuf 定义数据结构，并生成多种语言（如 Java, Go, Python, C++ 等）相应的代码，这样<strong>不同语言的微服务之间就能通过统一的数据格式来交换数据</strong>。</p>
-<h3><span id="1protobuf-是谁提出和实现的它的实现最开始是为了解决什么问题">**1.**ProtoBuf 是谁提出和实现的？它的实现最开始是为了解决什么问题？</span></h3><p>由 Google 提出，最初是为了处理 Google 内部大量数据通信和存储时的性能问题。 它的目标是提供一个高效、跨平台的序列化工具，能减少带宽消耗并提高通信效率。 </p>
+<h3><span id="1protobuf-是谁提出和实现的它的实现最开始是为了解决什么问题">1.ProtoBuf 是谁提出和实现的？它的实现最开始是为了解决什么问题？</span></h3><p>由 Google 提出，最初是为了处理 Google 内部大量数据通信和存储时的性能问题。 它的目标是提供一个高效、跨平台的序列化工具，能减少带宽消耗并提高通信效率。 </p>
 <p><strong>关键点</strong>：</p>
 <ul>
 <li><p><strong>解决性能瓶颈</strong>：为大规模数据存储和高效网络传输提供支持。 </p>
@@ -161,7 +161,7 @@
 </li>
 </ul>
 <hr>
-<h3><span id="2-protobuf-的作用与意义它在微服务中扮演什么角色">**2. ProtoBuf 的作用与意义，**它在微服务中扮演什么角色？</span></h3><p><strong>作用是定义数据结构并对其进行序列化</strong>。 在 <strong>微服务</strong> 中，ProtoBuf 通过提供一种标准化的格式（接口定义），使得不<strong>同语言实现的服务可以进行跨语言通信</strong>。不同语言的服务通过ProtoBuf 提供的统一的接口和消息格式进行通信，避免了传统的 JSON 或 XML 传输中的效率瓶颈。 </p>
+<h3><span id="2-protobuf-的作用与意义它在微服务中扮演什么角色">2. ProtoBuf 的作用与意义，它在微服务中扮演什么角色？</span></h3><p><strong>作用是定义数据结构并对其进行序列化</strong>。 在 <strong>微服务</strong> 中，ProtoBuf 通过提供一种标准化的格式（接口定义），使得不<strong>同语言实现的服务可以进行跨语言通信</strong>。不同语言的服务通过ProtoBuf 提供的统一的接口和消息格式进行通信，避免了传统的 JSON 或 XML 传输中的效率瓶颈。 </p>
 <p><strong>关键点</strong>：</p>
 <ul>
 <li><p><strong>统一接口</strong>：定义接口、请求体参数和返回值。 </p>
@@ -172,7 +172,7 @@
 </li>
 </ul>
 <hr>
-<h3><span id="3-同样是跨平台数据格式为什么不用-json-而是protobuf"><strong>3. 同样是跨平台数据格式，为什么不用 JSON 而是ProtoBuf？</strong></span></h3><p><strong>ProtoBuf</strong> 比 JSON 更高效：它使用<strong>二进制格式</strong>进行数据序列化，传输速度更快、占用带宽更小。 <strong>性能对比</strong>：JSON 是文本格式，解析和序列化更慢，而 ProtoBuf 的二进制格式更紧凑、解析速度更快。 <strong>跨语言支持</strong>：ProtoBuf 更容易通过生成对应语言的代码来实现跨语言通信，而 JSON 没有那么强的类型和协议支持。 </p>
+<h3><span id="3-同样是跨平台数据格式为什么不用-json-而是protobuf">3. 同样是跨平台数据格式，为什么不用 JSON 而是ProtoBuf？</span></h3><p><strong>ProtoBuf</strong> 比 JSON 更高效：它使用<strong>二进制格式</strong>进行数据序列化，传输速度更快、占用带宽更小。 <strong>性能对比</strong>：JSON 是文本格式，解析和序列化更慢，而 ProtoBuf 的二进制格式更紧凑、解析速度更快。 <strong>跨语言支持</strong>：ProtoBuf 更容易通过生成对应语言的代码来实现跨语言通信，而 JSON 没有那么强的类型和协议支持。 </p>
 <p><strong>关键点</strong>：</p>
 <ul>
 <li><p><strong>性能更好</strong>：二进制格式比 JSON 更高效。 </p>
@@ -181,7 +181,7 @@
 </li>
 </ul>
 <hr>
-<h3><span id="4-rpc-协议与-http-协议的区别它们都是应用层协议吗">**4. RPC 协议与 HTTP 协议的区别，**它们都是应用层协议吗？</span></h3><p>RPC 通常用于微服务间的高效通信，而 HTTP 更多用于 Web 服务中的请求-响应通信。 </p>
+<h3><span id="4-rpc-协议与-http-协议的区别它们都是应用层协议吗">4. RPC 协议与 HTTP 协议的区别，它们都是应用层协议吗？</span></h3><p>RPC 通常用于微服务间的高效通信，而 HTTP 更多用于 Web 服务中的请求-响应通信。 </p>
 <p><strong>关键点</strong>：</p>
 <ul>
 <li><p><strong>RPC</strong> 更适合服务间通信，支持远程调用。 </p>
@@ -190,18 +190,18 @@
 </li>
 </ul>
 <hr>
-<h3><span id="5grpc中服务端的服务注册在哪客户端调用的方法是直接在-grpc-上吗还是注册中心直接和服务器交互吗">**5.**gRPC中，服务端的服务注册在哪，客户端调用的方法是直接在 gRPC 上吗，还是注册中心？直接和服务器交互吗？</span></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">服务端启动 → 注册地址到注册中心 → 注册中心维护服务列表  </span><br><span class="line">客户端启动 → 从注册中心获取服务地址 → 生成存根 → 存根通过gRPC协议直接调用服务端</span><br></pre></td></tr></table></figure>
+<h3><span id="5grpc中服务端的服务注册在哪客户端调用的方法是直接在-grpc-上吗还是注册中心直接和服务器交互吗">5.gRPC中，服务端的服务注册在哪，客户端调用的方法是直接在 gRPC 上吗，还是注册中心？直接和服务器交互吗？</span></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">服务端启动 → 注册地址到注册中心 → 注册中心维护服务列表  </span><br><span class="line">客户端启动 → 从注册中心获取服务地址 → 生成存根 → 存根通过gRPC协议直接调用服务端</span><br></pre></td></tr></table></figure>
 <p> 服务注册：<strong>gRPC 本身不自带服务注册功能</strong>，在微服务场景中，需结合 Consul、Etcd 等第三方注册中心实现。gRPC 服务器启动时，会通过自定义代码或第三方 SDK 将自身地址、服务名称等信息注册到注册中心，由注册中心维护服务实例的动态列表（包括新增、下线、健康状态等）。<br>客户端调用：客户端调用分为两个阶段。首先是服务发现，客户端启动时或定期向注册中心请求目标服务的可用实例地址；然后，客户端根据 gRPC 协议文件生成本地存根（Stub），通过存根调用远程方法，存根会按照 gRPC 协议（基于 HTTP&#x2F;2）将请求参数序列化后，直接与获取到地址的 gRPC 服务器建立连接并发送请求，服务端处理后将结果返回给客户端。</p>
 <p><strong>关键点：</strong></p>
 <p><strong>服务注册</strong>：依赖第三方注册中心管理服务实例，非 gRPC 内置功能。</p>
 <p><strong>客户端与服务器交互</strong>：客户端先从注册中心获取服务地址，再通过存根与服务器直接交互，注册中心不参与通信过程。</p>
 <hr>
-<h3><span id="6grpc-存根是什么和grpc-服务器端的关系存根是框架自动生成的吗">**6.**gRPC 存根是什么，和gRPC 服务器端的关系，存根是框架自动生成的吗？</span></h3><p>gRPC 存根与服务器端通过 .proto 文件关联，<strong>存根</strong>由框架根据 .proto 自动生成，分客户端和服务端。客户端存根封装通信细节，服务端存根负责解析请求、调度业务实现。<strong>服务器端</strong>基于服务端存根实现具体业务逻辑，处理客户端通过存根发起的调用。</p>
+<h3><span id="6grpc-存根是什么和grpc-服务器端的关系存根是框架自动生成的吗">6.gRPC 存根是什么，和gRPC 服务器端的关系，存根是框架自动生成的吗？</span></h3><p>gRPC 存根与服务器端通过 .proto 文件关联，<strong>存根</strong>由框架根据 .proto 自动生成，分客户端和服务端。客户端存根封装通信细节，服务端存根负责解析请求、调度业务实现。<strong>服务器端</strong>基于服务端存根实现具体业务逻辑，处理客户端通过存根发起的调用。</p>
 <p><strong>关键点</strong>：</p>
 <p><strong>存根</strong>：自动生成，是通信桥梁，隐藏网络细节。</p>
 <p><strong>服务器端</strong>：实现业务逻辑，通过存根接收和处理请求。</p>
 <hr>
-<h3><span id></span></h3>]]></content>
+]]></content>
       <categories>
         <category>技术</category>
       </categories>
