@@ -40,6 +40,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Git合并冲突解决与操作逻辑（AI版）</title>
+    <url>/posts/Git%E5%90%88%E5%B9%B6%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E4%B8%8E%E6%93%8D%E4%BD%9C%E9%80%BB%E8%BE%91%EF%BC%88AI%E7%89%88%EF%BC%89/</url>
+    <content><![CDATA[<blockquote>
+<p>基于自己的思考结合AI给我梳理的总结，强烈建议看，真的非常条理性，易读也易懂。</p>
+</blockquote>
+<p>在多人协作的 Git 开发流程中，代码冲突是不可避免的场景。如何优雅地解决冲突并确保本地修改不丢失，需要一套清晰的操作逻辑。以下是对冲突解决思路的梳理与优化：</p>
+<h3><span id="一-冲突场景的核心矛盾">一、冲突场景的核心矛盾</span></h3><p>当多人基于同一分支开发时，若远程分支已存在他人提交的新内容，而你的本地修改基于旧版本进行，此时无论是直接 <code>git push</code>（因版本不一致被拒绝），还是先 <code>git pull</code> 再提交（触发合并冲突），都会面临冲突问题。核心矛盾在于：<strong>本地修改与远程最新版本存在差异，需要通过合并整合，但过程中需避免本地内容意外丢失</strong>。</p>
+<h3><span id="二-两种经典解决方案的细节与适用场景">二、两种经典解决方案的细节与适用场景</span></h3><p>针对不同开发状态（如代码是否完成、是否愿意提交半成品），可采用以下两种方案：</p>
+<h4><span id="方案一用-git-stash-暂存中间状态推荐未完成开发时使用">方案一：用 <code>git stash</code> 暂存中间状态（推荐未完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git stash</code> → <code>git pull</code> → <code>git stash pop</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><code>git stash</code> 会将<strong>工作区和暂存区的所有修改</strong>（包括未提交的代码）临时保存到 Git 的「 stash 栈」中，并将工作区和暂存区恢复到本地最近一次提交的干净状态。若需保存未跟踪的文件（如新建但未 <code>git add</code> 的文件），可使用 <code>git stash -u</code>（<code>-u</code> 即 <code>--include-untracked</code>）。</li>
+<li><code>git pull</code> 此时可顺利拉取远程最新代码（因本地已无未提交修改，避免了合并冲突的前置阻碍）。</li>
+<li><code>git stash pop</code> 将暂存的修改恢复到工作区，此时本地代码相当于「远程最新版本 + 你的本地修改」，若存在冲突，Git 会在工作区标记冲突位置。</li>
+<li>手动解决冲突后，通过 <code>git add</code> 和 <code>git commit</code> 整合修改，最终推送到远程。</li>
+</ol>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>无需提交「半成品代码」，保持提交记录的整洁性（最终仅生成一次包含完整修改的提交）。</p>
+</li>
+<li><p>适合开发到中途需同步远程代码的场景，既保证本地修改不丢失，又能基于最新版本继续开发。</p>
+</li>
+</ul>
+<h4><span id="方案二先提交本地修改再合并远程代码推荐已完成开发时使用">方案二：先提交本地修改，再合并远程代码（推荐已完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git add .</code> → <code>git commit -m &quot;描述修改内容&quot;</code> → <code>git pull</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><p>先通过 <code>git commit</code> 将本地修改固化为一个正式版本，确保工作区和暂存区干净。</p>
+</li>
+<li><p><code>git pull</code> 实际包含 <code>git fetch</code>（拉取远程最新提交记录到本地）和 <code>git merge</code>（将本地提交与远程最新版本合并）：</p>
+</li>
+</ol>
+<ul>
+<li><p>若合并无冲突，Git 会自动生成一个「合并提交」，整合双方修改。</p>
+</li>
+<li><p>若有冲突，Git 会在工作区标记冲突文件，需手动解决后再次提交。</p>
+</li>
+</ul>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>步骤直观，适合已完成开发、确认本地修改无误的场景。</p>
+</li>
+<li><p>所有修改都有明确的提交记录，便于后续追溯和回滚。</p>
+</li>
+</ul>
+<h3><span id="三-关键原则避免冲突的核心是及时同步">三、关键原则：避免冲突的核心是「及时同步」</span></h3><p>无论采用哪种方案，核心逻辑都是<strong>让本地修改基于远程最新版本进行整合</strong>。冲突的本质是「同一部分代码被多人修改」，因此：</p>
+<ol>
+<li><p>开发过程中应频繁 <code>git pull</code> 同步远程更新，减少冲突概率；</p>
+</li>
+<li><p>解决冲突时需仔细比对双方修改，确保业务逻辑正确；</p>
+</li>
+<li><p>永远不要用 <code>--force</code> 强制推送（可能覆盖他人代码），除非明确知道自己在做什么。</p>
+</li>
+</ol>
+<h3><span id="总结">总结</span></h3><p>冲突是 Git 协作的正常现象，两种方案各有侧重：</p>
+<ul>
+<li><p>未完成开发时，用 <code>git stash</code> 暂存修改，同步后继续开发，保持提交整洁；</p>
+</li>
+<li><p>已完成开发时，先提交本地修改，再合并远程更新，明确记录变更。</p>
+</li>
+</ul>
+<p>记住：<strong>冲突一定可以解决，关键是通过规范操作避免内容丢失</strong>。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Go哲学</title>
     <url>/posts/Go%E5%93%B2%E5%AD%A6/</url>
     <content><![CDATA[<p>1、Go 的并发原则非常优秀，目标就是简单：尽量使用 channel；把 Goroutine 当作免费的资源，随便用。</p>

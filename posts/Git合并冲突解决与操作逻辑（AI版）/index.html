@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="这是一个个人博客，记录技术学习和生活感悟"><title>Git合并冲突解决与操作逻辑（AI版） | RenaXu 's Wonderland</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/custom-icons.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/toc.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/pure-min.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://unpkg.com/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="https://unpkg.com/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="https://unpkg.com/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://unpkg.com/toastr/build/toastr.min.css"><div class="darkmode-toggle">🌓</div><script>var prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+var toggle = document.querySelector('.darkmode-toggle');
+var html = document.querySelector('html');
+
+html.dataset.dark = localStorage.dark || prefersDarkMode.matches;
+
+toggle.addEventListener('click', () => {
+localStorage.dark = !(html.dataset.dark == 'true');
+html.dataset.dark = localStorage.dark;
+});</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Git合并冲突解决与操作逻辑（AI版）</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">Git合并冲突解决与操作逻辑（AI版）</h1><div class="post-meta">2025-08-18<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.1k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 3</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">一、冲突场景的核心矛盾</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">二、两种经典解决方案的细节与适用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">方案一：用 git stash 暂存中间状态（推荐未完成开发时使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-text">方案二：先提交本地修改，再合并远程代码（推荐已完成开发时使用）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">三、关键原则：避免冲突的核心是「及时同步」</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text">总结</span></a></li></ol></div></div><div class="post-content"><blockquote>
+<p>基于自己的思考结合AI给我梳理的总结，强烈建议看，真的非常条理性，易读也易懂。</p>
+</blockquote>
+<p>在多人协作的 Git 开发流程中，代码冲突是不可避免的场景。如何优雅地解决冲突并确保本地修改不丢失，需要一套清晰的操作逻辑。以下是对冲突解决思路的梳理与优化：</p>
+<h3><span id="一-冲突场景的核心矛盾">一、冲突场景的核心矛盾</span></h3><p>当多人基于同一分支开发时，若远程分支已存在他人提交的新内容，而你的本地修改基于旧版本进行，此时无论是直接 <code>git push</code>（因版本不一致被拒绝），还是先 <code>git pull</code> 再提交（触发合并冲突），都会面临冲突问题。核心矛盾在于：<strong>本地修改与远程最新版本存在差异，需要通过合并整合，但过程中需避免本地内容意外丢失</strong>。</p>
+<h3><span id="二-两种经典解决方案的细节与适用场景">二、两种经典解决方案的细节与适用场景</span></h3><p>针对不同开发状态（如代码是否完成、是否愿意提交半成品），可采用以下两种方案：</p>
+<h4><span id="方案一用-git-stash-暂存中间状态推荐未完成开发时使用">方案一：用 <code>git stash</code> 暂存中间状态（推荐未完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git stash</code> → <code>git pull</code> → <code>git stash pop</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><code>git stash</code> 会将<strong>工作区和暂存区的所有修改</strong>（包括未提交的代码）临时保存到 Git 的「 stash 栈」中，并将工作区和暂存区恢复到本地最近一次提交的干净状态。若需保存未跟踪的文件（如新建但未 <code>git add</code> 的文件），可使用 <code>git stash -u</code>（<code>-u</code> 即 <code>--include-untracked</code>）。</li>
+<li><code>git pull</code> 此时可顺利拉取远程最新代码（因本地已无未提交修改，避免了合并冲突的前置阻碍）。</li>
+<li><code>git stash pop</code> 将暂存的修改恢复到工作区，此时本地代码相当于「远程最新版本 + 你的本地修改」，若存在冲突，Git 会在工作区标记冲突位置。</li>
+<li>手动解决冲突后，通过 <code>git add</code> 和 <code>git commit</code> 整合修改，最终推送到远程。</li>
+</ol>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>无需提交「半成品代码」，保持提交记录的整洁性（最终仅生成一次包含完整修改的提交）。</p>
+</li>
+<li><p>适合开发到中途需同步远程代码的场景，既保证本地修改不丢失，又能基于最新版本继续开发。</p>
+</li>
+</ul>
+<h4><span id="方案二先提交本地修改再合并远程代码推荐已完成开发时使用">方案二：先提交本地修改，再合并远程代码（推荐已完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git add .</code> → <code>git commit -m &quot;描述修改内容&quot;</code> → <code>git pull</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><p>先通过 <code>git commit</code> 将本地修改固化为一个正式版本，确保工作区和暂存区干净。</p>
+</li>
+<li><p><code>git pull</code> 实际包含 <code>git fetch</code>（拉取远程最新提交记录到本地）和 <code>git merge</code>（将本地提交与远程最新版本合并）：</p>
+</li>
+</ol>
+<ul>
+<li><p>若合并无冲突，Git 会自动生成一个「合并提交」，整合双方修改。</p>
+</li>
+<li><p>若有冲突，Git 会在工作区标记冲突文件，需手动解决后再次提交。</p>
+</li>
+</ul>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>步骤直观，适合已完成开发、确认本地修改无误的场景。</p>
+</li>
+<li><p>所有修改都有明确的提交记录，便于后续追溯和回滚。</p>
+</li>
+</ul>
+<h3><span id="三-关键原则避免冲突的核心是及时同步">三、关键原则：避免冲突的核心是「及时同步」</span></h3><p>无论采用哪种方案，核心逻辑都是<strong>让本地修改基于远程最新版本进行整合</strong>。冲突的本质是「同一部分代码被多人修改」，因此：</p>
+<ol>
+<li><p>开发过程中应频繁 <code>git pull</code> 同步远程更新，减少冲突概率；</p>
+</li>
+<li><p>解决冲突时需仔细比对双方修改，确保业务逻辑正确；</p>
+</li>
+<li><p>永远不要用 <code>--force</code> 强制推送（可能覆盖他人代码），除非明确知道自己在做什么。</p>
+</li>
+</ol>
+<h3><span id="总结">总结</span></h3><p>冲突是 Git 协作的正常现象，两种方案各有侧重：</p>
+<ul>
+<li><p>未完成开发时，用 <code>git stash</code> 暂存修改，同步后继续开发，保持提交整洁；</p>
+</li>
+<li><p>已完成开发时，先提交本地修改，再合并远程更新，明确记录变更。</p>
+</li>
+</ul>
+<p>记住：<strong>冲突一定可以解决，关键是通过规范操作避免内容丢失</strong>。</p>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/" rel="tag">git</a></li></ul></div><div class="post-nav"><a class="next" href="/posts/git%20%E9%A1%B9%E7%9B%AE%E5%86%B2%E7%AA%81%EF%BC%8C%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E7%9A%84%E6%80%9D%E8%80%83/">git 项目冲突，怎么解决的思考</a></div></div></div></div><div class="pure-u-1 pure-u-md-4-4"><div id="footer">Copyright © 2025 <a href="/." rel="nofollow">RenaXu 's Wonderland.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+  search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js?v=1.0.0" successtext="复制成功！"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css?v=1.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script></div></body></html>
