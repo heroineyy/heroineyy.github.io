@@ -7,20 +7,20 @@ html.dataset.dark = localStorage.dark || prefersDarkMode.matches;
 toggle.addEventListener('click', () => {
 localStorage.dark = !(html.dataset.dark == 'true');
 html.dataset.dark = localStorage.dark;
-});</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">写接口的感悟</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">写接口的感悟</h1><div class="post-meta">2025-08-18<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 686</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 2</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div></div></div><div class="post-content"><blockquote>
+});</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">写接口的感悟</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">写接口的感悟</h1><div class="post-meta">2025-08-18<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 683</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 2</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div></div></div><div class="post-content"><blockquote>
 <p>数据命名要规范，数据需要分析清楚再设计接口，对于写接口的时候先整体后局部，代码实现可以交给AI，在后端开发中，沟通是极为重要的，一定要花时间分析数据，下面分享一下自己写接口的经验流程：</p>
 </blockquote>
 <p>1、设计接口文档，先确定大致要实现的接口，每个接口的传参和入参、函数名，函数名要用驼峰命名，公有函数首字母大写，私有函数首字母小写。以及接口要实现的功能。</p>
 <p>2、定义数据结构，根据提供数据和定义好的接口设计数据结构。</p>
 <p>3、分层实现，从控制层开始写代码，不着急细节，用伪代码大致实现逻辑，然后实现方法，完善细节，自顶向下的做，现跑通再优化。</p>
 <p>4、为了让代码更好读，每个函数的功能尽量满足单一职责原则，工具类函数单独用文件实现，重复代码需要封装，控制层的代码用来判断接口数据是否正确传入，包装返回值，验证身份等，服务层用来实现业务逻辑，模型层和数据库真正的打交道。</p>
-<p>5、多用注释，先用注释要干什么，然后实现，最后用注释来解释为什么，代码本事解释干什么。</p>
+<p>5、多用注释，先用注释要干什么，然后实现，最后用注释来解释为什么，代码本身解释干什么。</p>
 <p>6、如果开发无法专注就是休息不够，不要吝啬休息的重要性。</p>
 <p>7、沟通的占据开发过程中的80%，所以不要着急写代码，经可能花多的时间理解需求，做好需求分析，与业务方沟通，善用工具减少沟通成本，比如使用swagger实现接口文档，遇到问题直接面对面交流效率更直接。</p>
 <p>8、面对复杂的功能，要问题拆解，列出123，功能就会浮出水面。</p>
 <p>9、每天的工作一定要记录，方便复盘。</p>
 <p>10、没有被用到的代码直接删。</p>
-<p>11、时刻想到资源释放：如数据库连接、文件流是否及时关闭，避免内存泄漏。</p>
+<p>11、设计到数据库连接、文件操作，需要是否及时关闭，避免内存泄漏。</p>
 <p>12、“测试驱动开发（TDD）” 思路 —— 先定义接口的测试用例，再写实现代码，而非 “写完再凑测试”。（这一步需要好好学习！）</p>
 <p>13、接口的耗时控制：是否在服务层存在不必要的循环 &#x2F; 计算，是否需要异步处理非核心流程。</p>
 <p>总之，个人感觉接口开发不仅是 “写代码实现功能”，而应该是是 “设计一个稳定、安全、易维护的服务契约”，重在还是多练习多思考。</p>
