@@ -12,12 +12,6 @@ html.dataset.dark = localStorage.dark;
 <p>M 代表 Machine（工作线程），</p>
 <p>P 代表 Processor（逻辑处理器），</p>
 <p>其中G、P 在用户空间，M在内核空间。</p>
-<center>
-<img width="343" height="301" alt="image" src="https://github.com/user-attachments/assets/146a0976-0742-4d94-b5c9-71261f04fcc1">
-</center>
-
-<center>图1 GMP模型</center>
-
 <p>Goroutine（协程）本质上是一个go程序的函数，在主函数中用go关键字标注，那么这个函数就会独立于主函数并发并发运行，也就是说它可以不按程序的顺序执行，而是他会被Go runtime中的P(处理器)管理，由P决定它应该交给哪个工作线程运行。特别注意！！！go程序中所有的函数都会被当做协程对象，Go 程序中，<strong>所有代码最终都会通过协程（G）执行</strong>—— 即使是 <code>main</code> 函数这样的 “主逻辑”，本质上也是作为一个特殊的协程（主协程）运行的。</p>
 <p>Processor（逻辑处理器）本质上是用户态的一个数据结构，其中维护了一个存储Goroutine的队列。 Go runtime 在用户态维护了一张 “M-P 绑定表”。当 M 需要运行 G 时，会向 Go runtime 请求绑定一个空闲的 P，绑定后 M 就能访问该 P 管理的本地 G 队列。P 的数量通常与 CPU 核心数相关（可通过 GOMAXPROCS 设置），一般取等，尽可能让在不同cpu上的M绑定p,充分利用cpu资源，除了每个 P 的本地队列，还有一个全局队列，当本地队列空时，M 会从其他 P 的队列或全局队列偷取 G 来执行（工作窃取机制）。</p>
 <p>Machine（工作线程）位于内核态，在go程序开始运行时，由Go runtime创建，程序结束他会被系统回收其创建时的资源，当 M 执行 G 的代码时，M 会加载 G 的栈指针、程序计数器等上下文，会从内核态切换到用户态，当需要系统调用时，再从用户态切回内核态。</p>
