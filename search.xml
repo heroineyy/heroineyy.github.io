@@ -68,33 +68,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Go哲学</title>
-    <url>/posts/Go%E5%93%B2%E5%AD%A6/</url>
-    <content><![CDATA[<p>1、Go 的并发原则非常优秀，目标就是简单：尽量使用 channel；把 Goroutine 当作免费的资源，随便用。</p>
-<p>2、Go 的并发编程模型用 Goroutine 和 Channel 来替代。Goroutine 和线程类似，Channel 和 Mutex 类似。</p>
-<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
-<p>4、Go 的理念：用通信来共享内存。与其让多个 Goroutine 争抢同一块内存，不如让它们各自独立，通过 Channel 把需要的数据传递给对方，核心目的是避免数据竞争。</p>
-<p>5、Go 参数传递都是值传递。</p>
-<p>6、&amp;和*的区别</p>
-<ul>
-<li><p>&amp;是引用，作用于值类型，用于取地址，如果想要传递一个类型的地址避免值拷贝，就可以在前面加一个&amp;表示取该类型的地址，在函数的参数定义时，记得在参数的类型加上*。</p>
-</li>
-<li><p>*是指针，用于标记指针类型，或者对地址进行解引用，例如 var a *int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
-</li>
-</ul>
-<p>7、GMP 模型</p>
-<p>M，内核线程，操作系统内核其实看不见 G 和 P，只知道自己在执行一个线程。G 和 P 都是在用户空间上的实现。每一个 M 持有一个 P，通过 P 来获取 G。</p>
-<p>8、Go 语言在高并发场景应用非常广泛，但是 Go 的数据结构大多数都是线程不安全的，也就是说当多个 groutine 同时操作数据会存在数据竞争的问题，比如 Map、Chan 线程并不安全，解决方案可以加锁也可以用好 channel，本质需要通过 synic.lock 来应对并发问题使其同一时间保证只有一个协程用一份数据。</p>
-<p>9、组合优于继承，通过 “结构体嵌入”（Struct Embedding）实现代码复用和功能组合。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Git合并冲突解决与操作逻辑（AI版）</title>
     <url>/posts/Git%E5%90%88%E5%B9%B6%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E4%B8%8E%E6%93%8D%E4%BD%9C%E9%80%BB%E8%BE%91%EF%BC%88AI%E7%89%88%EF%BC%89/</url>
     <content><![CDATA[<blockquote>
@@ -164,6 +137,33 @@
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Go哲学</title>
+    <url>/posts/Go%E5%93%B2%E5%AD%A6/</url>
+    <content><![CDATA[<p>1、Go 的并发原则非常优秀，目标就是简单：尽量使用 channel；把 Goroutine 当作免费的资源，随便用。</p>
+<p>2、Go 的并发编程模型用 Goroutine 和 Channel 来替代。Goroutine 和线程类似，Channel 和 Mutex 类似。</p>
+<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
+<p>4、Go 的理念：用通信来共享内存。与其让多个 Goroutine 争抢同一块内存，不如让它们各自独立，通过 Channel 把需要的数据传递给对方，核心目的是避免数据竞争。</p>
+<p>5、Go 参数传递都是值传递。</p>
+<p>6、&amp;和*的区别</p>
+<ul>
+<li><p>&amp;是引用，作用于值类型，用于取地址，如果想要传递一个类型的地址避免值拷贝，就可以在前面加一个&amp;表示取该类型的地址，在函数的参数定义时，记得在参数的类型加上*。</p>
+</li>
+<li><p>*是指针，用于标记指针类型，或者对地址进行解引用，例如 var a *int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
+</li>
+</ul>
+<p>7、GMP 模型</p>
+<p>M，内核线程，操作系统内核其实看不见 G 和 P，只知道自己在执行一个线程。G 和 P 都是在用户空间上的实现。每一个 M 持有一个 P，通过 P 来获取 G。</p>
+<p>8、Go 语言在高并发场景应用非常广泛，但是 Go 的数据结构大多数都是线程不安全的，也就是说当多个 groutine 同时操作数据会存在数据竞争的问题，比如 Map、Chan 线程并不安全，解决方案可以加锁也可以用好 channel，本质需要通过 synic.lock 来应对并发问题使其同一时间保证只有一个协程用一份数据。</p>
+<p>9、组合优于继承，通过 “结构体嵌入”（Struct Embedding）实现代码复用和功能组合。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
       </tags>
   </entry>
   <entry>
@@ -1076,7 +1076,7 @@
 </ul>
 <p>2、将数据库查询逻辑显示暴露到逻辑上而避免使用复杂的sql语句<br>方便后续定位问题。</p>
 <p>3、在数据库中表设计中，不建议设置外键。<br>对记录的删除和插入都会对关联表做数据完整性检查，有的时候这可能是不必要的，这些应该把它暴露到业务逻辑层来做。主要还是增加性能开销。</p>
-<h2><span id="gorm操作mysql-最佳实践设计接口常用">Gorm操作mysql 最佳实践（设计接口常用）</span></h2><h3><span id="根据条件查询行记录-select">根据条件查询行记录 (SELECT *)</span></h3><p><strong>Sql</strong></p>
+<h2><span id="gorm操作mysql-最佳实践设计接口常用">Gorm操作mysql 最佳实践（设计接口常用）</span></h2><h3><span id="场景-1-根据条件查询行记录-select">场景 1: 根据条件查询行记录 (SELECT *)</span></h3><p><strong>Sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span> <span class="keyword">AND</span> grade <span class="operator">=</span> &quot;1年级&quot;;</span><br></pre></td></tr></table></figure>
 
 <p><strong>GORM 操作</strong>	</p>
