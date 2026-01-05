@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Cursor meetup chengdu的一些感受</title>
-    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
-    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
-<p>2、一定要尝试并体验新技术</p>
-<p>3、一定要经历挫折</p>
-<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
-<p>5、深入理解mcp 才能使用mcp</p>
-<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
-<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
-<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
-<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
-<p>4、cursor 最适合写工具类和单元测试代码</p>
-<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
-<p>6、一些推荐技术或工具网站分享</p>
-<p>1）difi-on-qianniu</p>
-<p>2）vercel</p>
-<p>3）monica</p>
-<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
-<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
-<p>2、找不到目标？找到一个技能树，把它填满</p>
-<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
-<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
-<p>5、关于提升后端技能</p>
-<p>首次从工作上面考虑：</p>
-<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
-<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
-<p>其次从下班后上考虑：</p>
-<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
-<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
-<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>分享</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GMP模型的理解</title>
     <url>/posts/GMP%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>GMP 是 Go 语言特有的协程调度模型：</p>
@@ -137,6 +98,89 @@
       </categories>
       <tags>
         <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title> Gorm Preload 核心用法与避坑指南 </title>
+    <url>/posts/Gorm%20Preload%20%E6%A0%B8%E5%BF%83%E7%94%A8%E6%B3%95%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/</url>
+    <content><![CDATA[<blockquote>
+<p>Gorm 的 <code>Preload</code> 是多表关联查询的核心功能，能高效解决 N+1 查询问题，但配置 <code>foreignKey</code> 和 <code>references</code> 时容易踩坑。本文精简梳理其核心原理、配置规则与避坑要点，帮助快速掌握用法。</p>
+</blockquote>
+<h2><span id="一-preload-核心价值与原理">一、Preload 核心价值与原理</span></h2><h3><span id="1-核心价值">1. 核心价值</span></h3><ul>
+<li>解决 N+1 问题：批量查询+内存拼接，仅需 2 次数据库请求，提升性能；</li>
+<li>简化逻辑：无需复杂 JOIN 语句，标签配置即可实现关联查询，返回结构化数据；</li>
+<li>灵活筛选：支持闭包实现关联数据的筛选、排序、分页。</li>
+</ul>
+<h3><span id="2-工作原理">2. 工作原理</span></h3><ol>
+<li>查询主模型数据，提取关联匹配所需 ID 集合（外键或主键）；</li>
+<li>关联模型批量查询：用 <code>IN</code> 条件匹配 ID 集合，获取关联数据；</li>
+<li>内存拼接：按标签规则将关联数据填充到主模型关联字段。</li>
+</ol>
+<h2><span id="二-核心概念主模型与关联模型">二、核心概念：主模型与关联模型</span></h2><ul>
+<li>主模型：查询发起方 + 关联标签附着方；（即类似foreignKey 与 references标签）</li>
+<li>关联模型：主模型指向的、需预加载的模型。</li>
+</ul>
+<p>示例：<code>db.Preload(&quot;Buyer&quot;).Find(&amp;orders)</code> 中，Order 是主模型，User 是关联模型；<code>db.Preload(&quot;Orders&quot;).Find(&amp;users)</code> 中，User 是主模型，Order 是关联模型。</p>
+<h2><span id="三-核心配置规则foreignkey-与-references">三、核心配置规则：foreignKey 与 references</span></h2><p>二者是配套的“匹配规则对”，非同一概念：</p>
+<ul>
+<li>foreignKey：指向<strong>外键持有方</strong>的外键字段（匹配凭证）；</li>
+<li>references：指向<strong>被关联方</strong>的主键字段（匹配目标）。</li>
+</ul>
+<h3><span id="基础定义">基础定义</span></h3><ul>
+<li>主键：表的唯一标识，非空唯一（如 User.UserID）；</li>
+<li>外键：存储另一表主键的关联凭证，可重复可空（如 Order.BuyerID）。</li>
+</ul>
+<h3><span id="分场景配置示例">分场景配置示例</span></h3><h4><span id="场景-1一对一order-userorder-持外键">场景 1：一对一（Order → User，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">  Buyer       User    `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint   `gorm:&quot;primaryKey;column:user_id&quot;` // 被关联方主键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
+<p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
+<h4><span id="场景-2一对多user-orderorder-持外键">场景 2：一对多（User → Order，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint     `gorm:&quot;primaryKey;column:user_id&quot;`</span><br><span class="line">  Orders   []Order  `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
+<p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
+<h3><span id="gorm-标签解析逻辑">Gorm 标签解析逻辑</span></h3><ol>
+<li>解析标签位置，确定主&#x2F;关联模型；</li>
+<li>检查主模型是否存在 foreignKey 配置字段：存在则主模型是外键持有方，否则关联模型是持有方。</li>
+</ol>
+<p>总结：谁持外键，foreignKey 就指向谁；references 永远指向被关联方主键。</p>
+<h2><span id="四-省略-references-的默认行为">四、省略 references 的默认行为</span></h2><ul>
+<li>默认指向被关联模型的主键；</li>
+<li>主键判定优先级：显式 <code>primaryKey</code> 标签字段 &gt; 名为 ID 的字段；</li>
+<li>避坑：唯一键、联合主键场景需显式指定 references。</li>
+</ul>
+<h2><span id="五-关键区分标签与数据库外键约束">五、关键区分：标签与数据库外键约束</span></h2><p>二者完全独立：</p>
+<ul>
+<li>数据库外键约束：保证数据完整性，与 Preload 无关；</li>
+<li>Gorm 标签：Preload 唯一依赖，仅作用于应用层，不认数据库约束。</li>
+</ul>
+<h2><span id="六-避坑清单与注意事项">六、避坑清单与注意事项</span></h2><h3><span id="1-标签配置">1. 标签配置</span></h3><ul>
+<li>配置结构体字段名（大小写敏感），非数据库列名；</li>
+<li>外键与主键字段类型需一致；</li>
+<li>多对多需显式指定中间表（joinTable）。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;&quot;`  // 中间表名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Role struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Users []User `gorm:&quot;many2many:user_roles;&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 默认推断：</span><br><span class="line">// - User 端：foreign key = UserID, reference key = ID</span><br><span class="line">// - Role 端：foreign key = RoleID, reference key = ID</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 显式指定</span><br><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;foreignKey:ID;references:ID;joinForeignKey:UserId;joinReferences:RoleId&quot;`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="2-性能优化">2. 性能优化</span></h3><ul>
+<li>避免过度预加载，仅加载必要数据；</li>
+<li>大批量数据查询需分页。</li>
+</ul>
+<h3><span id="3-排错技巧">3. 排错技巧</span></h3><ul>
+<li>开启 SQL 日志，检查 IN 条件字段与值；</li>
+<li>验证 foreignKey&#x2F;references 字段的存在性与拼写；</li>
+<li>检查主&#x2F;关联模型数据的匹配性。</li>
+</ul>
+<h2><span id="七-核心要点总结">七、核心要点总结</span></h2><ol>
+<li>Preload 核心是解决 N+1 问题，原理为“批量查询+内存拼接”；</li>
+<li>主&#x2F;关联模型由“查询发起方+标签附着方”界定；</li>
+<li>foreignKey 指向外键持有方外键位置，references 指向被关联方主键位置，不可颠倒；</li>
+<li>Preload 仅依赖模型标签，与数据库外键约束无关。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>后端</tag>
       </tags>
   </entry>
   <entry>
@@ -1546,6 +1590,45 @@
 <p>想象一个场景：你已经跳槽来公司 3 年了，一个工作日的下午你正在会议室开会，突然接到了上家公司的一个电话，需要你解释一下你所设计的系统架构决策点是什么，以及这个函数为什么要这样写。<br>是不是会很痛苦也会很无奈</p>
 </blockquote>
 <p>我们进行的所有的工作最终都会落实在代码上，如果你写过的代码需要你对他负责一辈子，那么你会逼着三年前的自己好好命名，将大函数拆分成易于理解的小函数。将类和包结构好好组织，写好注释，并测试自己的代码。设计文档也会好好写，技术债务也会清理而不会任其堆积。因为余生你都需要对这份代码负责，所以你只能将它变得更优美、更灵活、更高效。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>分享</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Cursor meetup chengdu的一些感受</title>
+    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
+    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
+<p>2、一定要尝试并体验新技术</p>
+<p>3、一定要经历挫折</p>
+<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
+<p>5、深入理解mcp 才能使用mcp</p>
+<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
+<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
+<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
+<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
+<p>4、cursor 最适合写工具类和单元测试代码</p>
+<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
+<p>6、一些推荐技术或工具网站分享</p>
+<p>1）difi-on-qianniu</p>
+<p>2）vercel</p>
+<p>3）monica</p>
+<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
+<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
+<p>2、找不到目标？找到一个技能树，把它填满</p>
+<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
+<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
+<p>5、关于提升后端技能</p>
+<p>首次从工作上面考虑：</p>
+<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
+<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
+<p>其次从下班后上考虑：</p>
+<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
+<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
+<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
 ]]></content>
       <categories>
         <category>技术</category>
