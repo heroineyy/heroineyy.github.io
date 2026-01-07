@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Cursor meetup chengdu的一些感受</title>
+    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
+    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
+<p>2、一定要尝试并体验新技术</p>
+<p>3、一定要经历挫折</p>
+<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
+<p>5、深入理解mcp 才能使用mcp</p>
+<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
+<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
+<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
+<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
+<p>4、cursor 最适合写工具类和单元测试代码</p>
+<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
+<p>6、一些推荐技术或工具网站分享</p>
+<p>1）difi-on-qianniu</p>
+<p>2）vercel</p>
+<p>3）monica</p>
+<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
+<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
+<p>2、找不到目标？找到一个技能树，把它填满</p>
+<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
+<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
+<p>5、关于提升后端技能</p>
+<p>首次从工作上面考虑：</p>
+<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
+<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
+<p>其次从下班后上考虑：</p>
+<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
+<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
+<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>分享</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>GMP模型的理解</title>
     <url>/posts/GMP%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>GMP 是 Go 语言特有的协程调度模型：</p>
@@ -1591,6 +1630,56 @@
       </tags>
   </entry>
   <entry>
+    <title>新手小白也能会！Kratos 框架单元测试从入门到上手</title>
+    <url>/posts/%E6%96%B0%E6%89%8B%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E4%BC%9A%EF%BC%81Kratos%20%E6%A1%86%E6%9E%B6%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E4%B8%8A%E6%89%8B/</url>
+    <content><![CDATA[<p>作为编程新手，你是不是也有这样的困扰：想验证一个接口功能，总要先把整个项目跑起来，再用 Postman 一遍遍地调试验证？不仅耗时，还得依赖项目完整运行。今天就以 Kratos 框架为例，手把手教你写单元测试——不用启动整个项目，也能精准验证功能逻辑，从小白到「单元测试大佬」（假的🤡）～</p>
+<h2><span id="一-先搞懂单元测试到底解决什么问题">一、先搞懂：单元测试到底解决什么问题？</span></h2><p>单元测试的核心是<strong>测试项目中某个独立的方法&#x2F;函数是否符合预期</strong>，比如一个接口的核心逻辑、一个业务层的处理函数。</p>
+<p>对比传统调试方式，单元测试的优势：</p>
+<ul>
+<li><p>不依赖项目完整运行：哪怕项目其他模块没写完，也能单独测试目标功能</p>
+</li>
+<li><p>覆盖多场景：可以轻松编写正常&#x2F;异常&#x2F;边界等多种测试用例</p>
+</li>
+<li><p>节省时间：一次编写，多次运行，改代码后一键验证是否改坏原有逻辑</p>
+</li>
+</ul>
+<h2><span id="二-实战kratos-框架单元测试三步法">二、实战：Kratos 框架单元测试三步法</span></h2><p>Kratos 框架基于依赖注入设计，写单元测试的核心是「先搭好测试依赖环境，再写测试用例」，全程分 3 步搞定。</p>
+<h3><span id="第一步编写测试依赖上下文testhelpergo">第一步：编写测试依赖上下文（testhelper.go）</span></h3><p>先新建一个 <code>testhelper</code> 文件夹，创建 <code>testhelper.go</code> 文件，用来封装测试需要的所有依赖（配置、日志、业务层、数据层等），相当于给单元测试搭一个「迷你运行环境」。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">package testhelper</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;your-project/internal/biz&quot;   // 业务层包路径</span><br><span class="line">    &quot;your-project/internal/conf&quot;  // 配置包路径</span><br><span class="line">    &quot;your-project/internal/data&quot;  // 数据层包路径</span><br><span class="line">    &quot;your-project/internal/service&quot; // 服务层包路径</span><br><span class="line">    &quot;github.com/go-kratos/kratos/v2/log&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// TestContext 封装单元测试所需的所有依赖组件</span><br><span class="line">// 可根据测试场景按需添加/删除依赖字段</span><br><span class="line">type TestContext struct &#123;</span><br><span class="line">    Config     *conf.Bootstrap       // 全局启动配置</span><br><span class="line">    CommonConf *conf.CommonService   // 通用服务配置</span><br><span class="line">    Logger     log.Logger            // 日志组件</span><br><span class="line">    DataClient *data.Data            // 数据层客户端</span><br><span class="line">    BizUsecase *biz.DemoUsecase      // 业务层用例</span><br><span class="line">    DemoService *service.DemoService // 待测试的服务</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// NewTestContext 创建包含所有测试依赖的上下文实例</span><br><span class="line">func NewTestContext(</span><br><span class="line">    bc *conf.Bootstrap,</span><br><span class="line">    commonConf *conf.CommonService,</span><br><span class="line">    logger log.Logger,</span><br><span class="line">    dataClient *data.Data,</span><br><span class="line">    bizUsecase *biz.DemoUsecase,</span><br><span class="line">    demoService *service.DemoService,</span><br><span class="line">) *TestContext &#123;</span><br><span class="line">    return &amp;TestContext&#123;</span><br><span class="line">        Config:     bc,</span><br><span class="line">        CommonConf: commonConf,</span><br><span class="line">        Logger:     logger,</span><br><span class="line">        DataClient: dataClient,</span><br><span class="line">        BizUsecase: bizUsecase,</span><br><span class="line">        DemoService: demoService,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="第二步依赖注入初始化wirego">第二步：依赖注入初始化（wire.go）</span></h3><p>新建 <code>wire.go</code> 文件，通过 Google Wire 实现依赖注入的初始化，生成可直接调用的「依赖初始化函数」。</p>
+<p>小贴士：Wire 是 Kratos 常用的依赖注入工具，需先安装：<code>go install github.com/google/wire/cmd/wire@latest</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//go:build wireinject</span><br><span class="line">// +build wireinject</span><br><span class="line"></span><br><span class="line">package testhelper</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;your-project/internal/conf&quot;  // 配置包路径</span><br><span class="line">    &quot;your-project/internal/server&quot; // 服务注册包路径</span><br><span class="line">    &quot;github.com/google/wire&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// InitializeTestContext 初始化测试上下文（由 Wire 自动生成实现）</span><br><span class="line">// 返回值：测试上下文实例、资源清理函数、错误信息</span><br><span class="line">func InitializeTestContext() (*TestContext, func(), error) &#123;</span><br><span class="line">    wire.Build(</span><br><span class="line">        // 基础配置依赖（需自己实现：读取配置文件）</span><br><span class="line">        provideConfig,        // 提供 conf.Bootstrap 实例</span><br><span class="line">        provideCommonService, // 提供 conf.CommonService 实例</span><br><span class="line">        provideLogger,        // 提供 log.Logger 实例</span><br><span class="line">        </span><br><span class="line">        // Kratos 服务层/数据层/业务层依赖集（项目中已定义）</span><br><span class="line">        server.DataProviderSet,  // 数据层依赖</span><br><span class="line">        server.BizProviderSet,    // 业务层依赖</span><br><span class="line">        server.ServiceProviderSet,// 服务层依赖</span><br><span class="line">        </span><br><span class="line">        // 绑定测试上下文</span><br><span class="line">        NewTestContext,</span><br><span class="line">    )</span><br><span class="line">    return nil, nil, nil // 占位：Wire 会自动生成真实逻辑</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 以下是配置依赖的示例实现（需根据自己项目调整）</span><br><span class="line">func provideConfig() *conf.Bootstrap &#123;</span><br><span class="line">    // 实际项目中：读取 yaml/toml 配置文件，解析为 conf.Bootstrap</span><br><span class="line">    return &amp;conf.Bootstrap&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func provideCommonService(conf *conf.Bootstrap) *conf.CommonService &#123;</span><br><span class="line">    return conf.CommonService</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func provideLogger() log.Logger &#123;</span><br><span class="line">    return log.DefaultLogger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>写完后，在 <code>testhelper</code> 文件夹下执行终端命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wire</span><br></pre></td></tr></table></figure>
+<p>执行成功后会生成 <code>wire_gen.go</code> 文件——这是单元测试的「核心钥匙」，里面包含了 <code>InitializeTestContext</code> 的真实实现。</p>
+<h3><span id="第三步编写单元测试用例demo_testgo">第三步：编写单元测试用例（demo_test.go）</span></h3><p>新建测试文件（<strong>文件名必须以 _test 结尾</strong>），比如 <code>demo_test.go</code>，以「测试一个查询接口」为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">package testhelper</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;context&quot;</span><br><span class="line">    v1 &quot;your-project/api/v1&quot; // API 定义包路径</span><br><span class="line">    &quot;testing&quot;</span><br><span class="line"></span><br><span class="line">    &quot;github.com/stretchr/testify/assert&quot;</span><br><span class="line">    &quot;github.com/stretchr/testify/require&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// 测试用例表格：覆盖不同场景（正常/异常/边界）</span><br><span class="line">var testCases = []struct &#123;</span><br><span class="line">    name        string          // 用例名称</span><br><span class="line">    request     v1.DemoRequest  // 测试请求参数</span><br><span class="line">    expectCount int             // 预期返回数据条数</span><br><span class="line">&#125;&#123;</span><br><span class="line">    &#123;</span><br><span class="line">        name: &quot;正常场景：按ID查询&quot;,</span><br><span class="line">        request: v1.DemoRequest&#123;</span><br><span class="line">            Id:      &quot;123456&quot;,</span><br><span class="line">            PageNum: 1,</span><br><span class="line">            PageSize: 10,</span><br><span class="line">        &#125;,</span><br><span class="line">        expectCount: 1,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        name: &quot;边界场景：空ID查询&quot;,</span><br><span class="line">        request: v1.DemoRequest&#123;</span><br><span class="line">            Id:      &quot;&quot;,</span><br><span class="line">            PageNum: 1,</span><br><span class="line">            PageSize: 10,</span><br><span class="line">        &#125;,</span><br><span class="line">        expectCount: 0,</span><br><span class="line">    &#125;,</span><br><span class="line">    // 可继续添加更多用例：比如分页超出范围、参数非法等</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 单元测试函数：必须以 Test 开头，入参为 *testing.T</span><br><span class="line">func TestDemoService_QueryData(t *testing.T) &#123;</span><br><span class="line">    // 1. 初始化测试上下文（核心：从 wire_gen.go 获取依赖）</span><br><span class="line">    ins, cleanup, err := InitializeTestContext()</span><br><span class="line">    require.NoError(t, err, &quot;❌ 初始化测试上下文失败：%v&quot;, err)</span><br><span class="line">    defer cleanup() // 测试结束后清理资源（比如关闭数据库连接）</span><br><span class="line"></span><br><span class="line">    // 2. 构建上下文（可添加用户ID、权限等上下文信息）</span><br><span class="line">    ctx := context.Background()</span><br><span class="line">    ctx = context.WithValue(ctx, &quot;uid&quot;, &quot;10086&quot;) // 模拟请求上下文</span><br><span class="line"></span><br><span class="line">    // 3. 遍历测试用例，逐个执行</span><br><span class="line">    for _, tc := range testCases &#123;</span><br><span class="line">        // t.Run：单独执行每个用例，失败不影响其他用例</span><br><span class="line">        t.Run(tc.name, func(t *testing.T) &#123;</span><br><span class="line">            t.Logf(&quot;🚀 开始执行用例：%s&quot;, tc.name)</span><br><span class="line"></span><br><span class="line">            // 4. 调用待测试的方法</span><br><span class="line">            res, err := ins.DemoService.QueryData(ctx, &amp;tc.request)</span><br><span class="line"></span><br><span class="line">            // 5. 断言验证结果（核心：判断是否符合预期）</span><br><span class="line">            if assert.NoError(t, err, &quot;❌ 接口调用失败：%v&quot;, err) &#123;</span><br><span class="line">                t.Logf(&quot;✅ 接口调用成功&quot;)</span><br><span class="line">                assert.NotNil(t, res, &quot;❌ 响应结果不能为空&quot;)</span><br><span class="line">                </span><br><span class="line">                if tc.expectCount &gt;= 0 &#123;</span><br><span class="line">                    assert.Len(t, res.DataList, tc.expectCount,</span><br><span class="line">                        &quot;❌ 返回数据条数不符预期：预期%d，实际%d&quot;,</span><br><span class="line">                        tc.expectCount, len(res.DataList))</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                t.Logf(&quot;📊 测试通过：返回 %d 条数据&quot;, len(res.DataList))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="关键规则提醒">关键规则提醒</span></h3><ol>
+<li><p>测试文件命名：必须以 <code>_test.go</code> 结尾（比如 <code>demo_test.go</code>）；</p>
+</li>
+<li><p>测试函数命名：必须以 <code>Test</code> 开头，入参固定为 <code>*testing.T</code>（比如 <code>TestDemoService_QueryData</code>）；</p>
+</li>
+<li><p>执行测试：在测试文件所在目录执行 <code>go test -v</code>（<code>-v</code> 显示详细日志）。</p>
+</li>
+</ol>
+<h2><span id="三-总结kratos-单元测试核心三步">三、总结：Kratos 单元测试核心三步</span></h2><ol>
+<li><p><strong>搭依赖</strong>：通过 <code>testhelper.go</code> 封装测试需要的所有依赖（配置、服务、日志等）；</p>
+</li>
+<li><p><strong>做注入</strong>：通过 <code>wire.go</code> 生成依赖初始化函数（执行 <code>wire</code> 命令）；</p>
+</li>
+<li><p><strong>写用例</strong>：通过 <code>xxx_test.go</code> 编写测试用例，调用初始化函数验证功能。</p>
+</li>
+</ol>
+<p>其实单元测试没有想象中复杂，核心就是「隔离依赖、覆盖场景、验证结果」。刚开始可以先写简单的正常场景，慢慢扩展到异常、边界场景，写多了就会发现——单元测试能帮我们提前发现很多 Bug，远比手动调试高效～</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>程序员应该知道的38件事儿</title>
     <url>/posts/%E7%A8%8B%E5%BA%8F%E5%91%98%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%8438%E4%BB%B6%E4%BA%8B%E5%84%BF/</url>
     <content><![CDATA[<h2><span id="1-简化根本复杂性消除偶发复杂性">1. 简化根本复杂性，消除偶发复杂性</span></h2><p>根本复杂性指的是问题与生俱来的、无法避免的困难。比如，协调全国的空中交通，必须实时追踪每架飞机的位置、高度、航速、航向、目的地、降落次序等，才能避免空中和地面冲突。以及还要兼顾因天气原因等航班延误导致的变化。</p>
@@ -1958,45 +2047,6 @@
 <p>想象一个场景：你已经跳槽来公司 3 年了，一个工作日的下午你正在会议室开会，突然接到了上家公司的一个电话，需要你解释一下你所设计的系统架构决策点是什么，以及这个函数为什么要这样写。<br>是不是会很痛苦也会很无奈</p>
 </blockquote>
 <p>我们进行的所有的工作最终都会落实在代码上，如果你写过的代码需要你对他负责一辈子，那么你会逼着三年前的自己好好命名，将大函数拆分成易于理解的小函数。将类和包结构好好组织，写好注释，并测试自己的代码。设计文档也会好好写，技术债务也会清理而不会任其堆积。因为余生你都需要对这份代码负责，所以你只能将它变得更优美、更灵活、更高效。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>分享</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Cursor meetup chengdu的一些感受</title>
-    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
-    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
-<p>2、一定要尝试并体验新技术</p>
-<p>3、一定要经历挫折</p>
-<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
-<p>5、深入理解mcp 才能使用mcp</p>
-<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
-<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
-<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
-<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
-<p>4、cursor 最适合写工具类和单元测试代码</p>
-<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
-<p>6、一些推荐技术或工具网站分享</p>
-<p>1）difi-on-qianniu</p>
-<p>2）vercel</p>
-<p>3）monica</p>
-<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
-<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
-<p>2、找不到目标？找到一个技能树，把它填满</p>
-<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
-<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
-<p>5、关于提升后端技能</p>
-<p>首次从工作上面考虑：</p>
-<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
-<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
-<p>其次从下班后上考虑：</p>
-<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
-<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
-<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
 ]]></content>
       <categories>
         <category>技术</category>
