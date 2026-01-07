@@ -1,45 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Cursor meetup chengdu的一些感受</title>
-    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
-    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
-<p>2、一定要尝试并体验新技术</p>
-<p>3、一定要经历挫折</p>
-<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
-<p>5、深入理解mcp 才能使用mcp</p>
-<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
-<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
-<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
-<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
-<p>4、cursor 最适合写工具类和单元测试代码</p>
-<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
-<p>6、一些推荐技术或工具网站分享</p>
-<p>1）difi-on-qianniu</p>
-<p>2）vercel</p>
-<p>3）monica</p>
-<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
-<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
-<p>2、找不到目标？找到一个技能树，把它填满</p>
-<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
-<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
-<p>5、关于提升后端技能</p>
-<p>首次从工作上面考虑：</p>
-<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
-<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
-<p>其次从下班后上考虑：</p>
-<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
-<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
-<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>分享</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>GMP模型的理解</title>
     <url>/posts/GMP%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>GMP 是 Go 语言特有的协程调度模型：</p>
@@ -1274,6 +1235,246 @@
       </tags>
   </entry>
   <entry>
+    <title>实习复盘：遇到问题的分类与总结</title>
+    <url>/posts/%E5%AE%9E%E4%B9%A0%E5%A4%8D%E7%9B%98%EF%BC%9A%E9%81%87%E5%88%B0%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E7%B1%BB%E4%B8%8E%E6%80%BB%E7%BB%93/</url>
+    <content><![CDATA[<p>下面是我近3个月遇到的问题和解决，根据我的实习日报整理来，按<strong>技术工具类、框架开发类、数据库操作类、项目协作类、业务逻辑类</strong>五大维度进行分类，并提炼对应的思考与解决方案，形成可复用的经验沉淀。分享给大家～</p>
+<h2><span id="一-技术工具类问题">一、 技术工具类问题</span></h2><h3><span id="1-go-语言基础与工具链">1.  Go 语言基础与工具链</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>go path</code>&#x2F;<code>go root</code>&#x2F;<code>go module</code> 概念混淆，环境配置报错</td>
+<td align="left">通过实操踩坑明确三者区别：<code>GOROOT</code> 是 Go 安装路径，<code>GOPATH</code>是工作区路径，<code>Go Module</code>是项目依赖管理工具；后续配置优先使用 <code>Go Module</code>避免路径冲突</td>
+</tr>
+<tr>
+<td align="left"><code>go get</code>与 <code>go install</code>用法混淆</td>
+<td align="left">区分核心用途：<code>go get</code>下载项目依赖到 <code>$GOPATH/pkg/mod</code>；<code>go install</code>安装全局工具到 <code>$GOPATH/bin</code>；工具安装用 <code>go install</code>，项目依赖用 <code>go get</code></td>
+</tr>
+<tr>
+<td align="left">range 遍历值拷贝导致数据异常（如指针遍历返回重复地址）</td>
+<td align="left">理解 range 遍历机制：遍历值类型时是<strong>值拷贝</strong>，遍历指针类型时需注意底层数据共享；解决方法：遍历指针切片时改用索引访问，或使用深拷贝</td>
+</tr>
+<tr>
+<td align="left">结构体指针空指针解引用 panic</td>
+<td align="left">指针类型使用前必须做非空校验；非必要场景优先使用值类型结构体，减少空指针风险，面对未知类型变量，可用接口接收 + 类型断言转换，替代泛型实现灵活处理</td>
+</tr>
+<tr>
+<td align="left">单元测试无法执行（方法未注册、依赖未注入）</td>
+<td align="left">遵守 Go 测试规范：测试文件以<code>_test.go</code> 结尾，函数名以 <code>Test</code>开头；确保测试方法依赖的服务通过 Wire 正确注入，排查 <code>wire_gen.go</code>是否生成成功，<strong>单元测试覆盖核心接口可提升问题排查效率</strong>，批量测试用例建议用表格定义法</td>
+</tr>
+</tbody></table>
+<h3><span id="2-git-与项目构建工具">2. Git 与项目构建工具</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Git Submodule 拉取失败、提交权限问题</td>
+<td align="left">掌握子模块操作命令：<code>git clone --recurse-submodules</code>拉取主项目+子模块；<code>git submodule add</code>添加子模块；权限问题需检查子模块仓库的访问权限【项目子模块冲突解决方案：git rm –cached {MOD_NAME} 删除缓存记录 + git submodule add –force 重新绑定】</td>
+</tr>
+<tr>
+<td align="left">代码合并冲突（尤其是多分支协同、子模块冲突）</td>
+<td align="left">合并前先拉取目标分支或者合最新主分支最新代码；子模块冲突需先进入子模块目录解决冲突，再提交主项目；<strong>禁止直接删除冲突代码</strong>，需与团队成员确认逻辑。<strong>合并冲突原则</strong>：不清楚代码归属时保留双方逻辑，删除重复代码但严禁删除缺失代码；基于 master 切出的开发分支合并到 release 时，优先拉取 master 最新代码解决冲突。</td>
+</tr>
+<tr>
+<td align="left">Makefile 构建失败、Wire 依赖注入未生效</td>
+<td align="left">项目根目录 <code>make all</code>失败时，进入对应服务目录手动执行 <code>wire</code>命令生成注入代码；确保 <code>wire.go</code> 中注册了所有需要注入的服务。<strong>子模块项目编译注意事项</strong>：如 duanzhi 项目 v1 是子模块链接，需进入对应子模块目录单独编译，而非根目录统一构建</td>
+</tr>
+<tr>
+<td align="left">脚本编译运行失败（如通知脚本）</td>
+<td align="left">脚本运行依赖编译后的可执行文件，需执行 <code>make build</code>编译；运行时需传入正确参数，确保脚本代码与主项目代码同步。</td>
+</tr>
+</tbody></table>
+<h2><span id="二-框架开发类问题kratos-protobuf-wire">二、 框架开发类问题（Kratos + Protobuf + Wire）</span></h2><h3><span id="1-kratos-框架核心问题">1. Kratos 框架核心问题</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">接口注册后无法访问（HTTP 服务未注册）</td>
+<td align="left">接口需在 <code>server/http</code> 中注册；Post 请求需在 Protobuf 的<code>option</code>中添加 <code>body:&quot;*&quot;</code>，否则无法正确接收参数<strong>kratos中间件集成规范</strong>：在 server 层通过 http.Middleware(middleware.Group(“路由地址”).Middleware(“方法”)) 注册，如 Token 解析中间件需绑定指定路由</td>
+</tr>
+<tr>
+<td align="left">中间件、组件（MySQL&#x2F;Redis）无法注入</td>
+<td align="left">通过全局配置 + Wire 依赖注入实现组件注册；确保组件的 <code>New</code>方法被<code>wire.NewSet()</code>注册，<code>wire_gen.go</code> 未被误删<strong>wire 注入深层要求</strong>：被注入的方法内部调用的其他方法，也必须完成 Wire 注册，否则会因依赖缺失导致启动失败</td>
+</tr>
+<tr>
+<td align="left">自定义错误返回不规范、接口返回格式不一致</td>
+<td align="left">统一封装错误返回结构体，定义标准化错误码；所有接口返回值遵循同一格式，避免直接返回原生错误<strong>接口返回一致性要求</strong>：针对需要数据返回同步的接口，不同接口尽量使用相同的参数传递方式，即使无法复用代码，也要保证入参、出参的命名和格式统一</td>
+</tr>
+<tr>
+<td align="left">Kratos 项目启动失败（子模块依赖、编译遗漏）</td>
+<td align="left">检查项目是否包含未初始化的子模块；进入对应服务目录手动执行 wire 和 make build；确保所有依赖的服务都已注册；Kratos <strong>项目启动特殊要求</strong>：不能直接执行 main.go，需点击上级目录启动调试；编译失败时优先检查子模块是否同步更新</td>
+</tr>
+</tbody></table>
+<h3><span id="2-protobuf-与-wire-依赖注入">2. Protobuf 与 Wire 依赖注入</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">同包 Proto 文件重复定义 <code>message</code>报错</td>
+<td align="left">遵守 Proto 命名规范：同包内 <code>message</code> 名称全局唯一；可通过划分不同包路径管理重复的消息定义<strong>Proto 定义避坑点</strong>：规避同级目录下同名 message 定义，Post 请求必须在 option 中配置 body:”*” 才能正确接收参数</td>
+</tr>
+<tr>
+<td align="left">Wire 注入失败（服务未注册、依赖缺失）</td>
+<td align="left">检查 <code>wire.go</code>中是否包含所有依赖的服务；确保依赖的服务提供了正确的构造函数；手动执行 <code>wire</code>命令排查注入错误</td>
+</tr>
+<tr>
+<td align="left">Protobuf 生成代码后字段类型不匹配（如 MySQL int 对应 Protobuf int32）</td>
+<td align="left">保证数据库字段、Proto 字段、Go 结构体字段类型<strong>完全一致</strong>；MySQL INT 类型默认对应 Go <code>int32；</code>避免因类型不匹配引发隐性问题<strong>枚举值定义规范</strong>：基于团队开发项目，已有的枚举值禁止自行定义，可通过前端代码追踪获取统一枚举值</td>
+</tr>
+<tr>
+<td align="left">wire、go generate .&#x2F;.. 、protoc 命令不清</td>
+<td align="left">protoc 是跨语言的协议编译工具，专注于将 .proto 转成业务代码；wire 是Go 专属的依赖注入工具，专注于自动组装 Go 项目的对象依赖；go generate .&#x2F;.. 是代码生成的触发器，本身不生成代码，而是批量执行 protoc&#x2F;wire 等生成指令，简化操作流程。</td>
+</tr>
+</tbody></table>
+<h2><span id="三-数据库操作类问题mysql-redis-gorm">三、 数据库操作类问题（MySQL + Redis + GORM）</span></h2><h3><span id="1-gorm-核心操作问题">1. GORM 核心操作问题</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Preload 预加载关联数据失败（关联条件错误、数据混乱）</td>
+<td align="left">预加载前明确主&#x2F;子表关联字段；foreignKey和references需要在结构体中tag指定遵循 GORM 预加载语法：<code>Preload(&quot;关联字段&quot;, 条件)</code>；避免盲目预加载，按需加载关联数据<strong>GORM Preload 底层原理</strong>：通过两次查询实现关联数据加载（先查主表，再根据主表 ID 查关联表），关联条件错误会导致数据加载失败</td>
+</tr>
+<tr>
+<td align="left"><code>First</code>方法查询不到数据未处理 <code>ErrRecordNotFound</code>错误</td>
+<td align="left"><code>First</code>方法查询不到会返回<code>gorm.ErrRecordNotFound</code>，必须手动判断该错误；查询时传入<strong>结构体指针</strong>，否则无法赋值<strong>GORM 方法注意事项</strong>：Create 和 First 方法会自动将数据库数据赋值到入参结构体指针，无需二次查询；Find 方法必须在条件之后调用</td>
+</tr>
+<tr>
+<td align="left"><code>Upsert</code>方法冲突键未加索引导致创建失败</td>
+<td align="left">使用 <code>Upsert</code>时，指定的冲突键（如 <code>ON CONFLICT (id)</code>）必须在数据库中创建索引；先创建索引再执行 Upsert 操作<strong>Upsert 坑点</strong>：无法通过 RowsAffected 判断是创建还是更新操作（返回 1 表示两种操作都可能），需先查询再判断</td>
+</tr>
+<tr>
+<td align="left">连表查询字段歧义报错（两个表存在相同字段）</td>
+<td align="left">连表查询时明确字段归属：<code>SELECT t1.id, t2.name FROM table1 t1 JOIN table2 t2 ON t1.id = t2.tid</code>；避免使用 <code>SELECT *</code></td>
+</tr>
+</tbody></table>
+<h3><span id="2-数据库性能与逻辑问题">2. 数据库性能与逻辑问题</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">循环查询数据库导致性能低下</td>
+<td align="left">优先使用<strong>预加载 + 批量查询</strong>替代循环查询；数据量小时可一次性查询后在内存中用 Map 去重，避免多次数据库交互<strong>数据去重策略</strong>：数据量大时必须在数据库层面聚合去重（如 GROUP BY），避免内存溢出；数据量小时可在内存中去重提升效率</td>
+</tr>
+<tr>
+<td align="left">字段冗余、数据类型选择不合理（如 varchar(255) 滥用）</td>
+<td align="left">按实际业务需求最小化设置字段类型：如短字符串用 <code>varchar(16)/varchar(32)</code>，整数用 <code>int8/int16</code>替代 <code>int</code>；减少内存占用与 IO 压力<strong>字段设计核心原则</strong>：贴合业务需求，创建时间、更新时间字段放在表结构末尾；优先使用主键 ID 查询，替代名称模糊匹配，利用索引提升性能</td>
+</tr>
+<tr>
+<td align="left">事务未生效（如子表更新未继承主表事务）</td>
+<td align="left">遵循分层原则，<strong>在 Biz 层开启事务</strong>；确保事务覆盖所有相关操作，避免跨层调用导致事务失效</td>
+</tr>
+<tr>
+<td align="left">时间字段格式不统一（如 varchar 存储时间无法转换为 <code>time.Time</code>）</td>
+<td align="left">数据库时间字段优先使用 <code>datetime</code> 类型；若必须用字符串存储，需统一格式（如 <code>2006-01-02 15:04:05</code>），并使用 <code>carbon</code> 包解析<strong>Carbon 包使用坑点</strong>：ToDateTimeString() 格式固定为 2025-01-01，自定义格式需用 ToLayoutString()；计算上个月日期时，需先设置日期再减月份（如 carbon.Now().SetDay(25).SubMonths(1)）</td>
+</tr>
+<tr>
+<td align="left">外键约束导致性能开销与操作限制</td>
+<td align="left"><strong>表设计避坑点</strong>：不建议设置外键约束，外键会增加删除 &#x2F; 插入操作的完整性检查开销；数据关联逻辑应放在业务层实现，而非数据库层面</td>
+</tr>
+</tbody></table>
+<h2><span id="四-项目协作类问题">四、 项目协作类问题</span></h2><h3><span id="1-前后端联调">1. 前后端联调</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">接口参数类型不匹配（如前端传空字符串给 int 类型字段）</td>
+<td align="left">明确前后端参数类型约定：int 类型不能传 <code>&quot;&quot;</code>，string 类型不能传 <code>0</code>；后端增加参数校验，返回明确错误提示</td>
+</tr>
+<tr>
+<td align="left">接口返回数据格式不符合前端预期（如字段名不一致、数据未去重）</td>
+<td align="left">联调前同步接口文档，统一字段命名规范（如使用下划线命名）；后端对返回数据进行去重、格式化处理，确保与文档一致</td>
+</tr>
+<tr>
+<td align="left">接口响应速度慢（如视频上传时同步处理视频帧）</td>
+<td align="left">优化接口逻辑：将耗时操作（如视频帧处理）改为异步执行；视频上传时前端同时传递 md5，避免重复上传<strong>第三方集成容灾思维</strong>：第三方接口响应不稳定时，改用异步处理 + 状态回调模式，保障主流程可用性</td>
+</tr>
+</tbody></table>
+<h3><span id="2-测试与线上问题">2. 测试与线上问题</span></h3><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">测试反馈的 Bug 集中在参数校验缺失、数据逻辑不严谨</td>
+<td align="left">开发时明确每个参数的<strong>必填&#x2F;非必填</strong>、<strong>取值范围</strong>；列表数据必须去重，指针遍历避免返回拷贝地址；错误返回需明确提示（如“已选数据内不存在原 id”）<strong>开发自测原则</strong>：尽可能考虑边界情况，通过自测 + 单元测试排查遗漏问题；重点检查参数校验、空指针、数组越界等高频问题</td>
+</tr>
+<tr>
+<td align="left">灰度环境数据库字段更新失败、数据查询异常</td>
+<td align="left">掌握灰度环境操作流程：更新表字段需提交工单；查询灰度数据需通过未来云平台；确保灰度环境配置与生产环境一致<strong>线上发布关键步骤</strong>：开发分支需合并到 master 分支后再发布；子模块代码需同步更新并提交；分支落后时用 git pull origin&#x2F;master 拉取最新代码</td>
+</tr>
+<tr>
+<td align="left">线上问题排查效率低（如日志未打印 SQL、无法定位错误）</td>
+<td align="left"><strong>日志记录核心要求</strong>：打印日志时必须传递 ctx，方便后续链路追踪；日志内容要明确，包含操作类型、入参、错误信息，宁可多打不可少打;关键操作添加日志记录，包含入参、出参、错误信息；排查线上问题时先查日志，再查数据库<strong>线上问题排查技巧</strong>：反馈 Bug 时需标注数据唯一标识（如主键 ID）和关联表名；通过日志中的 SQL 语句模拟执行，定位是代码还是数据问题</td>
+</tr>
+</tbody></table>
+<h2><span id="五-业务逻辑类问题">五、 业务逻辑类问题</span></h2><table>
+<thead>
+<tr>
+<th align="left">遇到的问题</th>
+<th align="left">思考与解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">模块间联动逻辑不清晰（如模板管理与应用管理的数据依赖）</td>
+<td align="left">设计接口前梳理模块间的数据流转关系，明确依赖字段；参考已有项目的联动逻辑，避免孤立设计接口</td>
+</tr>
+<tr>
+<td align="left">第三方接口调用问题（如幂等性问题、接口失效）</td>
+<td align="left">调用第三方接口前确认幂等性；接口失效时及时排查网络或接口文档变更；<strong>通过结构体指针传入第三方服务，并确保 Wire 注入</strong></td>
+</tr>
+<tr>
+<td align="left">代码逻辑复杂、冗余，维护难度大</td>
+<td align="left">遵循 “单一职责原则”，将复杂函数拆分为不超过 50 行的小函数；重复代码封装为公共方法，业务逻辑与非业务逻辑分离，如果代码越写越复杂，需反思是否逻辑设计有问题，牢记 “大道至简”。</td>
+</tr>
+<tr>
+<td align="left">通用功能重复开发（如操作日志、权限校验）</td>
+<td align="left">封装通用工具类（如操作日志模块），提炼可复用的逻辑；工具类需编写使用文档，方便其他项目接入。<strong>封装思维培养</strong>：保持封装通用工具类的习惯和敏感性，如权限校验、第三方调用、日志记录等，提升后续项目开发效率</td>
+</tr>
+</tbody></table>
+<h1><span id="六-总结">六、总结</span></h1><p>近期实习完整覆盖了 Go 后端开发（基于kratos项目）的全流程，从环境配置、Kratos 框架实操、数据库优化到跨团队协作与线上运维，每一次踩坑、每一次问题排查都沉淀为宝贵的实战经验。记录下这些经历与思考，既是对这段实习的复盘沉淀，也希望能为刚入行的后端开发者提供一点参考。</p>
+<p>于我而言，这段实习最大的成长，莫过于完成了从 “技术实现者” 到 “业务解决者” 的思维转变。不断的踩坑试错到最后的问题解决，让我明白，后端开发绝不是 “CRUD 搬砖”。优秀的技术方案，一定是能精准解决业务问题的方案。脱离业务的代码，再优雅也只是空中楼阁。</p>
+<p>最后，把这段实习的感悟分享给大家：</p>
+<ul>
+<li><p>新手阶段别怕踩坑，每一个 bug 都是一次成长的机会；</p>
+</li>
+<li><p>尽早培养 “业务思维”，多和产品、运营沟通，理解需求背后的价值；</p>
+</li>
+<li><p>坚持复盘和沉淀，把零散的经验整理成可复用的方法论。</p>
+</li>
+</ul>
+<p>愿我们都能在技术之路上，既懂代码，更懂业务。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>接口设计场景下数据层的最佳实践</title>
     <url>/posts/%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E5%9C%BA%E6%99%AF%E4%B8%8B%E6%95%B0%E6%8D%AE%E5%B1%82%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</url>
     <content><![CDATA[<h2><span id="设计数据库的小tips">设计数据库的小tips</span></h2><p>1、数据库表字段不建议设置值时允许为null。</p>
@@ -1757,6 +1958,45 @@
 <p>想象一个场景：你已经跳槽来公司 3 年了，一个工作日的下午你正在会议室开会，突然接到了上家公司的一个电话，需要你解释一下你所设计的系统架构决策点是什么，以及这个函数为什么要这样写。<br>是不是会很痛苦也会很无奈</p>
 </blockquote>
 <p>我们进行的所有的工作最终都会落实在代码上，如果你写过的代码需要你对他负责一辈子，那么你会逼着三年前的自己好好命名，将大函数拆分成易于理解的小函数。将类和包结构好好组织，写好注释，并测试自己的代码。设计文档也会好好写，技术债务也会清理而不会任其堆积。因为余生你都需要对这份代码负责，所以你只能将它变得更优美、更灵活、更高效。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>分享</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Cursor meetup chengdu的一些感受</title>
+    <url>/posts/Cursor%20meetup%20chengdu%E7%9A%84%E4%B8%80%E4%BA%9B%E6%84%9F%E5%8F%97/</url>
+    <content><![CDATA[<h2><span id="一-leerob的分享">一、leerob的分享</span></h2><p>1、知道所以然 基础知识 底层原理</p>
+<p>2、一定要尝试并体验新技术</p>
+<p>3、一定要经历挫折</p>
+<p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
+<p>5、深入理解mcp 才能使用mcp</p>
+<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
+<h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
+<p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
+<p>3、让大模型生成测试数据，根据示例数据生成回答</p>
+<p>4、cursor 最适合写工具类和单元测试代码</p>
+<p>5、写代码前，提前告诉他环境版本信息，避免写出和当前环境不匹配，导致运行不通过的代码 </p>
+<p>6、一些推荐技术或工具网站分享</p>
+<p>1）difi-on-qianniu</p>
+<p>2）vercel</p>
+<p>3）monica</p>
+<p>4）deep-wiki（将代码库发给他生成详细的文档）</p>
+<h2><span id="三-自由交流时间的收获">三、自由交流时间的收获</span></h2><p>1、先修心再修术</p>
+<p>2、找不到目标？找到一个技能树，把它填满</p>
+<p>3、当下学习什么？拥抱新技术、大胆尝试、但依旧要深挖底层基础，啃大骨头才是我们程序员的核心竞争力</p>
+<p>4、简历被拒，面试没有通过？针对找后端项目，可能是项目太过简单面试官看不上，那么就打磨技术多写代码，对自己的项目做进一步优化，事实求是，另外回答问题不笃定出现了“吧”什么的只是面试的大忌，不要把面试官当成傻子，包装的简历一定会被洞察到，写到简历的东西一定要熟悉。</p>
+<p>5、关于提升后端技能</p>
+<p>首次从工作上面考虑：</p>
+<p>1）在工作中想想哪些是重复的工作，哪些环节需要优化、沿着工作的技术做衍生学习 </p>
+<p>2）把握时代的风口，提前学小而精的东西，大家都不学或不知道然后你去学的东西，做到60%～70%，取得老板信任将其工作交付于你负责（学习领导里感觉也很重要）</p>
+<p>其次从下班后上考虑：</p>
+<p>1）找到一个技能树，设定短期目标、一点点把它填满，</p>
+<p>2）如何在这个过程取得正反馈？任务拆解，选择自己感兴趣的学习</p>
+<p>6、一切皆有可能，向外寻求机会、找到一切可能性、多分享多连接</p>
 ]]></content>
       <categories>
         <category>技术</category>
