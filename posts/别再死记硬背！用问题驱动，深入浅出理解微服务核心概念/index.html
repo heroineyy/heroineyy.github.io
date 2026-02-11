@@ -17,7 +17,7 @@ html.dataset.dark = localStorage.dark;
 <ul>
 <li><p><strong>解决性能瓶颈</strong>：为大规模数据存储和高效网络传输提供支持。 </p>
 </li>
-<li><p><strong>跨平台兼容</strong>：可以支持多种语言和平台。</p>
+<li><p><strong>跨平台兼容</strong>：可以支持多种语言和平台。 </p>
 </li>
 </ul>
 <hr>
@@ -28,7 +28,7 @@ html.dataset.dark = localStorage.dark;
 </li>
 <li><p><strong>跨语言通信</strong>：不同语言可以互相通信。 </p>
 </li>
-<li><p><strong>数据格式统一</strong>：避免了 JSON 或 XML 的性能损耗。</p>
+<li><p><strong>数据格式统一</strong>：避免了 JSON 或 XML 的性能损耗。 </p>
 </li>
 </ul>
 <hr>
@@ -37,7 +37,7 @@ html.dataset.dark = localStorage.dark;
 <ul>
 <li><p><strong>性能更好</strong>：二进制格式比 JSON 更高效。 </p>
 </li>
-<li><p><strong>跨语言支持</strong>：ProtoBuf 通过生成代码支持多种语言。</p>
+<li><p><strong>跨语言支持</strong>：ProtoBuf 通过生成代码支持多种语言。 </p>
 </li>
 </ul>
 <hr>
@@ -46,12 +46,12 @@ html.dataset.dark = localStorage.dark;
 <ul>
 <li><p><strong>RPC</strong> 更适合服务间通信，支持远程调用。 </p>
 </li>
-<li><p><strong>HTTP</strong> 适合客户端和服务器之间的请求响应。</p>
+<li><p><strong>HTTP</strong> 适合客户端和服务器之间的请求响应。 </p>
 </li>
 </ul>
 <hr>
 <h3><span id="5grpc中服务端的服务注册在哪客户端调用的方法是直接在-grpc-上吗还是注册中心直接和服务器交互吗">5.gRPC中，服务端的服务注册在哪，客户端调用的方法是直接在 gRPC 上吗，还是注册中心？直接和服务器交互吗？</span></h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">服务端启动 → 注册地址到注册中心 → 注册中心维护服务列表  </span><br><span class="line">客户端启动 → 从注册中心获取服务地址 → 生成存根 → 存根通过gRPC协议直接调用服务端</span><br></pre></td></tr></table></figure>
-<p> 服务注册：<strong>gRPC 本身不自带服务注册功能</strong>，在微服务场景中，需结合 Consul、Etcd 等第三方注册中心实现。gRPC 服务器启动时，会通过自定义代码或第三方 SDK 将自身地址、服务名称等信息注册到注册中心，由注册中心维护服务实例的动态列表（包括新增、下线、健康状态等）。<br>客户端调用：客户端调用分为两个阶段。首先是服务发现，客户端启动时或定期向注册中心请求目标服务的可用实例地址；然后，客户端根据 gRPC 协议文件生成本地存根（Stub），通过存根调用远程方法，存根会按照 gRPC 协议（基于 HTTP&#x2F;2）将请求参数序列化后，直接与获取到地址的 gRPC 服务器建立连接并发送请求，服务端处理后将结果返回给客户端。</p>
+<p> 服务注册：<strong>gRPC 本身不自带服务注册功能</strong>，在微服务场景中，需结合 Consul、Etcd 等第三方注册中心实现。gRPC 服务器启动时，会通过自定义代码或第三方 SDK 将自身地址、服务名称等信息注册到注册中心，由注册中心维护服务实例的动态列表（包括新增、下线、健康状态等）。<br>客户端调用：客户端调用分为两个阶段。首先是服务发现，客户端启动时或定期向注册中心请求目标服务的可用实例地址；然后，客户端根据 gRPC 协议文件生成本地存根（Stub），通过存根调用远程方法，存根会按照 gRPC 协议（基于 HTTP/2）将请求参数序列化后，直接与获取到地址的 gRPC 服务器建立连接并发送请求，服务端处理后将结果返回给客户端。</p>
 <p><strong>关键点：</strong></p>
 <p><strong>服务注册</strong>：依赖第三方注册中心管理服务实例，非 gRPC 内置功能。</p>
 <p><strong>客户端与服务器交互</strong>：客户端先从注册中心获取服务地址，再通过存根与服务器直接交互，注册中心不参与通信过程。</p>

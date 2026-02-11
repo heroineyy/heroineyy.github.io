@@ -9,14 +9,14 @@ localStorage.dark = !(html.dataset.dark == 'true');
 html.dataset.dark = localStorage.dark;
 });</script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Go哲学</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">Go哲学</h1><div class="post-meta">2025-07-29<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 493</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 1</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div></div></div><div class="post-content"><p>1、Go 的并发原则非常优秀，目标就是简单：尽量使用 channel；把 Goroutine 当作免费的资源，随便用。</p>
 <p>2、Go 的并发编程模型用 Goroutine 和 Channel 来替代。Goroutine 和线程类似，Channel 和 Mutex 类似。</p>
-<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
+<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
 <p>4、Go 的理念：用通信来共享内存。与其让多个 Goroutine 争抢同一块内存，不如让它们各自独立，通过 Channel 把需要的数据传递给对方，核心目的是避免数据竞争。</p>
 <p>5、Go 参数传递都是值传递。</p>
 <p>6、&amp;和*的区别</p>
 <ul>
 <li><p>&amp;是引用，作用于值类型，用于取地址，如果想要传递一个类型的地址避免值拷贝，就可以在前面加一个&amp;表示取该类型的地址，在函数的参数定义时，记得在参数的类型加上*。</p>
 </li>
-<li><p>*是指针，用于标记指针类型，或者对地址进行解引用，例如 var a *int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
+<li><p><em>是指针，用于标记指针类型，或者对地址进行解引用，例如 var a </em>int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
 </li>
 </ul>
 <p>7、GMP 模型</p>

@@ -35,15 +35,13 @@ html.dataset.dark = localStorage.dark;
 <li>外键：存储另一表主键的关联凭证，可重复可空（如 Order.BuyerID）。</li>
 </ul>
 <h3><span id="分场景配置示例">分场景配置示例</span></h3><h4><span id="场景-1一对一order-userorder-持外键">场景 1：一对一（Order → User，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">  Buyer       User    `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint   `gorm:&quot;primaryKey;column:user_id&quot;` // 被关联方主键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
 <p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
 <h4><span id="场景-2一对多user-orderorder-持外键">场景 2：一对多（User → Order，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint     `gorm:&quot;primaryKey;column:user_id&quot;`</span><br><span class="line">  Orders   []Order  `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
 <p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
 <h3><span id="gorm-标签解析逻辑">Gorm 标签解析逻辑</span></h3><ol>
-<li>解析标签位置，确定主&#x2F;关联模型；</li>
+<li>解析标签位置，确定主/关联模型；</li>
 <li>检查主模型是否存在 foreignKey 配置字段：存在则主模型是外键持有方，否则关联模型是持有方。</li>
 </ol>
 <p>总结：谁持外键，foreignKey 就指向谁；references 永远指向被关联方主键。</p>
@@ -63,19 +61,18 @@ html.dataset.dark = localStorage.dark;
 <li>多对多需显式指定中间表（joinTable）。</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;&quot;`  // 中间表名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Role struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Users []User `gorm:&quot;many2many:user_roles;&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 默认推断：</span><br><span class="line">// - User 端：foreign key = UserID, reference key = ID</span><br><span class="line">// - Role 端：foreign key = RoleID, reference key = ID</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 显式指定</span><br><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;foreignKey:ID;references:ID;joinForeignKey:UserId;joinReferences:RoleId&quot;`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="2-性能优化">2. 性能优化</span></h3><ul>
 <li>避免过度预加载，仅加载必要数据；</li>
 <li>大批量数据查询需分页。</li>
 </ul>
 <h3><span id="3-排错技巧">3. 排错技巧</span></h3><ul>
 <li>开启 SQL 日志，检查 IN 条件字段与值；</li>
-<li>验证 foreignKey&#x2F;references 字段的存在性与拼写；</li>
-<li>检查主&#x2F;关联模型数据的匹配性。</li>
+<li>验证 foreignKey/references 字段的存在性与拼写；</li>
+<li>检查主/关联模型数据的匹配性。</li>
 </ul>
 <h2><span id="七-核心要点总结">七、核心要点总结</span></h2><ol>
 <li>Preload 核心是解决 N+1 问题，原理为“批量查询+内存拼接”；</li>
-<li>主&#x2F;关联模型由“查询发起方+标签附着方”界定；</li>
+<li>主/关联模型由“查询发起方+标签附着方”界定；</li>
 <li>foreignKey 指向外键持有方外键位置，references 指向被关联方主键位置，不可颠倒；</li>
 <li>Preload 仅依赖模型标签，与数据库外键约束无关。</li>
 </ol>

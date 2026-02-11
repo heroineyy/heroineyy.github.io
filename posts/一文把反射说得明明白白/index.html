@@ -19,11 +19,9 @@ html.dataset.dark = localStorage.dark;
 <h3><span id="3-框架为什么爱用反射">3. 框架为什么爱用反射？</span></h3><p>知道了他的本质，我们再看它的应用场景，</p>
 <p>举个 Java 框架的例子，比如 Spring Boot。<br>在我们自己写代码时，<code>new</code> 一个对象是显式写出来的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">MyService</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyService</span>();</span><br></pre></td></tr></table></figure>
-
 <p>而 Spring Boot 可以<strong>不用你手动写</strong>，就直接实例化一个对象并注入到类里。这背后就是反射——框架在运行时扫描类，通过反射找到可用的构造方法，然后动态 <code>new</code> 出对象。举个栗子：</p>
 <p>假设你有如下的类：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>  <span class="comment">// 标记为Spring管理的bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performAction</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Action performed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p>然后你有一个需要MyService的类：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Application</span> &#123;</span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> MyService myService;  <span class="comment">// 自动注入MyService</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">start</span><span class="params">()</span> &#123;</span><br><span class="line">        myService.performAction();  <span class="comment">// 使用注入的MyService对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>在这个例子中：</p>
@@ -32,8 +30,6 @@ html.dataset.dark = localStorage.dark;
 <p>因此你并不需要显式地使用new MyService()来创建对象，Spring会在幕后通过反射来完成这一过程。</p>
 <blockquote>
 <p>其中@Component和@Autowired就是 Java 里的<strong>注解</strong>。 通常它写在类、方法、字段前面，形如 <code>@Something</code>，相当于一个标签，用来告诉框架“这里有特殊处理”。框架在启动时会扫描项目的所有类，通过反射获取它们的注解信息，然后按照注解规则去做事。</p>
-</blockquote>
-<blockquote>
 <p>注解有两类： 1、标记类、方法、字段为bean，使得它们可以被Spring容器管理,如@Component ；2、注入其他bean到类的字段、方法或构造器中，帮助实现依赖注入，达到解耦目的，如@Autowired</p>
 </blockquote>
 <p>说白了，框架的本质就是一堆通用功能的集合。用盖房子打比方：</p>
@@ -43,6 +39,7 @@ html.dataset.dark = localStorage.dark;
 </ul>
 <p>而反射，就是框架实现“自动适配你写的代码”的关键工具。</p>
 <h3><span id="4-go-语言里的反射">4. Go 语言里的反射</span></h3><p>Go 的反射原理和 Java 非常像：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -50,7 +47,8 @@ html.dataset.dark = localStorage.dark;
 <th><strong>Go反射</strong></th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>通过JVM的API访问类型的元信息（如<code>Class</code>、<code>Method</code>等）。</td>
 <td>通过Go的<code>reflect</code>包来访问类型和值的元信息。</td>
 </tr>
@@ -62,10 +60,11 @@ html.dataset.dark = localStorage.dark;
 <td>主要通过<code>Class</code>类和<code>java.lang.reflect</code>包进行反射操作。</td>
 <td>主要通过<code>reflect.Type</code>和<code>reflect.Value</code>进行反射操作。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>比如 Go 里的结构体标签（tag）：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>当我们用 <code>json.Marshal()</code> 把结构体转成 JSON 时，<code>encoding/json</code> 包会通过反射读取 <code>tag</code> 信息，然后决定用哪个字段名。</p>
 <p>很多 Go 框架（如 Gin、GORM）也大量使用反射来实现自动映射、自动注入等功能。</p>
 <h3><span id="5-总结">5. 总结</span></h3><p>反射其实没那么神秘——<strong>它就是在运行时，把“看似未知”的东西变成已知的，把“不可见”的类型和值变成可见并可操作的</strong>。它的实现依赖于语言编译器和运行时提供的元信息和接口。</p>

@@ -22,34 +22,38 @@ html.dataset.dark = localStorage.dark;
 </ul>
 <p>以后只要喊一声 “买材料”，机器人就去买；喊 “烤”，机器人就启动烤箱；喊 “全部做完”，机器人就按顺序执行所有步骤。</p>
 <p>对应到开发中：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">做蛋糕流程</th>
-<th align="left">make 工具对应概念</th>
+<th style="text-align:left">做蛋糕流程</th>
+<th style="text-align:left">make 工具对应概念</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">小本子</td>
-<td align="left">Makefile 文件</td>
+<tbody>
+<tr>
+<td style="text-align:left">小本子</td>
+<td style="text-align:left">Makefile 文件</td>
 </tr>
 <tr>
-<td align="left">步骤名（买材料 &#x2F; 烤）</td>
-<td align="left">任务（目标）</td>
+<td style="text-align:left">步骤名（买材料 / 烤）</td>
+<td style="text-align:left">任务（目标）</td>
 </tr>
 <tr>
-<td align="left">步骤具体操作</td>
-<td align="left">任务下的命令</td>
+<td style="text-align:left">步骤具体操作</td>
+<td style="text-align:left">任务下的命令</td>
 </tr>
 <tr>
-<td align="left">喊 “全部做完”</td>
-<td align="left">执行 make all 命令</td>
+<td style="text-align:left">喊 “全部做完”</td>
+<td style="text-align:left">执行 make all 命令</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>简单来说：<strong>Makefile 是任务清单，make 是执行清单的命令</strong>。</p>
 <h2><span id="二-为什么后端开发一定要用-make">二、为什么后端开发一定要用 make？</span></h2><p>我们的日常开发流程，全是重复的 “步骤”： </p>
 <ul>
-<li><p>编译代码：<code>go build</code>&#x2F;<code>gcc</code>&#x2F;<code>javac</code></p>
+<li><p>编译代码：<code>go build</code>/<code>gcc</code>/<code>javac</code></p>
 </li>
 <li><p>生成代码：<code>protoc</code> 编译 <code>.proto</code> 文件</p>
 </li>
@@ -73,24 +77,14 @@ html.dataset.dark = localStorage.dark;
 <h2><span id="四-进阶玩法多个任务组合-传参">四、进阶玩法：多个任务组合 + 传参</span></h2><p>一个项目不可能只有 “编译” 这一个任务，我们来扩展一下，实现<strong>编译 → 运行 → 清理</strong>的完整流程。</p>
 <h3><span id="1-多任务定义">1. 多任务定义</span></h3><p>修改 <code>Makefile</code>，增加 <code>run</code>（运行程序）和 <code>clean</code>（清理产物）任务：</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编译任务</span></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行任务（依赖 build 任务，先编译再运行）</span></span><br><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理任务</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf hello</span><br></pre></td></tr></table></figure>
-
-
 <p>执行单个任务：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">make build  <span class="comment"># 只编译</span></span><br><span class="line">make run    <span class="comment"># 先编译，再运行</span></span><br><span class="line">make clean  <span class="comment"># 清理二进制文件</span></span><br></pre></td></tr></table></figure>
-
-
 <h3><span id="2-传参数给任务">2. 传参数给任务</span></h3><p>有时候我们希望程序能接收动态参数，比如让 <code>hello</code> 程序输出指定名字。修改 <code>main.go</code>：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) &gt; <span class="number">1</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;Hello %s\n&quot;</span>, os.Args[<span class="number">1</span>])</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;Hello World&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修改 <code>Makefile</code> 的 <code>run</code> 任务，支持传参：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br></pre></td></tr></table></figure>
-<p>执行时传入参数：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make run ARGS=<span class="string">&quot;Go Developer&quot;</span></span><br></pre></td></tr></table></figure>
-<p>终端会输出：<code>Hello Go Developer</code>。</p>
+<p>修改 <code>Makefile</code> 的 <code>run</code> 任务，支持传参：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br></pre></td></tr></table></figure><br>执行时传入参数：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make run ARGS=<span class="string">&quot;Go Developer&quot;</span></span><br></pre></td></tr></table></figure><br>终端会输出：<code>Hello Go Developer</code>。</p>
 <h3><span id="3-组合任务一键执行所有流程">3. 组合任务：一键执行所有流程</span></h3><p>如果想一键完成 “编译 → 运行 → 清理”，可以定义一个 <code>all</code> 任务，调用其他任务：</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 组合任务：按顺序执行 build → run → clean</span></span><br><span class="line"><span class="section">all: build run clean</span></span><br><span class="line"></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br><span class="line"></span><br><span class="line"><span class="section">run:</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf hello</span><br></pre></td></tr></table></figure>
-<p>执行组合任务：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make all ARGS=<span class="string">&quot;Gopher&quot;</span></span><br></pre></td></tr></table></figure>
-<p>机器人会自动按顺序执行三个任务，省心又省力。</p>
+<p>执行组合任务：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make all ARGS=<span class="string">&quot;Gopher&quot;</span></span><br></pre></td></tr></table></figure><br>机器人会自动按顺序执行三个任务，省心又省力。</p>
 <h2><span id="五-避坑指南新手必看的-5-个注意事项">五、避坑指南：新手必看的 5 个注意事项</span></h2><p><code>Makefile</code> 语法看起来简单，但新手很容易踩坑，这里列出最常见的 5 个问题及解决方案。</p>
 <h3><span id="1-命令行首必须是-tab-键">1. 命令行首必须是 Tab 键</span></h3><p><strong>现象</strong>：执行 <code>make</code> 时报错 <code>missing separator</code>。</p>
 <p><strong>原因</strong>：任务下面的命令行首用了空格，<code>make</code> 要求必须是 <strong>一个 Tab 键</strong>。</p>
@@ -107,18 +101,13 @@ html.dataset.dark = localStorage.dark;
 <p><strong>解决方案</strong>：两种方式传递环境变量</p>
 <p>方式 1：执行 <code>make</code> 时前缀添加环境变量</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make build ENV=prod</span><br></pre></td></tr></table></figure>
-
 <p>方式 2：在 <code>Makefile</code> 中用 <code>export</code> 声明</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> ENV=prod</span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br></pre></td></tr></table></figure>
 <h3><span id="5-调试技巧只打印命令不执行">5. 调试技巧：只打印命令不执行</span></h3><p><strong>场景</strong>：写了复杂的 <code>Makefile</code>，想先检查命令是否正确。</p>
 <p><strong>解决方案</strong>：用 <code>make -n 任务名</code> 命令，只打印要执行的命令，不实际运行。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make -n all ARGS=<span class="string">&quot;Debug Test&quot;</span></span><br></pre></td></tr></table></figure>
-
-
 <h2><span id="六-go-项目实战完整的-makefile-模板">六、Go 项目实战：完整的 Makefile 模板</span></h2><p>最后给大家一个可以直接复用的 Go 项目 <code>Makefile</code> 模板，包含编译、测试、代码检查、生产环境构建等常用功能：</p>
 <figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义变量：二进制文件名、编译参数</span></span><br><span class="line">BIN_NAME = go-app</span><br><span class="line">GO_FLAGS = -ldflags=<span class="string">&quot;-s -w&quot;</span>  <span class="comment"># 减小二进制体积</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 声明伪目标</span></span><br><span class="line"><span class="meta"><span class="keyword">.PHONY</span>: build test lint clean build-prod run all</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地编译</span></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build <span class="variable">$(GO_FLAGS)</span> -o <span class="variable">$(BIN_NAME)</span> main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行单元测试</span></span><br><span class="line"><span class="section">test:</span></span><br><span class="line">    go test -v ./... -cover</span><br><span class="line"></span><br><span class="line"><span class="comment"># 代码检查（需安装 golangci-lint）</span></span><br><span class="line"><span class="section">lint:</span></span><br><span class="line">    golangci-lint run ./...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境编译（Linux 平台）</span></span><br><span class="line"><span class="section">build-prod:</span></span><br><span class="line">    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build <span class="variable">$(GO_FLAGS)</span> -o <span class="variable">$(BIN_NAME)</span>-linux main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行程序</span></span><br><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./<span class="variable">$(BIN_NAME)</span> <span class="variable">$(ARGS)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理产物</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf <span class="variable">$(BIN_NAME)</span> <span class="variable">$(BIN_NAME)</span>-linux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一键执行所有任务</span></span><br><span class="line"><span class="section">all: lint test build run clean</span></span><br></pre></td></tr></table></figure>
-
-
 <h2><span id="七-总结makefile-核心价值">七、总结：Makefile 核心价值</span></h2><p><strong>自动化</strong>：把重复的命令写进清单，一键执行，减少人工操作。</p>
 <p><strong>标准化</strong>：团队成员共用同一个 <code>Makefile</code>，避免 “你用 <code>go build</code>，我用 <code>go build -o</code>” 的混乱。</p>
 <p><strong>可扩展</strong>：从简单的编译运行，到复杂的打包部署，都可以通过任务组合实现。</p>

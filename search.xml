@@ -8,7 +8,7 @@
 <p>3、一定要经历挫折</p>
 <p>4、解决幻觉，事先把设计系统、应用架构环境告诉给AI</p>
 <p>5、深入理解mcp 才能使用mcp</p>
-<p>6、去<a href="http://x.com/">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
+<p>6、去<a href="http://x.com">x.com</a>社交软件看看leerob的上下文原理（多到不同平台看看大佬的对新技术的理解和观点）</p>
 <h2><span id="二-分享会的有趣信息">二、分享会的有趣信息</span></h2><p>1、项目很大的话 上下文太多 大模型出现问题怎么办？可以让gpt对代码进行拆分</p>
 <p>2、阅读代码 ，可以把函数给gpt总结核心、抽取主干再阅读</p>
 <p>3、让大模型生成测试数据，根据示例数据生成回答</p>
@@ -55,9 +55,9 @@
 </blockquote>
 <p>Go 语言的设计理念是 “一切皆协程”，如果在函数内部函数的并发运行，离不开工作线程，工作线程通过p获得g,因为g的切换完全在用户空间上的，加上g切换的资源开销非常小，使得在一个工作线程中可以执行多个协程，而无需自己切换，所以子协程即使崩了，也不会影响父协程的运行。这当然也有隐患，所以需要考虑并发问题和子协程和父协程的通信问题。</p>
 <p>介绍了协程，这不得不再知识衍生到线程和进程：</p>
-<p>进程是操作系统进行<strong>资源分配（如内存、文件描述符）的基本单位</strong>，值得注意的是，即使程序暂时未被 CPU 调度（处于就绪 &#x2F; 阻塞态），只要已加载到内存并拥有独立资源空间，仍属于进程，进程的<strong>数据、代码、文件描述符、</strong></p>
+<p>进程是操作系统进行<strong>资源分配（如内存、文件描述符）的基本单位</strong>，值得注意的是，即使程序暂时未被 CPU 调度（处于就绪 / 阻塞态），只要已加载到内存并拥有独立资源空间，仍属于进程，进程的<strong>数据、代码、文件描述符、</strong></p>
 <p><strong>虚拟内存空间</strong>是进程级独有资源（后续线程会共享），而<strong>寄存器、堆栈</strong>实际是线程运行时的私有资源。</p>
-<p>线程的创建依赖于进程，线程切换快，核心是因为无需切换进程的<strong>地址空间（虚拟内存映射表）</strong> —— 进程切换需让 CPU 重新加载地址空间，而线程切换仅需保存 &#x2F; 恢复自身的寄存器和栈上下文，操作成本远低于进程。因此说他是cpu调度的基本单位，</p>
+<p>线程的创建依赖于进程，线程切换快，核心是因为无需切换进程的<strong>地址空间（虚拟内存映射表）</strong> —— 进程切换需让 CPU 重新加载地址空间，而线程切换仅需保存 / 恢复自身的寄存器和栈上下文，操作成本远低于进程。因此说他是cpu调度的基本单位，</p>
 <p>总之：操作系统通过进程划分资源边界（避免资源冲突），通过线程实现 CPU 的高效调度（减少资源切换开销）</p>
 ]]></content>
       <categories>
@@ -170,15 +170,13 @@
 <li>外键：存储另一表主键的关联凭证，可重复可空（如 Order.BuyerID）。</li>
 </ul>
 <h3><span id="分场景配置示例">分场景配置示例</span></h3><h4><span id="场景-1一对一order-userorder-持外键">场景 1：一对一（Order → User，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">  Buyer       User    `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint   `gorm:&quot;primaryKey;column:user_id&quot;` // 被关联方主键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
 <p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
 <h4><span id="场景-2一对多user-orderorder-持外键">场景 2：一对多（User → Order，Order 持外键）</span></h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  UserID   uint     `gorm:&quot;primaryKey;column:user_id&quot;`</span><br><span class="line">  Orders   []Order  `gorm:&quot;foreignKey:BuyerID;references:UserID&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Order struct &#123;</span><br><span class="line">  gorm.Model</span><br><span class="line">  OrderID     uint    `gorm:&quot;primaryKey;column:order_id&quot;`</span><br><span class="line">  BuyerID     uint    `gorm:&quot;column:buyer_id&quot;` // 外键</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>⚠️这里为什么foreignKey的值是指向Order.BuyerID？</p>
 <p>因为Order的BuyerID是Order的外键，关联User的UserID（主键）</p>
 <h3><span id="gorm-标签解析逻辑">Gorm 标签解析逻辑</span></h3><ol>
-<li>解析标签位置，确定主&#x2F;关联模型；</li>
+<li>解析标签位置，确定主/关联模型；</li>
 <li>检查主模型是否存在 foreignKey 配置字段：存在则主模型是外键持有方，否则关联模型是持有方。</li>
 </ol>
 <p>总结：谁持外键，foreignKey 就指向谁；references 永远指向被关联方主键。</p>
@@ -198,19 +196,18 @@
 <li>多对多需显式指定中间表（joinTable）。</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;&quot;`  // 中间表名</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">type Role struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Users []User `gorm:&quot;many2many:user_roles;&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 默认推断：</span><br><span class="line">// - User 端：foreign key = UserID, reference key = ID</span><br><span class="line">// - Role 端：foreign key = RoleID, reference key = ID</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 显式指定</span><br><span class="line">type User struct &#123;</span><br><span class="line">    ID    uint</span><br><span class="line">    Name  string</span><br><span class="line">    Roles []Role `gorm:&quot;many2many:user_roles;foreignKey:ID;references:ID;joinForeignKey:UserId;joinReferences:RoleId&quot;`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="2-性能优化">2. 性能优化</span></h3><ul>
 <li>避免过度预加载，仅加载必要数据；</li>
 <li>大批量数据查询需分页。</li>
 </ul>
 <h3><span id="3-排错技巧">3. 排错技巧</span></h3><ul>
 <li>开启 SQL 日志，检查 IN 条件字段与值；</li>
-<li>验证 foreignKey&#x2F;references 字段的存在性与拼写；</li>
-<li>检查主&#x2F;关联模型数据的匹配性。</li>
+<li>验证 foreignKey/references 字段的存在性与拼写；</li>
+<li>检查主/关联模型数据的匹配性。</li>
 </ul>
 <h2><span id="七-核心要点总结">七、核心要点总结</span></h2><ol>
 <li>Preload 核心是解决 N+1 问题，原理为“批量查询+内存拼接”；</li>
-<li>主&#x2F;关联模型由“查询发起方+标签附着方”界定；</li>
+<li>主/关联模型由“查询发起方+标签附着方”界定；</li>
 <li>foreignKey 指向外键持有方外键位置，references 指向被关联方主键位置，不可颠倒；</li>
 <li>Preload 仅依赖模型标签，与数据库外键约束无关。</li>
 </ol>
@@ -227,14 +224,14 @@
     <url>/posts/Go%E5%93%B2%E5%AD%A6/</url>
     <content><![CDATA[<p>1、Go 的并发原则非常优秀，目标就是简单：尽量使用 channel；把 Goroutine 当作免费的资源，随便用。</p>
 <p>2、Go 的并发编程模型用 Goroutine 和 Channel 来替代。Goroutine 和线程类似，Channel 和 Mutex 类似。</p>
-<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
+<p>3、Channel 的发送和接收操作本质上都是 “值的拷贝”。</p>
 <p>4、Go 的理念：用通信来共享内存。与其让多个 Goroutine 争抢同一块内存，不如让它们各自独立，通过 Channel 把需要的数据传递给对方，核心目的是避免数据竞争。</p>
 <p>5、Go 参数传递都是值传递。</p>
 <p>6、&amp;和*的区别</p>
 <ul>
 <li><p>&amp;是引用，作用于值类型，用于取地址，如果想要传递一个类型的地址避免值拷贝，就可以在前面加一个&amp;表示取该类型的地址，在函数的参数定义时，记得在参数的类型加上*。</p>
 </li>
-<li><p>*是指针，用于标记指针类型，或者对地址进行解引用，例如 var a *int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
+<li><p><em>是指针，用于标记指针类型，或者对地址进行解引用，例如 var a </em>int  中，a 为指向 int 类型的地址， 若 p 是的类型是指针，*p 表示地址 p 指向的值。</p>
 </li>
 </ul>
 <p>7、GMP 模型</p>
@@ -255,7 +252,7 @@
     <content><![CDATA[<blockquote>
 <p><strong>论文</strong>：Going Where, by Whom, and at What Time: Next Location Prediction Considering User Preference and Temporal Regularity<br><strong>作者</strong>：Tianao Sun, Ke Fu, Weiming Huang, Kai Zhao, Yongshun Gong, Meng Chen (山东大学、南洋理工大学、佐治亚州立大学)<br><strong>发表</strong>：KDD 2024<br><strong>阅读时长</strong>：约 15 分钟<br><strong>难度</strong>：⭐⭐⭐ (需要轨迹挖掘、Transformer 基础)<br><strong>前置知识</strong>：Transformer 架构、LDA 主题模型、人类移动性建模</p>
 </blockquote>
-<h2><span id></span></h2><p>本文针对下一地点预测（Next Location Prediction）中用户偏好建模浅层化和时间规律利用不足的问题，提出了 <strong>MCLP</strong> 模型。核心创新在于将用户偏好（通过 LDA 挖掘）和下一时刻到达时间（通过注意力机制估计）显式作为上下文信息注入 Transformer 预测框架，在两个真实数据集上显著提升了预测精度。</p>
+<h2><span id> </span></h2><p>本文针对下一地点预测（Next Location Prediction）中用户偏好建模浅层化和时间规律利用不足的问题，提出了 <strong>MCLP</strong> 模型。核心创新在于将用户偏好（通过 LDA 挖掘）和下一时刻到达时间（通过注意力机制估计）显式作为上下文信息注入 Transformer 预测框架，在两个真实数据集上显著提升了预测精度。</p>
 <h2><span id="论文概述">论文概述</span></h2><p><strong>问题</strong>：现有的移动性预测模型往往将用户偏好简化为随机初始化的向量，且未能充分利用“到达时间”这一关键决定因素，或者仅将其视为辅助任务。</p>
 <p><strong>方案</strong>：提出多上下文感知位置预测模型（MCLP），通过显式建模用户偏好和预计到达时间作为核心上下文。</p>
 <p><strong>贡献</strong>：</p>
@@ -270,61 +267,65 @@
 <li><strong>用户偏好（By Whom）</strong>：不同用户有不同的生活习惯（如购物达人 vs. 学习爱好者）。传统的 Embedding 方法往往从零开始学习，难以捕捉轨迹中蕴含的显式偏好。</li>
 <li><strong>时间规律（At What Time）</strong>：时间是地点的强约束（如中午去餐厅，晚上回家）。以往研究要么忽略到达时间，要么将其作为次要的辅助任务，未意识到预测时间比预测地点容易得多，且时间可以作为预测地点的有力证据。</li>
 </ul>
-<p>论文通过**移动熵（Mobility Entropy）**分析证明，引入时间上下文后，用户移动模式的熵值显著降低，这意味着预测的可行性和准确性理论上会更高。</p>
+<p>论文通过<strong>移动熵（Mobility Entropy）</strong>分析证明，引入时间上下文后，用户移动模式的熵值显著降低，这意味着预测的可行性和准确性理论上会更高。</p>
 <h2><span id="核心方法">核心方法</span></h2><p>MCLP 的整体架构由三个核心组件组成：用户偏好挖掘、到达时间估计和序列模式挖掘。</p>
-<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzNfYXJjaF9vdmVyYWxs.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6TmZZWEpqYUY5dmRtVnlZV3hzLnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=jTwBWPNYus9iSL480hXLN1rBlsViRfJINqprQ9wRMMpaXxOyklQ~ayPTTB7Itu-bVRnZFd8ITyjPxT9-cSRX~z-xaY2qdojvng24SCmGFvtS~Y8mJ4XrVmHYZPOB0YK7jcjZKAHGKl9Q0-GHo6I6VIljpr3ZvuwAXLdf0zpBS07~1e0Cq4HRtE5b0KlgMma87N8E3Cohl7poB-SZgkzU0bBExCBEclYIqDZwqRbXSY10vvQsfItZVGPdDkuoh9yT~ERIMlHqqAb5vcWVBlqDnuQy9iDVo2qAv7Rh9xPEfhhMh0EOO6RV5HjlS7AbYkOHSrF38o-SPgrKb5EXxiWlUQ__" alt="MCLP 整体架构"></p>
+<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzNfYXJjaF9vdmVyYWxs.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6TmZZWEpqYUY5dmRtVnlZV3hzLnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&amp;Key-Pair-Id=K2HSFNDJXOU9YS&amp;Signature=jTwBWPNYus9iSL480hXLN1rBlsViRfJINqprQ9wRMMpaXxOyklQ~ayPTTB7Itu-bVRnZFd8ITyjPxT9-cSRX~z-xaY2qdojvng24SCmGFvtS~Y8mJ4XrVmHYZPOB0YK7jcjZKAHGKl9Q0-GHo6I6VIljpr3ZvuwAXLdf0zpBS07~1e0Cq4HRtE5b0KlgMma87N8E3Cohl7poB-SZgkzU0bBExCBEclYIqDZwqRbXSY10vvQsfItZVGPdDkuoh9yT~ERIMlHqqAb5vcWVBlqDnuQy9iDVo2qAv7Rh9xPEfhhMh0EOO6RV5HjlS7AbYkOHSrF38o-SPgrKb5EXxiWlUQ__" alt="MCLP 整体架构"></p>
 <h3><span id="1-用户偏好挖掘-user-preference-mining">1. 用户偏好挖掘 (User Preference Mining)</span></h3><p>为了注入先验知识，模型将用户轨迹视为“文档”，地点视为“单词”，利用 <strong>LDA (Latent Dirichlet Allocation)</strong> 模型生成用户-主题分布。</p>
 <ul>
 <li><strong>输入</strong>：用户-地点共现矩阵。</li>
-<li><strong>输出</strong>：用户偏好向量 $C^{u_i}$。</li>
-<li><strong>处理</strong>：通过一个带有残差连接和 LayerNorm 的 MLP 进一步提升语义表达，得到偏好嵌入 $e_{pre}^{u_i}$。</li>
+<li><strong>输出</strong>：用户偏好向量 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.05ex;" xmlns="http://www.w3.org/2000/svg" width="3.464ex" height="1.645ex" role="img" focusable="false" viewbox="0 -705 1530.9 727"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msup"><g data-mml-node="mi"><path data-c="1D436" d="M50 252Q50 367 117 473T286 641T490 704Q580 704 633 653Q642 643 648 636T656 626L657 623Q660 623 684 649Q691 655 699 663T715 679T725 690L740 705H746Q760 705 760 698Q760 694 728 561Q692 422 692 421Q690 416 687 415T669 413H653Q647 419 647 422Q647 423 648 429T650 449T651 481Q651 552 619 605T510 659Q484 659 454 652T382 628T299 572T226 479Q194 422 175 346T156 222Q156 108 232 58Q280 24 350 24Q441 24 512 92T606 240Q610 253 612 255T628 257Q648 257 648 248Q648 243 647 239Q618 132 523 55T319 -22Q206 -22 128 53T50 252Z"/></g><g data-mml-node="TeXAtom" transform="translate(845.3,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"/></g></g></g></g></g></g></svg></mjx-container>。</li>
+<li><strong>处理</strong>：通过一个带有残差连接和 LayerNorm 的 MLP 进一步提升语义表达，得到偏好嵌入 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.869ex;" xmlns="http://www.w3.org/2000/svg" width="3.514ex" height="2.398ex" role="img" focusable="false" viewbox="0 -675.5 1553.1 1059.7"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="TeXAtom" transform="translate(499,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"/></g></g></g><g data-mml-node="TeXAtom" transform="translate(499,-247) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"/></g><g data-mml-node="mi" transform="translate(503,0)"><path data-c="1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(954,0)"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g></g></g></g></g></svg></mjx-container>。</li>
 </ul>
 <h3><span id="2-到达时间估计-arrival-time-estimating">2. 到达时间估计 (Arrival Time Estimating)</span></h3><p>这是本文的亮点之一。模型不再直接预测下一地点，而是先估计“什么时候到达”。</p>
-<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzRfbWV0aG9kX2Fycml2YWxfdGltZQ.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6UmZiV1YwYUc5a1gyRnljbWwyWVd4ZmRHbHRaUS5wbmciLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=izbxRXm-lvwEyT6v0zFeKLBep30IVbdP-ykCpRA~3CPazB~3vThPeW9hquFdHMLD2BTPYW-5A9hvco24fahxmewb2~3PzcxY1ojLUxPMNg5aaUWlO16hsx93o4j8tvHmXLFFqq1Cpxrp1bXrcAYiMIjn0NY6vmwoDRI7stPyXoN-o8oLNuwQXJJGfgKI9kg77hIcBmtsHg439v8vknZSbSJgrwI9xT-aLGYJ~hCJcL2KBBMXDKTIbXnm9G6r-Xnzx5Xe~AtlVm7dje4o9MU5pxURSvWmJcdaerpM9nmqDqU4l1ZCw0-KNaJ~1ZeeUZq1Gz8rQZ944XyuF0eBUhFa4g__" alt="到达时间估计器结构"></p>
+<p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzRfbWV0aG9kX2Fycml2YWxfdGltZQ.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6UmZiV1YwYUc5a1gyRnljbWwyWVd4ZmRHbHRaUS5wbmciLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3OTg3NjE2MDB9fX1dfQ__&amp;Key-Pair-Id=K2HSFNDJXOU9YS&amp;Signature=izbxRXm-lvwEyT6v0zFeKLBep30IVbdP-ykCpRA~3CPazB~3vThPeW9hquFdHMLD2BTPYW-5A9hvco24fahxmewb2~3PzcxY1ojLUxPMNg5aaUWlO16hsx93o4j8tvHmXLFFqq1Cpxrp1bXrcAYiMIjn0NY6vmwoDRI7stPyXoN-o8oLNuwQXJJGfgKI9kg77hIcBmtsHg439v8vknZSbSJgrwI9xT-aLGYJ~hCJcL2KBBMXDKTIbXnm9G6r-Xnzx5Xe~AtlVm7dje4o9MU5pxURSvWmJcdaerpM9nmqDqU4l1ZCw0-KNaJ~1ZeeUZq1Gz8rQZ944XyuF0eBUhFa4g__" alt="到达时间估计器结构"></p>
 <ul>
-<li><strong>输入</strong>：用户时间嵌入 $e_t^{u_i}$（识别个性化时间偏好）、当前时间嵌入 $e_t^n$ 和所有候选时段嵌入。</li>
-<li><strong>核心机制</strong>：使用多头注意力机制（MHSA），以当前时间和用户个性化时间为 Query，所有候选时段为 Key&#x2F;Value，计算加权聚合的到达时间嵌入 $e_n^{at}$。</li>
+<li><strong>输入</strong>：用户时间嵌入 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.626ex;" xmlns="http://www.w3.org/2000/svg" width="2.68ex" height="2.386ex" role="img" focusable="false" viewbox="0 -777.7 1184.7 1054.5"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="TeXAtom" transform="translate(499,465.2) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(605,-150) scale(0.707)"><path data-c="1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"/></g></g></g><g data-mml-node="mi" transform="translate(499,-269) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g></g></g></svg></mjx-container>（识别个性化时间偏好）、当前时间嵌入 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.623ex;" xmlns="http://www.w3.org/2000/svg" width="2.202ex" height="2.151ex" role="img" focusable="false" viewbox="0 -675.5 973.3 950.7"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="mi" transform="translate(499,363) scale(0.707)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(499,-267.4) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g></g></g></svg></mjx-container> 和所有候选时段嵌入。</li>
+<li><strong>核心机制</strong>：使用多头注意力机制（MHSA），以当前时间和用户个性化时间为 Query，所有候选时段为 Key/Value，计算加权聚合的到达时间嵌入 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.576ex;" xmlns="http://www.w3.org/2000/svg" width="2.666ex" height="2.399ex" role="img" focusable="false" viewbox="0 -805.6 1178.3 1060.4"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="TeXAtom" transform="translate(499,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"/></g><g data-mml-node="mi" transform="translate(529,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g><g data-mml-node="mi" transform="translate(499,-247) scale(0.707)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g></g></g></g></svg></mjx-container>。</li>
 <li><strong>设计逻辑</strong>：这种方法比单一时段预测更具鲁棒性，能捕获用户在特定时间段内的行为概率分布。</li>
 </ul>
 <h3><span id="3-序列模式挖掘-sequential-pattern-mining">3. 序列模式挖掘 (Sequential Pattern Mining)</span></h3><p>使用 <strong>Transformer</strong> 编码器捕捉用户地点的长短期依赖关系。</p>
 <ul>
-<li><strong>输入序列</strong>：地点和时间的嵌入序列 $X &#x3D; {e_l + e_t + PE}$。</li>
-<li><strong>输出</strong>：序列上下文向量 $h_n^{out}$。</li>
-<li><strong>增强</strong>：通过残差式连接加入当前位置和时间信息，生成最终的序列嵌入 $e_n^{seq}$。</li>
+<li><strong>输入序列</strong>：地点和时间的嵌入序列 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.357ex;" xmlns="http://www.w3.org/2000/svg" width="17.442ex" height="1.902ex" role="img" focusable="false" viewbox="0 -683 7709.4 840.8"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D44B" d="M42 0H40Q26 0 26 11Q26 15 29 27Q33 41 36 43T55 46Q141 49 190 98Q200 108 306 224T411 342Q302 620 297 625Q288 636 234 637H206Q200 643 200 645T202 664Q206 677 212 683H226Q260 681 347 681Q380 681 408 681T453 682T473 682Q490 682 490 671Q490 670 488 658Q484 643 481 640T465 637Q434 634 411 620L488 426L541 485Q646 598 646 610Q646 628 622 635Q617 635 609 637Q594 637 594 648Q594 650 596 664Q600 677 606 683H618Q619 683 643 683T697 681T738 680Q828 680 837 683H845Q852 676 852 672Q850 647 840 637H824Q790 636 763 628T722 611T698 593L687 584Q687 585 592 480L505 384Q505 383 536 304T601 142T638 56Q648 47 699 46Q734 46 734 37Q734 35 732 23Q728 7 725 4T711 1Q708 1 678 1T589 2Q528 2 496 2T461 1Q444 1 444 10Q444 11 446 25Q448 35 450 39T455 44T464 46T480 47T506 54Q523 62 523 64Q522 64 476 181L429 299Q241 95 236 84Q232 76 232 72Q232 53 261 47Q262 47 267 47T273 46Q276 46 277 46T280 45T283 42T284 35Q284 26 282 19Q279 6 276 4T261 1Q258 1 243 1T201 2T142 2Q64 2 42 0Z"/></g><g data-mml-node="mo" transform="translate(1129.8,0)"><path data-c="3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"/></g><g data-mml-node="TeXAtom" data-mjx-texclass="ORD" transform="translate(2185.6,0)"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="mi" transform="translate(499,-150) scale(0.707)"><path data-c="1D459" d="M117 59Q117 26 142 26Q179 26 205 131Q211 151 215 152Q217 153 225 153H229Q238 153 241 153T246 151T248 144Q247 138 245 128T234 90T214 43T183 6T137 -11Q101 -11 70 11T38 85Q38 97 39 102L104 360Q167 615 167 623Q167 626 166 628T162 632T157 634T149 635T141 636T132 637T122 637Q112 637 109 637T101 638T95 641T94 647Q94 649 96 661Q101 680 107 682T179 688Q194 689 213 690T243 693T254 694Q266 694 266 686Q266 675 193 386T118 83Q118 81 118 75T117 65V59Z"/></g></g><g data-mml-node="mo" transform="translate(981.9,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"/></g><g data-mml-node="msub" transform="translate(1982.2,0)"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="mi" transform="translate(499,-150) scale(0.707)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g><g data-mml-node="mo" transform="translate(3008.7,0)"><path data-c="2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"/></g><g data-mml-node="mi" transform="translate(4008.9,0)"><path data-c="1D443" d="M287 628Q287 635 230 637Q206 637 199 638T192 648Q192 649 194 659Q200 679 203 681T397 683Q587 682 600 680Q664 669 707 631T751 530Q751 453 685 389Q616 321 507 303Q500 302 402 301H307L277 182Q247 66 247 59Q247 55 248 54T255 50T272 48T305 46H336Q342 37 342 35Q342 19 335 5Q330 0 319 0Q316 0 282 1T182 2Q120 2 87 2T51 1Q33 1 33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM645 554Q645 567 643 575T634 597T609 619T560 635Q553 636 480 637Q463 637 445 637T416 636T404 636Q391 635 386 627Q384 621 367 550T332 412T314 344Q314 342 395 342H407H430Q542 342 590 392Q617 419 631 471T645 554Z"/></g><g data-mml-node="mi" transform="translate(4759.9,0)"><path data-c="1D438" d="M492 213Q472 213 472 226Q472 230 477 250T482 285Q482 316 461 323T364 330H312Q311 328 277 192T243 52Q243 48 254 48T334 46Q428 46 458 48T518 61Q567 77 599 117T670 248Q680 270 683 272Q690 274 698 274Q718 274 718 261Q613 7 608 2Q605 0 322 0H133Q31 0 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H757Q764 676 764 669Q764 664 751 557T737 447Q735 440 717 440H705Q698 445 698 453L701 476Q704 500 704 528Q704 558 697 578T678 609T643 625T596 632T532 634H485Q397 633 392 631Q388 629 386 622Q385 619 355 499T324 377Q347 376 372 376H398Q464 376 489 391T534 472Q538 488 540 490T557 493Q562 493 565 493T570 492T572 491T574 487T577 483L544 351Q511 218 508 216Q505 213 492 213Z"/></g></g></g></g></svg></mjx-container>。</li>
+<li><strong>输出</strong>：序列上下文向量 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.576ex;" xmlns="http://www.w3.org/2000/svg" width="3.759ex" height="2.399ex" role="img" focusable="false" viewbox="0 -805.6 1661.7 1060.4"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="210E" d="M137 683Q138 683 209 688T282 694Q294 694 294 685Q294 674 258 534Q220 386 220 383Q220 381 227 388Q288 442 357 442Q411 442 444 415T478 336Q478 285 440 178T402 50Q403 36 407 31T422 26Q450 26 474 56T513 138Q516 149 519 151T535 153Q555 153 555 145Q555 144 551 130Q535 71 500 33Q466 -10 419 -10H414Q367 -10 346 17T325 74Q325 90 361 192T398 345Q398 404 354 404H349Q266 404 205 306L198 293L164 158Q132 28 127 16Q114 -11 83 -11Q69 -11 59 -2T48 16Q48 30 121 320L195 616Q195 629 188 632T149 637H128Q122 643 122 645T124 664Q129 683 137 683Z"/></g><g data-mml-node="TeXAtom" transform="translate(609,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D45C" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"/></g><g data-mml-node="mi" transform="translate(485,0)"><path data-c="1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mi" transform="translate(1057,0)"><path data-c="1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"/></g></g><g data-mml-node="mi" transform="translate(609,-247) scale(0.707)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g></g></g></g></svg></mjx-container>。</li>
+<li><strong>增强</strong>：通过残差式连接加入当前位置和时间信息，生成最终的序列嵌入 <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.332ex;" xmlns="http://www.w3.org/2000/svg" width="3.474ex" height="2.149ex" role="img" focusable="false" viewbox="0 -803.3 1535.4 950"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msubsup"><g data-mml-node="mi"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="TeXAtom" transform="translate(499,490.8) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g><g data-mml-node="mi" transform="translate(469,0)"><path data-c="1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"/></g><g data-mml-node="mi" transform="translate(935,0)"><path data-c="1D45E" d="M33 157Q33 258 109 349T280 441Q340 441 372 389Q373 390 377 395T388 406T404 418Q438 442 450 442Q454 442 457 439T460 434Q460 425 391 149Q320 -135 320 -139Q320 -147 365 -148H390Q396 -156 396 -157T393 -175Q389 -188 383 -194H370Q339 -192 262 -192Q234 -192 211 -192T174 -192T157 -193Q143 -193 143 -185Q143 -182 145 -170Q149 -154 152 -151T172 -148Q220 -148 230 -141Q238 -136 258 -53T279 32Q279 33 272 29Q224 -10 172 -10Q117 -10 75 30T33 157ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"/></g></g><g data-mml-node="mi" transform="translate(499,-138.9) scale(0.707)"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g></g></g></g></svg></mjx-container>。</li>
 </ul>
-<h3><span id="4-最终预测">4. 最终预测</span></h3><p>将上述四个嵌入向量拼接，通过全连接残差层进行 Softmax 分类：<br>$$P(\hat{l}<em>{n+1}) &#x3D; \text{softmax}(\text{FC}(e</em>{pre}^{u_i} \oplus e_l^{u_i} \oplus e_n^{at} \oplus e_n^{seq}))$$</p>
-<h2><span id="实验分析">实验分析</span></h2><h3><span id="主实验结果">主实验结果</span></h3><p>模型在 Traffic Camera 和 Mobile Phone 两个数据集上均取得了 SOTA 性能。</p>
+<h3><span id="4-最终预测">4. 最终预测</span></h3><p>将上述四个嵌入向量拼接，通过全连接残差层进行 Softmax 分类：</p>
+<script type="math/tex; mode=display">P(\hat{l}_{n+1}) = \text{softmax}(\text{FC}(e_{pre}^{u_i} \oplus e_l^{u_i} \oplus e_n^{at} \oplus e_n^{seq}))</script><h2><span id="实验分析">实验分析</span></h2><h3><span id="主实验结果">主实验结果</span></h3><p>模型在 Traffic Camera 和 Mobile Phone 两个数据集上均取得了 SOTA 性能。</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">方法</th>
-<th align="left">Traffic Camera (MRR)</th>
-<th align="left">Mobile Phone (MRR)</th>
+<th style="text-align:left">方法</th>
+<th style="text-align:left">Traffic Camera (MRR)</th>
+<th style="text-align:left">Mobile Phone (MRR)</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">DeepMove</td>
-<td align="left">46.08</td>
-<td align="left">49.11</td>
+<tbody>
+<tr>
+<td style="text-align:left">DeepMove</td>
+<td style="text-align:left">46.08</td>
+<td style="text-align:left">49.11</td>
 </tr>
 <tr>
-<td align="left">Flashback</td>
-<td align="left">47.33</td>
-<td align="left">50.22</td>
+<td style="text-align:left">Flashback</td>
+<td style="text-align:left">47.33</td>
+<td style="text-align:left">50.22</td>
 </tr>
 <tr>
-<td align="left">GETNext</td>
-<td align="left">47.15</td>
-<td align="left">49.89</td>
+<td style="text-align:left">GETNext</td>
+<td style="text-align:left">47.15</td>
+<td style="text-align:left">49.89</td>
 </tr>
 <tr>
-<td align="left"><strong>MCLP</strong></td>
-<td align="left"><strong>51.46</strong></td>
-<td align="left"><strong>51.81</strong></td>
+<td style="text-align:left"><strong>MCLP</strong></td>
+<td style="text-align:left"><strong>51.46</strong></td>
+<td style="text-align:left"><strong>51.81</strong></td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p><strong>关键结论</strong>：相比于将到达时间作为辅助任务的模型（如 GETNext），MCLP 这种显式将其作为上下文的方法表现更好，证明了时间规律对地点预测的直接决定作用。</p>
-<h3><span id="消融实验">消融实验</span></h3><p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzVfYWJsYXRpb25fdHJhZmZpYw.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6VmZZV0pzWVhScGIyNWZkSEpoWm1acFl3LnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=D8eVsypSTFYBKWma3hG364O1ltxQt5qorbkp3de6dMqmg7CtAnJ5snSSE3qMMznQsNzcMYsU6~v5BtZoVsf21z3afzdmuJAv~rhmBnSt0vcWQpy0a6lZtP6n5STymxTfVxfWugKDTzBG-A2v6DG36E-UDmDY5nzA3hzNfipEDJDByRl2Ps981JxsC1f1il49fjq4oH~yx9S6wbQMigBKBMZ8jNj82fnYLyyhOM0gAV7FrRJpjD~BNCsKaz9vmqzoqMg9Sy3Kvt1iPlr2~WxAxgYC0hejDj03YXWf5WuNEptUy~86nmYQ6x6TxzzB8f9t148fWQxRUxmu253B-DFwZA__" alt="消融实验结果"></p>
+<h3><span id="消融实验">消融实验</span></h3><p><img src="https://private-us-east-1.manuscdn.com/sessionFile/Dmivc7PvROkeB5xQjeHeBc/sandbox/hvPd9uevNS53IFBWIfk4PO-images_1770790904325_na1fn_L2hvbWUvdWJ1bnR1L3BhcGVyLW5vdGVzL21jbHAvaW1hZ2VzL2ZpZzVfYWJsYXRpb25fdHJhZmZpYw.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRG1pdmM3UHZST2tlQjV4UWplSGVCYy9zYW5kYm94L2h2UGQ5dWV2TlM1M0lGQldJZms0UE8taW1hZ2VzXzE3NzA3OTA5MDQzMjVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwzQmhjR1Z5TFc1dmRHVnpMMjFqYkhBdmFXMWhaMlZ6TDJacFp6VmZZV0pzWVhScGIyNWZkSEpoWm1acFl3LnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc5ODc2MTYwMH19fV19&amp;Key-Pair-Id=K2HSFNDJXOU9YS&amp;Signature=D8eVsypSTFYBKWma3hG364O1ltxQt5qorbkp3de6dMqmg7CtAnJ5snSSE3qMMznQsNzcMYsU6~v5BtZoVsf21z3afzdmuJAv~rhmBnSt0vcWQpy0a6lZtP6n5STymxTfVxfWugKDTzBG-A2v6DG36E-UDmDY5nzA3hzNfipEDJDByRl2Ps981JxsC1f1il49fjq4oH~yx9S6wbQMigBKBMZ8jNj82fnYLyyhOM0gAV7FrRJpjD~BNCsKaz9vmqzoqMg9Sy3Kvt1iPlr2~WxAxgYC0hejDj03YXWf5WuNEptUy~86nmYQ6x6TxzzB8f9t148fWQxRUxmu253B-DFwZA__" alt="消融实验结果"></p>
 <p>实验证明，<code>+Pre</code>（用户偏好）和 <code>+At</code>（到达时间）组件均能独立提升模型性能，而两者结合时效果达到最优。</p>
 <h2><span id="深度理解问答">深度理解问答</span></h2><h3><span id="q1-为什么使用-lda-提取偏好比直接让模型学习-embedding-更好">Q1: 为什么使用 LDA 提取偏好比直接让模型学习 Embedding 更好？</span></h3><p>直接学习的 Embedding（如传统模型中的 UserID Embedding）本质上是在学习一个 ID 的唯一表示，它需要大量的训练数据才能逐渐“悟”出用户的偏好。而 LDA 是基于全局统计规律的先验知识，它能直接识别出“这个用户经常去商场和电影院”这类高层语义，为模型提供了一个极佳的搜索起点，缓解了数据稀疏问题。</p>
 <h3><span id="q2-到达时间估计器中为什么不直接预测一个具体的时间点">Q2: 到达时间估计器中，为什么不直接预测一个具体的时间点？</span></h3><p>人类的行为在时间上具有一定的“模糊性”。例如，你可能在 18:00 到 19:00 之间的任何时间去吃晚饭。如果模型只预测一个点，容错率极低。MCLP 通过注意力机制生成一个聚合的时间嵌入，本质上是捕获了用户在未来多个可能时段的概率分布，这种“软预测”作为上下文注入到地点预测中，比一个“硬预测”的数值包含更丰富的信息。</p>
@@ -354,8 +355,8 @@
     <url>/posts/etcd%E4%B8%8Eredis%E7%9A%84%E7%89%B9%E6%80%A7%E8%A7%A3%E6%9E%90/</url>
     <content><![CDATA[<blockquote>
 <p>为什么写这个，因为感觉这玩意官方写得不太明白，所以想用更为通俗易懂的方式写清楚这是什么，看得愉快~</p>
-</blockquote>
-<h1><span id="关于etcd">关于etcd</span></h1><p>etcd 官方对它的定义是：一个<strong>高度一致的分布式键值存储系统</strong>，能为分布式系统或机器集群提供可靠的数据存储服务。它的厉害之处在于，即便遇到网络分区，也能优雅地完成领导者选举，而且机器故障也不怕，哪怕是领导者节点出问题也能应对。​</p>
+<h1><span id="关于etcd">关于etcd</span></h1></blockquote>
+<p>etcd 官方对它的定义是：一个<strong>高度一致的分布式键值存储系统</strong>，能为分布式系统或机器集群提供可靠的数据存储服务。它的厉害之处在于，即便遇到网络分区，也能优雅地完成领导者选举，而且机器故障也不怕，哪怕是领导者节点出问题也能应对。​</p>
 <p>咱们先拆拆 “分布式” 这三个字。etcd 可以由很多节点组成一个集群，最关键的是，每个节点存储的信息都高度一致。再看 “键值存储系统”，这说明它和 redis 本质上是一类东西，都是用来存键值对的。但两者的区别也很明显，<strong>etcd 主打的就是 “高度一致” 和 “分布式”</strong>，而 redis 集群里每个节点的信息并不完全相同。​</p>
 <p>更具体地说，<strong>redis 是基于内存进行读写的，这就让它特别适合高并发的场景</strong>；而 etcd 则更适合对一致性要求高的分布式场景。​</p>
 <p>etcd 能保证节点一致性，靠的是<strong>raft 算法</strong>。这个算法把节点分成了三类：领导者、追随者和候选人。领导者的职责很明确，负责处理写数据的请求，还得和追随者保持通信；追随者主要是处理客户端的读请求；候选人呢，就是未来有可能成为领导者的节点。</p>
@@ -401,7 +402,7 @@
 <p>3、第一种推荐代码只完成了一半，但想和远程代码同步的，第二种推荐确认自己的修改无误时使用.</p>
 <p>4、当本地提交的版本不是基于远程仓库的最新版本，一定会被拒绝push，</p>
 <p>解决方案就是git push, 解决冲突，再提交</p>
-<p>5、当本地正在修改代码，知道了远程已经迭代了代码需要同步时，如果直接git pull ,会覆盖掉工作区和暂存区的内容，也会被拒绝(因为在git merge 时会在工作区合并文件，并放到暂存区并提交，如果工作区不干净，即还有未add到暂存区的代码，就会覆盖其工作区中的代码，如果暂处区不干净，也会覆盖掉 ) ,（除非 在命令添加 –force，强制覆盖) </p>
+<p>5、当本地正在修改代码，知道了远程已经迭代了代码需要同步时，如果直接git pull ,会覆盖掉工作区和暂存区的内容，也会被拒绝(因为在git merge 时会在工作区合并文件，并放到暂存区并提交，如果工作区不干净，即还有未add到暂存区的代码，就会覆盖其工作区中的代码，如果暂处区不干净，也会覆盖掉 ) ,（除非 在命令添加 —force，强制覆盖) </p>
 <p>解决方案就是git stash ,git pull ,git stash pop ,然后解决冲突，再commit和push</p>
 ]]></content>
       <categories>
@@ -416,8 +417,6 @@
     <url>/posts/k8s%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/</url>
     <content><![CDATA[<blockquote>
 <p>网上对 k8s 含糊不清，以下是我对其的理解，分享给大家</p>
-</blockquote>
-<blockquote>
 <p>背景介绍：假设公司有一个超大的 web 应用，其中有很多服务，比如 mysql、redis、日志收集服务、web 服务等等，每个服务都可以用一个容器单独运行起来。突然来了泼天的流量，这个应用火了！，大量的用户请求造成了极大的数据库读写压力，原来一个容器可以扛住，现在快扛不住了，有没有一种办法，可以根据请求量多少自动增加容器数量来应对这样的读写压力来避免这样的问题，然后用户量请求下来的时候又恢复到原来的梳理呢?嗯！这时 k8s 就闪亮登场！</p>
 </blockquote>
 <h2><span id="k8s-是什么">k8s 是什么？</span></h2><p>全程 Kubernetes，是一个开源的容器编排引擎，用来对容器化应用进行自动部署、扩缩和管理。</p>
@@ -440,7 +439,7 @@
 </ul>
 <p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
 <center>图片来源：小白 debug</center>
- 
+
 
 <h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
 <p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
@@ -457,7 +456,7 @@
 <li>pod：k8s 最小单位，可以有多个容器，共同组成一套服务</li>
 </ul>
 <h2><span id="k8s-的本质是什么">k8s 的本质是什么？</span></h2><p>用户请求到实际应用的中间层，简化服务的部署运维流程，它可以作为代理对请求进行转发，也可以分布式管理实际应用，使业务更加高可用更好管理，节省复杂的人工管理。</p>
-<p><a href="https://golangguide.top/%E6%9E%B6%E6%9E%84/%E4%BA%91%E5%8E%9F%E7%94%9F/%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E7%82%B9/k8s%E5%88%B0%E5%BA%95%E6%98%AF%E4%BB%80%E4%B9%88.html#cluster">参考链接</a></p>
+<p><a href="https://golangguide.top/架构/云原生/核心知识点/k8s到底是什么.html#cluster">参考链接</a></p>
 ]]></content>
       <categories>
         <category>技术</category>
@@ -471,7 +470,7 @@
     <url>/posts/kafka%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>Kafka 本质上是一个消息队列中间件，经常在高并发的场景下我们会见到它，那顾名思义它就是面向于高并发的场景。下面我们来简单了解一下它吧～</p>
 <h1><span id="kafka有几个关键的概念">kafka有几个关键的概念</span></h1><p>既然是消息队列，那么一定包含生产者和消费者：</p>
-<p>每个生产者生产的消息都会属于一个topic,同一个topic的消息们会按照策略被分到不同的分区（partion）中，为了高可用，每个topic的多个partion都会有副本，将会存到不同的broker上，broker可以看作是服务器，它可以有多个话题的partion,可以从下图中看出他们的关系：	</p>
+<p>每个生产者生产的消息都会属于一个topic,同一个topic的消息们会按照策略被分到不同的分区（partion）中，为了高可用，每个topic的多个partion都会有副本，将会存到不同的broker上，broker可以看作是服务器，它可以有多个话题的partion,可以从下图中看出他们的关系：    </p>
 <p><img src="/images/image-20251001152947442.png" alt="image-20251001152947442"></p>
 <h1><span id="为什么要这么设计">为什么要这么设计？</span></h1><p>首先多副本可以保证改可用性，即使当前brocker挂了，也会在其他brocker里面找到对应的副本恢复，并将副本所在的节点转换成主节点。</p>
 <p>其次topic的消息的存放分到多个partion，实现负载均衡，分摊单个服务器的存储压力。</p>
@@ -527,11 +526,9 @@
 <h3><span id="3-框架为什么爱用反射">3. 框架为什么爱用反射？</span></h3><p>知道了他的本质，我们再看它的应用场景，</p>
 <p>举个 Java 框架的例子，比如 Spring Boot。<br>在我们自己写代码时，<code>new</code> 一个对象是显式写出来的：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">MyService</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyService</span>();</span><br></pre></td></tr></table></figure>
-
 <p>而 Spring Boot 可以<strong>不用你手动写</strong>，就直接实例化一个对象并注入到类里。这背后就是反射——框架在运行时扫描类，通过反射找到可用的构造方法，然后动态 <code>new</code> 出对象。举个栗子：</p>
 <p>假设你有如下的类：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span>  <span class="comment">// 标记为Spring管理的bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">performAction</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Action performed!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p>然后你有一个需要MyService的类：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Application</span> &#123;</span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> MyService myService;  <span class="comment">// 自动注入MyService</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">start</span><span class="params">()</span> &#123;</span><br><span class="line">        myService.performAction();  <span class="comment">// 使用注入的MyService对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>在这个例子中：</p>
@@ -540,8 +537,6 @@
 <p>因此你并不需要显式地使用new MyService()来创建对象，Spring会在幕后通过反射来完成这一过程。</p>
 <blockquote>
 <p>其中@Component和@Autowired就是 Java 里的<strong>注解</strong>。 通常它写在类、方法、字段前面，形如 <code>@Something</code>，相当于一个标签，用来告诉框架“这里有特殊处理”。框架在启动时会扫描项目的所有类，通过反射获取它们的注解信息，然后按照注解规则去做事。</p>
-</blockquote>
-<blockquote>
 <p>注解有两类： 1、标记类、方法、字段为bean，使得它们可以被Spring容器管理,如@Component ；2、注入其他bean到类的字段、方法或构造器中，帮助实现依赖注入，达到解耦目的，如@Autowired</p>
 </blockquote>
 <p>说白了，框架的本质就是一堆通用功能的集合。用盖房子打比方：</p>
@@ -551,6 +546,7 @@
 </ul>
 <p>而反射，就是框架实现“自动适配你写的代码”的关键工具。</p>
 <h3><span id="4-go-语言里的反射">4. Go 语言里的反射</span></h3><p>Go 的反射原理和 Java 非常像：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -558,7 +554,8 @@
 <th><strong>Go反射</strong></th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>通过JVM的API访问类型的元信息（如<code>Class</code>、<code>Method</code>等）。</td>
 <td>通过Go的<code>reflect</code>包来访问类型和值的元信息。</td>
 </tr>
@@ -570,10 +567,11 @@
 <td>主要通过<code>Class</code>类和<code>java.lang.reflect</code>包进行反射操作。</td>
 <td>主要通过<code>reflect.Type</code>和<code>reflect.Value</code>进行反射操作。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>比如 Go 里的结构体标签（tag）：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span> <span class="string">`json:&quot;name&quot;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>当我们用 <code>json.Marshal()</code> 把结构体转成 JSON 时，<code>encoding/json</code> 包会通过反射读取 <code>tag</code> 信息，然后决定用哪个字段名。</p>
 <p>很多 Go 框架（如 Gin、GORM）也大量使用反射来实现自动映射、自动注入等功能。</p>
 <h3><span id="5-总结">5. 总结</span></h3><p>反射其实没那么神秘——<strong>它就是在运行时，把“看似未知”的东西变成已知的，把“不可见”的类型和值变成可见并可操作的</strong>。它的实现依赖于语言编译器和运行时提供的元信息和接口。</p>
@@ -615,13 +613,7 @@
 </blockquote>
 <p>1、安装 air</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/air-verse/air</span><br></pre></td></tr></table></figure>
-<p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure>
-<p>3、根据实际项目，调整.air.toml 中的内容，air 将按照下面规则热重启，建议理解每个参数的意思</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root = &quot;D:/project/your-project-name&quot;  # 项目根目录位置</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line">  pre_cmd = [&quot;source pre_env.sh&quot;,&quot;bee generate docs&quot;] # 在 go buid 前的命令，这里第一个是导入环境变量，第二个是更新 swagger 接口文档和路由</span><br><span class="line">  args_bin = []</span><br><span class="line">  bin = &quot;./tmp/main.exe&quot;  # 运行编译好的文件命令</span><br><span class="line">  cmd = &quot;go build -o ./tmp/main.exe your-project-name&quot; #构建项目命令</span><br><span class="line">  delay = 1000</span><br><span class="line">  exclude_dir = [&quot;tmp&quot;, &quot;vendor&quot;, &quot;testdata&quot; ,&quot;logs&quot; ,&quot;.idea&quot;,&quot;.git&quot;,&quot;docker&quot;] # 排除这些文件</span><br><span class="line">  exclude_file = []</span><br><span class="line">  exclude_regex = [&quot;_test.go&quot;]</span><br><span class="line">  exclude_unchanged = false</span><br><span class="line">  follow_symlink = false</span><br><span class="line">  full_bin = &quot;&quot;</span><br><span class="line">  include_dir = []</span><br><span class="line">  include_ext = [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot; ,&quot;ini&quot; ,&quot;conf&quot;] # 这些文件一旦变化并保存就会触发重新构建并启动</span><br><span class="line">  include_file = []</span><br><span class="line">  kill_delay = &quot;1s&quot;</span><br><span class="line">  log = &quot;build-errors.log&quot;  #生成的日志名</span><br><span class="line">  poll = false</span><br><span class="line">  poll_interval = 0</span><br><span class="line">  post_cmd = []</span><br><span class="line">  pre_cmd = []</span><br><span class="line">  rerun = false</span><br><span class="line">  rerun_delay = 500</span><br><span class="line">  send_interrupt = false</span><br><span class="line">  stop_on_error = false</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>4、在项目根目录下，终端执行 air，便可实现使用 Air 实现 Go 程序热启动</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">air</span></span><br></pre></td></tr></table></figure>
-<p><a href="https://www.liwenzhou.com/posts/Go/live-reload-with-air/">参考</a></p>
+<p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure><br>3、根据实际项目，调整.air.toml 中的内容，air 将按照下面规则热重启，建议理解每个参数的意思<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root = &quot;D:/project/your-project-name&quot;  # 项目根目录位置</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line">  pre_cmd = [&quot;source pre_env.sh&quot;,&quot;bee generate docs&quot;] # 在 go buid 前的命令，这里第一个是导入环境变量，第二个是更新 swagger 接口文档和路由</span><br><span class="line">  args_bin = []</span><br><span class="line">  bin = &quot;./tmp/main.exe&quot;  # 运行编译好的文件命令</span><br><span class="line">  cmd = &quot;go build -o ./tmp/main.exe your-project-name&quot; #构建项目命令</span><br><span class="line">  delay = 1000</span><br><span class="line">  exclude_dir = [&quot;tmp&quot;, &quot;vendor&quot;, &quot;testdata&quot; ,&quot;logs&quot; ,&quot;.idea&quot;,&quot;.git&quot;,&quot;docker&quot;] # 排除这些文件</span><br><span class="line">  exclude_file = []</span><br><span class="line">  exclude_regex = [&quot;_test.go&quot;]</span><br><span class="line">  exclude_unchanged = false</span><br><span class="line">  follow_symlink = false</span><br><span class="line">  full_bin = &quot;&quot;</span><br><span class="line">  include_dir = []</span><br><span class="line">  include_ext = [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot; ,&quot;ini&quot; ,&quot;conf&quot;] # 这些文件一旦变化并保存就会触发重新构建并启动</span><br><span class="line">  include_file = []</span><br><span class="line">  kill_delay = &quot;1s&quot;</span><br><span class="line">  log = &quot;build-errors.log&quot;  #生成的日志名</span><br><span class="line">  poll = false</span><br><span class="line">  poll_interval = 0</span><br><span class="line">  post_cmd = []</span><br><span class="line">  pre_cmd = []</span><br><span class="line">  rerun = false</span><br><span class="line">  rerun_delay = 500</span><br><span class="line">  send_interrupt = false</span><br><span class="line">  stop_on_error = false</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure><br>4、在项目根目录下，终端执行 air，便可实现使用 Air 实现 Go 程序热启动<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">air</span></span><br></pre></td></tr></table></figure><br><a href="https://www.liwenzhou.com/posts/Go/live-reload-with-air/">参考</a></p>
 ]]></content>
       <categories>
         <category>技术</category>
@@ -648,34 +640,38 @@
 </ul>
 <p>以后只要喊一声 “买材料”，机器人就去买；喊 “烤”，机器人就启动烤箱；喊 “全部做完”，机器人就按顺序执行所有步骤。</p>
 <p>对应到开发中：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="left">做蛋糕流程</th>
-<th align="left">make 工具对应概念</th>
+<th style="text-align:left">做蛋糕流程</th>
+<th style="text-align:left">make 工具对应概念</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">小本子</td>
-<td align="left">Makefile 文件</td>
+<tbody>
+<tr>
+<td style="text-align:left">小本子</td>
+<td style="text-align:left">Makefile 文件</td>
 </tr>
 <tr>
-<td align="left">步骤名（买材料 &#x2F; 烤）</td>
-<td align="left">任务（目标）</td>
+<td style="text-align:left">步骤名（买材料 / 烤）</td>
+<td style="text-align:left">任务（目标）</td>
 </tr>
 <tr>
-<td align="left">步骤具体操作</td>
-<td align="left">任务下的命令</td>
+<td style="text-align:left">步骤具体操作</td>
+<td style="text-align:left">任务下的命令</td>
 </tr>
 <tr>
-<td align="left">喊 “全部做完”</td>
-<td align="left">执行 make all 命令</td>
+<td style="text-align:left">喊 “全部做完”</td>
+<td style="text-align:left">执行 make all 命令</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>简单来说：<strong>Makefile 是任务清单，make 是执行清单的命令</strong>。</p>
 <h2><span id="二-为什么后端开发一定要用-make">二、为什么后端开发一定要用 make？</span></h2><p>我们的日常开发流程，全是重复的 “步骤”： </p>
 <ul>
-<li><p>编译代码：<code>go build</code>&#x2F;<code>gcc</code>&#x2F;<code>javac</code></p>
+<li><p>编译代码：<code>go build</code>/<code>gcc</code>/<code>javac</code></p>
 </li>
 <li><p>生成代码：<code>protoc</code> 编译 <code>.proto</code> 文件</p>
 </li>
@@ -699,24 +695,14 @@
 <h2><span id="四-进阶玩法多个任务组合-传参">四、进阶玩法：多个任务组合 + 传参</span></h2><p>一个项目不可能只有 “编译” 这一个任务，我们来扩展一下，实现<strong>编译 → 运行 → 清理</strong>的完整流程。</p>
 <h3><span id="1-多任务定义">1. 多任务定义</span></h3><p>修改 <code>Makefile</code>，增加 <code>run</code>（运行程序）和 <code>clean</code>（清理产物）任务：</p>
 <figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编译任务</span></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行任务（依赖 build 任务，先编译再运行）</span></span><br><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理任务</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf hello</span><br></pre></td></tr></table></figure>
-
-
 <p>执行单个任务：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make build  <span class="comment"># 只编译</span></span><br><span class="line">make run    <span class="comment"># 先编译，再运行</span></span><br><span class="line">make clean  <span class="comment"># 清理二进制文件</span></span><br></pre></td></tr></table></figure>
-
-
 <h3><span id="2-传参数给任务">2. 传参数给任务</span></h3><p>有时候我们希望程序能接收动态参数，比如让 <code>hello</code> 程序输出指定名字。修改 <code>main.go</code>：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(os.Args) &gt; <span class="number">1</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;Hello %s\n&quot;</span>, os.Args[<span class="number">1</span>])</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;Hello World&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>修改 <code>Makefile</code> 的 <code>run</code> 任务，支持传参：</p>
-<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br></pre></td></tr></table></figure>
-<p>执行时传入参数：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make run ARGS=<span class="string">&quot;Go Developer&quot;</span></span><br></pre></td></tr></table></figure>
-<p>终端会输出：<code>Hello Go Developer</code>。</p>
+<p>修改 <code>Makefile</code> 的 <code>run</code> 任务，支持传参：<br><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br></pre></td></tr></table></figure><br>执行时传入参数：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make run ARGS=<span class="string">&quot;Go Developer&quot;</span></span><br></pre></td></tr></table></figure><br>终端会输出：<code>Hello Go Developer</code>。</p>
 <h3><span id="3-组合任务一键执行所有流程">3. 组合任务：一键执行所有流程</span></h3><p>如果想一键完成 “编译 → 运行 → 清理”，可以定义一个 <code>all</code> 任务，调用其他任务：</p>
 <figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 组合任务：按顺序执行 build → run → clean</span></span><br><span class="line"><span class="section">all: build run clean</span></span><br><span class="line"></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br><span class="line"></span><br><span class="line"><span class="section">run:</span></span><br><span class="line">    ./hello <span class="variable">$(ARGS)</span></span><br><span class="line"></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf hello</span><br></pre></td></tr></table></figure>
-<p>执行组合任务：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make all ARGS=<span class="string">&quot;Gopher&quot;</span></span><br></pre></td></tr></table></figure>
-<p>机器人会自动按顺序执行三个任务，省心又省力。</p>
+<p>执行组合任务：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make all ARGS=<span class="string">&quot;Gopher&quot;</span></span><br></pre></td></tr></table></figure><br>机器人会自动按顺序执行三个任务，省心又省力。</p>
 <h2><span id="五-避坑指南新手必看的-5-个注意事项">五、避坑指南：新手必看的 5 个注意事项</span></h2><p><code>Makefile</code> 语法看起来简单，但新手很容易踩坑，这里列出最常见的 5 个问题及解决方案。</p>
 <h3><span id="1-命令行首必须是-tab-键">1. 命令行首必须是 Tab 键</span></h3><p><strong>现象</strong>：执行 <code>make</code> 时报错 <code>missing separator</code>。</p>
 <p><strong>原因</strong>：任务下面的命令行首用了空格，<code>make</code> 要求必须是 <strong>一个 Tab 键</strong>。</p>
@@ -733,18 +719,13 @@
 <p><strong>解决方案</strong>：两种方式传递环境变量</p>
 <p>方式 1：执行 <code>make</code> 时前缀添加环境变量</p>
 <figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line">make build ENV=prod</span><br></pre></td></tr></table></figure>
-
 <p>方式 2：在 <code>Makefile</code> 中用 <code>export</code> 声明</p>
 <figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">export</span> ENV=prod</span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build -o hello main.go</span><br></pre></td></tr></table></figure>
 <h3><span id="5-调试技巧只打印命令不执行">5. 调试技巧：只打印命令不执行</span></h3><p><strong>场景</strong>：写了复杂的 <code>Makefile</code>，想先检查命令是否正确。</p>
 <p><strong>解决方案</strong>：用 <code>make -n 任务名</code> 命令，只打印要执行的命令，不实际运行。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make -n all ARGS=<span class="string">&quot;Debug Test&quot;</span></span><br></pre></td></tr></table></figure>
-
-
 <h2><span id="六-go-项目实战完整的-makefile-模板">六、Go 项目实战：完整的 Makefile 模板</span></h2><p>最后给大家一个可以直接复用的 Go 项目 <code>Makefile</code> 模板，包含编译、测试、代码检查、生产环境构建等常用功能：</p>
 <figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 定义变量：二进制文件名、编译参数</span></span><br><span class="line">BIN_NAME = go-app</span><br><span class="line">GO_FLAGS = -ldflags=<span class="string">&quot;-s -w&quot;</span>  <span class="comment"># 减小二进制体积</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 声明伪目标</span></span><br><span class="line"><span class="meta"><span class="keyword">.PHONY</span>: build test lint clean build-prod run all</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 本地编译</span></span><br><span class="line"><span class="section">build:</span></span><br><span class="line">    go build <span class="variable">$(GO_FLAGS)</span> -o <span class="variable">$(BIN_NAME)</span> main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行单元测试</span></span><br><span class="line"><span class="section">test:</span></span><br><span class="line">    go test -v ./... -cover</span><br><span class="line"></span><br><span class="line"><span class="comment"># 代码检查（需安装 golangci-lint）</span></span><br><span class="line"><span class="section">lint:</span></span><br><span class="line">    golangci-lint run ./...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境编译（Linux 平台）</span></span><br><span class="line"><span class="section">build-prod:</span></span><br><span class="line">    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build <span class="variable">$(GO_FLAGS)</span> -o <span class="variable">$(BIN_NAME)</span>-linux main.go</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行程序</span></span><br><span class="line"><span class="section">run: build</span></span><br><span class="line">    ./<span class="variable">$(BIN_NAME)</span> <span class="variable">$(ARGS)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理产物</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">    rm -rf <span class="variable">$(BIN_NAME)</span> <span class="variable">$(BIN_NAME)</span>-linux</span><br><span class="line"></span><br><span class="line"><span class="comment"># 一键执行所有任务</span></span><br><span class="line"><span class="section">all: lint test build run clean</span></span><br></pre></td></tr></table></figure>
-
-
 <h2><span id="七-总结makefile-核心价值">七、总结：Makefile 核心价值</span></h2><p><strong>自动化</strong>：把重复的命令写进清单，一键执行，减少人工操作。</p>
 <p><strong>标准化</strong>：团队成员共用同一个 <code>Makefile</code>，避免 “你用 <code>go build</code>，我用 <code>go build -o</code>” 的混乱。</p>
 <p><strong>可扩展</strong>：从简单的编译运行，到复杂的打包部署，都可以通过任务组合实现。</p>
@@ -791,7 +772,7 @@
 <p>10、没有被用到的代码直接删。</p>
 <p>11、设计到数据库连接、文件操作，需要是否及时关闭，避免内存泄漏。</p>
 <p>12、“测试驱动开发（TDD）” 思路 —— 先定义接口的测试用例，再写实现代码，而非 “写完再凑测试”。（这一步需要好好学习！）</p>
-<p>13、接口的耗时控制：是否在服务层存在不必要的循环 &#x2F; 计算，是否需要异步处理非核心流程。</p>
+<p>13、接口的耗时控制：是否在服务层存在不必要的循环 / 计算，是否需要异步处理非核心流程。</p>
 <p>总之，个人感觉接口开发不仅是 “写代码实现功能”，而应该是是 “设计一个稳定、安全、易维护的服务契约”，重在还是多练习多思考。</p>
 ]]></content>
       <categories>
@@ -814,7 +795,7 @@
 <ul>
 <li><p><strong>解决性能瓶颈</strong>：为大规模数据存储和高效网络传输提供支持。 </p>
 </li>
-<li><p><strong>跨平台兼容</strong>：可以支持多种语言和平台。</p>
+<li><p><strong>跨平台兼容</strong>：可以支持多种语言和平台。 </p>
 </li>
 </ul>
 <hr>
@@ -825,7 +806,7 @@
 </li>
 <li><p><strong>跨语言通信</strong>：不同语言可以互相通信。 </p>
 </li>
-<li><p><strong>数据格式统一</strong>：避免了 JSON 或 XML 的性能损耗。</p>
+<li><p><strong>数据格式统一</strong>：避免了 JSON 或 XML 的性能损耗。 </p>
 </li>
 </ul>
 <hr>
@@ -834,7 +815,7 @@
 <ul>
 <li><p><strong>性能更好</strong>：二进制格式比 JSON 更高效。 </p>
 </li>
-<li><p><strong>跨语言支持</strong>：ProtoBuf 通过生成代码支持多种语言。</p>
+<li><p><strong>跨语言支持</strong>：ProtoBuf 通过生成代码支持多种语言。 </p>
 </li>
 </ul>
 <hr>
@@ -843,12 +824,12 @@
 <ul>
 <li><p><strong>RPC</strong> 更适合服务间通信，支持远程调用。 </p>
 </li>
-<li><p><strong>HTTP</strong> 适合客户端和服务器之间的请求响应。</p>
+<li><p><strong>HTTP</strong> 适合客户端和服务器之间的请求响应。 </p>
 </li>
 </ul>
 <hr>
 <h3><span id="5grpc中服务端的服务注册在哪客户端调用的方法是直接在-grpc-上吗还是注册中心直接和服务器交互吗">5.gRPC中，服务端的服务注册在哪，客户端调用的方法是直接在 gRPC 上吗，还是注册中心？直接和服务器交互吗？</span></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">服务端启动 → 注册地址到注册中心 → 注册中心维护服务列表  </span><br><span class="line">客户端启动 → 从注册中心获取服务地址 → 生成存根 → 存根通过gRPC协议直接调用服务端</span><br></pre></td></tr></table></figure>
-<p> 服务注册：<strong>gRPC 本身不自带服务注册功能</strong>，在微服务场景中，需结合 Consul、Etcd 等第三方注册中心实现。gRPC 服务器启动时，会通过自定义代码或第三方 SDK 将自身地址、服务名称等信息注册到注册中心，由注册中心维护服务实例的动态列表（包括新增、下线、健康状态等）。<br>客户端调用：客户端调用分为两个阶段。首先是服务发现，客户端启动时或定期向注册中心请求目标服务的可用实例地址；然后，客户端根据 gRPC 协议文件生成本地存根（Stub），通过存根调用远程方法，存根会按照 gRPC 协议（基于 HTTP&#x2F;2）将请求参数序列化后，直接与获取到地址的 gRPC 服务器建立连接并发送请求，服务端处理后将结果返回给客户端。</p>
+<p> 服务注册：<strong>gRPC 本身不自带服务注册功能</strong>，在微服务场景中，需结合 Consul、Etcd 等第三方注册中心实现。gRPC 服务器启动时，会通过自定义代码或第三方 SDK 将自身地址、服务名称等信息注册到注册中心，由注册中心维护服务实例的动态列表（包括新增、下线、健康状态等）。<br>客户端调用：客户端调用分为两个阶段。首先是服务发现，客户端启动时或定期向注册中心请求目标服务的可用实例地址；然后，客户端根据 gRPC 协议文件生成本地存根（Stub），通过存根调用远程方法，存根会按照 gRPC 协议（基于 HTTP/2）将请求参数序列化后，直接与获取到地址的 gRPC 服务器建立连接并发送请求，服务端处理后将结果返回给客户端。</p>
 <p><strong>关键点：</strong></p>
 <p><strong>服务注册</strong>：依赖第三方注册中心管理服务实例，非 gRPC 内置功能。</p>
 <p><strong>客户端与服务器交互</strong>：客户端先从注册中心获取服务地址，再通过存根与服务器直接交互，注册中心不参与通信过程。</p>
@@ -872,11 +853,9 @@
     <url>/posts/%E5%8D%81%E5%A4%A7%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95-go%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0/</url>
     <content><![CDATA[<blockquote>
 <p>最常用的排序算法：快速排序 和 归并排序。<br>适用于数值范围较小或均匀分布：计数排序 和 桶排序。<br>适合小规模数据或者部分有序的数据：冒泡排序、选择排序 和 插入排序。</p>
-</blockquote>
-<blockquote>
 <p>以下示例以从小到大排序为例</p>
-</blockquote>
-<h2><span id="1-冒泡排序">1、冒泡排序</span></h2><p>和相邻的数比较，比它大交换，向左移动，直到列表的末尾，返回，重复过程</p>
+<h2><span id="1-冒泡排序">1、冒泡排序</span></h2></blockquote>
+<p>和相邻的数比较，比它大交换，向左移动，直到列表的末尾，返回，重复过程</p>
 <p>时间复杂度：o(n^2)</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">bubbleSort</span><span class="params">(nums []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">  <span class="keyword">for</span> i:=<span class="number">0</span>;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">    <span class="keyword">for</span> j:=<span class="number">0</span>;j&lt;<span class="built_in">len</span>(nums)-i<span class="number">-1</span>;j++&#123;</span><br><span class="line">      <span class="keyword">if</span> nums[j]&gt;nums[j+<span class="number">1</span>]&#123;</span><br><span class="line">        nums[j],nums[j+<span class="number">1</span>]=nums[j+<span class="number">1</span>],nums[j]</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> nums</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2><span id="2-选择排序">2、选择排序</span></h2><p>在未排序数组中选择一个最小的放到已经排序数组的最后面，重复过程</p>
@@ -891,11 +870,11 @@
 <h2><span id="5-归并排序">5、归并排序</span></h2><p>将未排序数组划分两组，得到的两组继续递归操作，切半划分，直到划分的组不能被划分，合并两个数组，返回再合并</p>
 <p>时间复杂度：o(nlog(n))</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mergeSort</span><span class="params">(nums []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">  size:=<span class="built_in">len</span>(nums)</span><br><span class="line">  <span class="keyword">if</span> size&lt;=<span class="number">1</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> nums</span><br><span class="line">  &#125;</span><br><span class="line">  left:=mergeSort(nums[:size/<span class="number">2</span>])</span><br><span class="line">  right:=mergeSort(nums[size/<span class="number">2</span>:])</span><br><span class="line">  <span class="keyword">return</span> merge(left,right)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge</span><span class="params">(str1 []<span class="type">int</span>,str2 []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">  res:=<span class="built_in">make</span>([]<span class="type">int</span>,<span class="number">0</span>，<span class="built_in">len</span>(str1)+<span class="built_in">len</span>(str2))</span><br><span class="line">  i,j:=<span class="number">0</span>,<span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> i&lt;<span class="built_in">len</span>(str1)&amp;&amp;j&lt;<span class="built_in">len</span>(str2)&#123;</span><br><span class="line">    <span class="keyword">if</span> str1[i]&lt;str2[j]&#123;</span><br><span class="line">      res=<span class="built_in">append</span>(res,str1[i])</span><br><span class="line">      i++</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      res=<span class="built_in">append</span>(res,str2[j])</span><br><span class="line">      j++</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> i&lt;<span class="built_in">len</span>(str1)&#123;</span><br><span class="line">    res=<span class="built_in">append</span>(res,str1[i])</span><br><span class="line">    i++</span><br><span class="line">  &#125;</span><br><span class="line">   <span class="keyword">for</span> j&lt;<span class="built_in">len</span>(str2)&#123;</span><br><span class="line">    res=<span class="built_in">append</span>(res,str2[j])</span><br><span class="line">    j++</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2><span id="6-堆排序">6、堆排序</span></h2><p>将未排序数组构建一个完全二叉树，找到倒数第一个非叶子节点（n&#x2F;2-1),与子节点比较，交换比自己大的子节点， 构建一个大根堆，每次取第一个，直到取完（大根堆可以让空间复杂度降为 o(1))</p>
+<h2><span id="6-堆排序">6、堆排序</span></h2><p>将未排序数组构建一个完全二叉树，找到倒数第一个非叶子节点（n/2-1),与子节点比较，交换比自己大的子节点， 构建一个大根堆，每次取第一个，直到取完（大根堆可以让空间复杂度降为 o(1))</p>
 <p>时间复杂度：o(nlog(n))</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">heapSort</span><span class="params">(nums []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(nums)&lt;=<span class="number">1</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> nums</span><br><span class="line">  &#125;</span><br><span class="line">  buidHeap(nums)</span><br><span class="line">  res:=<span class="built_in">make</span>([]<span class="type">int</span>,<span class="number">0</span>,<span class="built_in">len</span>(nums))</span><br><span class="line">  <span class="keyword">for</span> <span class="built_in">len</span>(nums)&gt;<span class="number">0</span>&#123;</span><br><span class="line">    val,newNums:=pop(nums)</span><br><span class="line">    res=<span class="built_in">append</span>(res,val)</span><br><span class="line">    nums=newNums</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">buildHeap</span><span class="params">(nums []<span class="type">int</span>)</span></span>&#123;</span><br><span class="line">   i:=<span class="built_in">len</span>(nums)/<span class="number">2</span><span class="number">-1</span></span><br><span class="line">   <span class="keyword">for</span> i&gt;=<span class="number">0</span>&#123;</span><br><span class="line">      adjustHeap(nums,i,<span class="built_in">len</span>(nums))</span><br><span class="line">      i--</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">adjustHeap</span><span class="params">(nums []<span class="type">int</span>,i <span class="type">int</span>,size <span class="type">int</span>)</span></span>&#123;</span><br><span class="line">  maxIndex:=i</span><br><span class="line">  left,right:=i*<span class="number">2</span>,i*<span class="number">2</span>+<span class="number">1</span></span><br><span class="line">  <span class="keyword">if</span> left&lt;size &amp;&amp;nums[maxIndex]&lt;nums[left]&#123;</span><br><span class="line">     maxIndex=left</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> i*<span class="number">2</span>+<span class="number">1</span>&lt;size&amp;&amp;nums[maxIndex]&lt;nums[right]&#123;</span><br><span class="line">     maxIndex=right</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> maxIndex!=i&#123;</span><br><span class="line">    nums[i],nums[maxIndex]=nums[maxIndex],nums[i]</span><br><span class="line">    adjustHeap(nums,maxIndex,size)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pop</span><span class="params">(nums []<span class="type">int</span>)</span></span>(<span class="type">int</span>,[]<span class="type">int</span>) &#123;</span><br><span class="line">    top:=nums[<span class="number">0</span>]</span><br><span class="line">    nums[<span class="number">0</span>]=nums[<span class="built_in">len</span>(nums)<span class="number">-1</span>]</span><br><span class="line">    newNums:=nums[:<span class="built_in">len</span>(nums)<span class="number">-1</span>]</span><br><span class="line">    adjustHeap(nums,<span class="number">0</span>,<span class="built_in">len</span>(newNums))</span><br><span class="line">    <span class="keyword">return</span> top,newNums</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2><span id="7-希尔排序">7、希尔排序</span></h2><p>改进版的插入排序，跳着排，最后会间隔为 1 排</p>
-<p>时间复杂度：o(n^(3&#x2F;2))</p>
+<p>时间复杂度：o(n^(3/2))</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">shellSort</span><span class="params">(nums []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">   <span class="keyword">if</span> <span class="built_in">len</span>(nums)&lt;=<span class="number">1</span>&#123;</span><br><span class="line">     <span class="keyword">return</span> nums</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">for</span> gap:=<span class="built_in">len</span>(nums)/<span class="number">2</span>;gap&gt;<span class="number">0</span>;gap/=<span class="number">2</span>&#123;</span><br><span class="line">     <span class="keyword">for</span> i:=gap;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">         cur:=nums[i]</span><br><span class="line">         j:=i</span><br><span class="line">         <span class="keyword">for</span> j&gt;=gap&amp;&amp;nums[j-gap]&gt;cur&#123;</span><br><span class="line">           nums[j]=nums[j-gap]</span><br><span class="line">           j-=gap </span><br><span class="line">         &#125;</span><br><span class="line">         nums[j]=cur</span><br><span class="line">     &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> nums</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2><span id="8-桶排序">8、桶排序</span></h2><p>分桶→桶内排序→合并，每个桶都有范围限制，将数据分到对应的桶中，对每个桶中的数据分别排序，然后合并每个桶的数据</p>
 <p>时间复杂度：o(n*k)</p>
@@ -906,17 +885,6 @@
 <h2><span id="10-计数排序">10、计数排序</span></h2><p>统计待排数组中每个元素的个数，然后对其进行合并</p>
 <p>时间复杂度：O(n + k)</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">countingSort</span><span class="params">(nums []<span class="type">int</span>)</span></span>[]<span class="type">int</span>&#123;</span><br><span class="line">  <span class="keyword">if</span> <span class="built_in">len</span>(nums)&lt;=<span class="number">1</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> nums</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 找到数组中最大和最小的</span></span><br><span class="line">  minNum,maxNum:=nums[<span class="number">0</span>],nums[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">for</span> i:=<span class="number">0</span>;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">    <span class="keyword">if</span> nums[i]&lt;minNum&#123;</span><br><span class="line">      minNum=nums[i]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> nums[i]&gt;maxNum&#123;</span><br><span class="line">      maxNum=nums[i] </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  counts:=<span class="built_in">make</span>([]<span class="type">int</span>,maxNum-minNum+<span class="number">1</span>)</span><br><span class="line">  <span class="keyword">for</span> i:=<span class="number">0</span>;i&lt;<span class="built_in">len</span>(nums);i++&#123;</span><br><span class="line">    counts[nums[i]-minNum]++</span><br><span class="line">  &#125;</span><br><span class="line">  res:=<span class="built_in">make</span>([]<span class="type">int</span>,<span class="number">0</span>,<span class="built_in">len</span>(nums))</span><br><span class="line">  <span class="keyword">for</span> i:=<span class="number">0</span>;i&lt;<span class="built_in">len</span>(counts);i++&#123;</span><br><span class="line">    <span class="keyword">for</span> count[i]&gt;<span class="number">0</span>&#123;</span><br><span class="line">      res=<span class="built_in">append</span>(res,i+minNum)</span><br><span class="line">      count[i]-- </span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-
-
 ]]></content>
       <categories>
         <category>技术</category>
@@ -972,14 +940,11 @@
 <li>输入以下命令验证安装：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">node --version</span><br><span class="line">npm --version</span><br></pre></td></tr></table></figure>
-
 <p>如果显示版本号，说明安装成功。</p>
 <h3><span id="配置npm镜像可选但推荐">配置npm镜像（可选但推荐）</span></h3><p>为了提高包下载速度，建议配置国内镜像：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br></pre></td></tr></table></figure>
-
 <p>验证配置：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm config get registry</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2><span id="git安装">Git安装</span></h2><p>Git 是版本控制工具，用于管理代码和部署博客到 GitHub Pages。</p>
 <h3><span id="步骤1下载git">步骤1：下载Git</span></h3><ol>
@@ -1007,19 +972,15 @@
 </ol>
 <h3><span id="步骤3验证安装">步骤3：验证安装</span></h3><p>打开命令提示符，输入：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git --version</span><br></pre></td></tr></table></figure>
-
 <p>如果显示版本号，说明安装成功。</p>
 <h3><span id="步骤4配置git用户信息">步骤4：配置Git用户信息</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;你的用户名&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;你的邮箱@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-
 <p>这些信息将用于提交记录。</p>
 <hr>
 <h2><span id="hexo安装与配置">Hexo安装与配置</span></h2><p>现在我们开始安装和配置 Hexo 博客框架。</p>
 <h3><span id="步骤1安装hexo-cli">步骤1：安装Hexo CLI</span></h3><p>打开命令提示符（以管理员身份运行），输入：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install -g hexo-cli</span><br></pre></td></tr></table></figure>
-
 <p>等待安装完成。</p>
 <h3><span id="步骤2验证hexo安装">步骤2：验证Hexo安装</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo version</span><br></pre></td></tr></table></figure>
-
 <p>如果显示版本信息，说明安装成功。</p>
 <hr>
 <h2><span id="创建博客项目">创建博客项目</span></h2><h3><span id="步骤1选择博客目录">步骤1：选择博客目录</span></h3><ol>
@@ -1031,44 +992,30 @@
 </li>
 </ol>
 <h3><span id="步骤2初始化hexo项目">步骤2：初始化Hexo项目</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init my-blog</span><br><span class="line"><span class="built_in">cd</span> my-blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
-
 <p>这将创建一个名为 <code>my-blog</code> 的文件夹，包含完整的博客项目结构。</p>
 <h3><span id="步骤3项目结构说明">步骤3：项目结构说明</span></h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">my-blog/</span><br><span class="line">├── _config.yml          # 站点配置文件</span><br><span class="line">├── package.json         # 应用程序信息</span><br><span class="line">├── scaffolds/           # 模板文件夹</span><br><span class="line">├── source/              # 资源文件夹</span><br><span class="line">│   ├── _drafts/         # 草稿文件夹</span><br><span class="line">│   └── _posts/          # 文章文件夹</span><br><span class="line">├── themes/              # 主题文件夹</span><br><span class="line">└── node_modules/        # 依赖包文件夹</span><br></pre></td></tr></table></figure>
-
 <h3><span id="步骤4启动本地服务器">步骤4：启动本地服务器</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo server</span><br></pre></td></tr></table></figure>
-
 <p>或简写为：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-
 <p>打开浏览器访问 <code>http://localhost:4000</code>，您应该能看到默认的博客页面。</p>
 <hr>
 <h2><span id="博客配置与定制">博客配置与定制</span></h2><h3><span id="基本配置">基本配置</span></h3><p>编辑根目录下的 <code>_config.yml</code> 文件，配置您的博客信息：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 网站信息</span></span><br><span class="line"><span class="attr">title:</span> <span class="string">我的个人博客</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;分享技术与生活&#x27;</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;这是一个基于Hexo搭建的个人博客，记录技术学习和生活感悟&#x27;</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="string">技术,博客,生活,学习</span></span><br><span class="line"><span class="attr">author:</span> <span class="string">您的名字</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># URL配置</span></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://yourusername.github.io</span></span><br><span class="line"><span class="attr">root:</span> <span class="string">/</span></span><br><span class="line"><span class="attr">permalink:</span> <span class="string">:year/:month/:day/:title/</span></span><br><span class="line"><span class="attr">permalink_defaults:</span></span><br><span class="line"><span class="attr">pretty_urls:</span></span><br><span class="line">  <span class="attr">trailing_index:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">trailing_html:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-
 <h3><span id="创建新文章">创建新文章</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建新文章</span></span><br><span class="line">hexo new <span class="string">&quot;文章标题&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建新页面</span></span><br><span class="line">hexo new page <span class="string">&quot;页面名称&quot;</span></span><br></pre></td></tr></table></figure>
-
 <p>文章将在 <code>source/_posts/</code> 目录下生成，使用 Markdown 格式编写。</p>
 <h3><span id="文章格式示例">文章格式示例</span></h3><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: 我的第一篇博客</span><br><span class="line">date: 2025-01-27 10:00:00</span><br><span class="line">tags: [标签1, 标签2]</span><br><span class="line"><span class="section">categories: [分类名称]</span></span><br><span class="line"><span class="section">---</span></span><br><span class="line"></span><br><span class="line">这里是文章内容，使用Markdown语法编写。</span><br><span class="line"></span><br><span class="line"><span class="section">## 二级标题</span></span><br><span class="line"></span><br><span class="line"><span class="section">### 三级标题</span></span><br><span class="line"></span><br><span class="line"><span class="bullet">-</span> 列表项1</span><br><span class="line"><span class="bullet">-</span> 列表项2</span><br><span class="line"></span><br><span class="line"><span class="strong">**粗体文字**</span></span><br><span class="line"></span><br><span class="line"><span class="emphasis">*斜体文字*</span></span><br><span class="line"></span><br><span class="line">[<span class="string">链接文字</span>](<span class="link">https://example.com</span>)</span><br><span class="line"></span><br><span class="line">![<span class="string">图片描述</span>](<span class="link">图片路径</span>)</span><br></pre></td></tr></table></figure>
-
 <h3><span id="主题安装">主题安装</span></h3><p>Hexo 有丰富的主题生态，推荐几个优秀主题：</p>
 <h4><span id="1-next主题简洁优雅">1. NexT主题（简洁优雅）</span></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> themes</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next next</span><br></pre></td></tr></table></figure>
-
 <p>修改 <code>_config.yml</code>：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">next</span></span><br></pre></td></tr></table></figure>
-
 <h4><span id="2-butterfly主题功能丰富">2. Butterfly主题（功能丰富）</span></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-theme-butterfly</span><br></pre></td></tr></table></figure>
-
 <p>修改 <code>_config.yml</code>：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">butterfly</span></span><br></pre></td></tr></table></figure>
-
 <h4><span id="3-fluid主题现代化设计">3. Fluid主题（现代化设计）</span></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-theme-fluid</span><br></pre></td></tr></table></figure>
-
 <p>修改 <code>_config.yml</code>：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">theme:</span> <span class="string">fluid</span></span><br></pre></td></tr></table></figure>
-
 <h3><span id="常用插件">常用插件</span></h3><p>安装一些有用的插件来增强博客功能：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 生成站点地图</span></span><br><span class="line">npm install hexo-generator-sitemap --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成RSS订阅</span></span><br><span class="line">npm install hexo-generator-feed --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># 搜索功能</span></span><br><span class="line">npm install hexo-generator-searchdb --save</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署插件</span></span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2><span id="github-pages部署">GitHub Pages部署</span></h2><p>GitHub Pages 是免费的静态网站托管服务，非常适合托管 Hexo 博客。</p>
 <h3><span id="步骤1创建github账户">步骤1：创建GitHub账户</span></h3><ol>
@@ -1093,14 +1040,12 @@
 <li>生成SSH密钥：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;你的邮箱@example.com&quot;</span></span><br></pre></td></tr></table></figure>
-
-<ol start="3">
+<ol>
 <li>按回车使用默认路径，可以设置密码或直接回车</li>
 <li>复制公钥内容：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
-
-<ol start="5">
+<ol>
 <li>在GitHub上添加SSH密钥：<ul>
 <li>点击头像 → Settings</li>
 <li>左侧菜单选择 “SSH and GPG keys”</li>
@@ -1111,22 +1056,15 @@
 </ol>
 <h3><span id="步骤4配置hexo部署">步骤4：配置Hexo部署</span></h3><p>编辑博客根目录下的 <code>_config.yml</code> 文件，在文件末尾添加：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 部署配置</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:你的用户名/你的用户名.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
-
 <p>如果没有配置SSH，也可以使用HTTPS：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/你的用户名/你的用户名.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
-
 <h3><span id="步骤5安装部署插件">步骤5：安装部署插件</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
 <h3><span id="步骤6部署博客">步骤6：部署博客</span></h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 清理缓存</span></span><br><span class="line">hexo clean</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成静态文件</span></span><br><span class="line">hexo generate</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署到GitHub</span></span><br><span class="line">hexo deploy</span><br></pre></td></tr></table></figure>
-
 <p>或者使用简写命令：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean &amp;&amp; hexo g &amp;&amp; hexo d</span><br></pre></td></tr></table></figure>
-
 <h3><span id="步骤7访问博客">步骤7：访问博客</span></h3><p>部署成功后，访问 <code>https://你的用户名.github.io</code> 即可看到您的博客。</p>
 <hr>
-<h2><span id="常见问题解决">常见问题解决</span></h2><h3><span id="问题1npm安装速度慢">问题1：npm安装速度慢</span></h3><p><strong>解决方案：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用淘宝镜像</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用cnpm</span></span><br><span class="line">npm install -g cnpm --registry=https://registry.npmmirror.com</span><br><span class="line">cnpm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
+<h2><span id="常见问题解决">常见问题解决</span></h2><h3><span id="问题1npm安装速度慢">问题1：npm安装速度慢</span></h3><p><strong>解决方案：</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用淘宝镜像</span></span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npmmirror.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者使用cnpm</span></span><br><span class="line">npm install -g cnpm --registry=https://registry.npmmirror.com</span><br><span class="line">cnpm install hexo-cli -g</span><br></pre></td></tr></table></figure></p>
 <h3><span id="问题2hexo命令不识别">问题2：hexo命令不识别</span></h3><p><strong>可能原因：</strong></p>
 <ul>
 <li>Node.js未正确安装</li>
@@ -1142,21 +1080,15 @@
 </ul>
 </li>
 </ol>
-<h3><span id="问题3端口4000被占用">问题3：端口4000被占用</span></h3><p><strong>错误信息：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Error: listen EADDRINUSE :::4000</span><br></pre></td></tr></table></figure>
-
-<p><strong>解决方案：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用其他端口</span></span><br><span class="line">hexo server -p 5000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者找到占用进程并结束</span></span><br><span class="line">netstat -ano | findstr :4000</span><br><span class="line">taskkill /PID 进程ID /F</span><br></pre></td></tr></table></figure>
-
+<h3><span id="问题3端口4000被占用">问题3：端口4000被占用</span></h3><p><strong>错误信息：</strong><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Error: listen EADDRINUSE :::4000</span><br></pre></td></tr></table></figure></p>
+<p><strong>解决方案：</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 使用其他端口</span></span><br><span class="line">hexo server -p 5000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者找到占用进程并结束</span></span><br><span class="line">netstat -ano | findstr :4000</span><br><span class="line">taskkill /PID 进程ID /F</span><br></pre></td></tr></table></figure></p>
 <h3><span id="问题4部署时权限错误">问题4：部署时权限错误</span></h3><p><strong>解决方案：</strong></p>
 <ol>
 <li>确保SSH密钥配置正确</li>
 <li>检查仓库权限设置</li>
 <li>使用HTTPS方式部署</li>
 </ol>
-<h3><span id="问题5中文文件名乱码">问题5：中文文件名乱码</span></h3><p><strong>解决方案：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 设置Git编码</span></span><br><span class="line">git config --global core.quotepath <span class="literal">false</span></span><br><span class="line">git config --global gui.encoding utf-8</span><br><span class="line">git config --global i18n.commit.encoding utf-8</span><br><span class="line">git config --global i18n.logoutputencoding utf-8</span><br></pre></td></tr></table></figure>
-
+<h3><span id="问题5中文文件名乱码">问题5：中文文件名乱码</span></h3><p><strong>解决方案：</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 设置Git编码</span></span><br><span class="line">git config --global core.quotepath <span class="literal">false</span></span><br><span class="line">git config --global gui.encoding utf-8</span><br><span class="line">git config --global i18n.commit.encoding utf-8</span><br><span class="line">git config --global i18n.logoutputencoding utf-8</span><br></pre></td></tr></table></figure></p>
 <h3><span id="问题6主题安装后样式异常">问题6：主题安装后样式异常</span></h3><p><strong>解决方案：</strong></p>
 <ol>
 <li>清理缓存：<code>hexo clean</code></li>
@@ -1168,7 +1100,8 @@
 <ol>
 <li>将图片放在 <code>source/images/</code> 目录下</li>
 <li>在文章中使用相对路径：<code>![描述](/images/图片名.jpg)</code></li>
-<li>或者安装图片处理插件：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure></li>
+<li>或者安装图片处理插件：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-asset-image --save</span><br></pre></td></tr></table></figure>
+</li>
 </ol>
 <h3><span id="问题8github-pages访问慢">问题8：GitHub Pages访问慢</span></h3><p><strong>解决方案：</strong></p>
 <ol>
@@ -1180,7 +1113,7 @@
 <h2><span id="进阶配置">进阶配置</span></h2><h3><span id="自定义域名">自定义域名</span></h3><p>如果您有自己的域名，可以配置自定义域名：</p>
 <ol>
 <li>在 <code>source/</code> 目录下创建 <code>CNAME</code> 文件</li>
-<li>在文件中写入您的域名（不带http:&#x2F;&#x2F;）：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www.yourdomain.com</span><br></pre></td></tr></table></figure></li>
+<li>在文件中写入您的域名（不带<a href="http://）：">http://）：</a><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">www.yourdomain.com</span><br></pre></td></tr></table></figure></li>
 <li>在域名提供商处配置DNS记录：<ul>
 <li>添加CNAME记录，指向 <code>你的用户名.github.io</code></li>
 </ul>
@@ -1192,7 +1125,6 @@
 <li>将整个博客项目推送到备份仓库：</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git init</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">&quot;博客备份&quot;</span></span><br><span class="line">git remote add origin https://github.com/你的用户名/blog-backup.git</span><br><span class="line">git push -u origin main</span><br></pre></td></tr></table></figure>
-
 <h3><span id="评论系统">评论系统</span></h3><p>添加评论功能：</p>
 <h4><span id="使用gitalk">使用Gitalk</span></h4><ol>
 <li><p>安装：</p>
@@ -1260,7 +1192,6 @@
 <li>在博客仓库创建 <code>.github/workflows/deploy.yml</code>：</li>
 </ol>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">Hexo</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">branches:</span> [ <span class="string">source</span> ]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">deploy:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v2</span></span><br><span class="line">    </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Setup</span> <span class="string">Node.js</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/setup-node@v2</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">node-version:</span> <span class="string">&#x27;16&#x27;</span></span><br><span class="line">        </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">dependencies</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">      </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Generate</span> <span class="string">static</span> <span class="string">files</span></span><br><span class="line">      <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line">      </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span> <span class="string">to</span> <span class="string">GitHub</span> <span class="string">Pages</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">peaceiris/actions-gh-pages@v3</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">github_token:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.GITHUB_TOKEN</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">publish_dir:</span> <span class="string">./public</span></span><br></pre></td></tr></table></figure>
-
 <hr>
 <h2><span id="总结">总结</span></h2><p>恭喜您！通过本指南，您已经学会了：</p>
 <ol>
@@ -1271,7 +1202,7 @@
 <li>✅ 解决常见问题</li>
 <li>✅ 进行进阶配置和优化</li>
 </ol>
-<h2><span id></span></h2><h3><span id="有用的资源">有用的资源</span></h3><ul>
+<h2><span id> </span></h2><h3><span id="有用的资源">有用的资源</span></h3><ul>
 <li><strong>Hexo官方文档</strong>：<a href="https://hexo.io/zh-cn/docs/">https://hexo.io/zh-cn/docs/</a></li>
 <li><strong>主题市场</strong>：<a href="https://hexo.io/themes/">https://hexo.io/themes/</a></li>
 <li><strong>插件市场</strong>：<a href="https://hexo.io/plugins/">https://hexo.io/plugins/</a></li>
@@ -1292,12 +1223,12 @@
     <url>/posts/%E5%9C%A8AI%E6%97%B6%E4%BB%A3%EF%BC%8C%E7%A8%8B%E5%BA%8F%E5%91%98%E8%AF%A5%E6%80%8E%E4%B9%88%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E6%8A%80%E8%83%BDAI%E6%B2%A1%E6%B3%95%E4%BB%A3%E6%9B%BF%EF%BC%9F/</url>
     <content><![CDATA[<blockquote>
 <p>先说说自己的思考</p>
-</blockquote>
-<h3><span id="0-说在前面">0、说在前面</span></h3><p>1、 <code>系统学习计算机基础</code> 、底层设计、设计思想，学习技术实现思想比会一门技术更重要！</p>
+<h3><span id="0-说在前面">0、说在前面</span></h3></blockquote>
+<p>1、 <code>系统学习计算机基础</code> 、底层设计、设计思想，学习技术实现思想比会一门技术更重要！</p>
 <p>2、沟通能力，团队协作能力， <code>与人打交道的能力</code> ,学会说清楚问题的能力</p>
 <p>3、aI是工具，它不能创造，但是人类有，最重要是发现问题、提出问题，那么一定要 <code>锻炼好自己提示词撰写</code> 的能力。</p>
 <p>4、发挥 <code>个人想象力</code> ，从自身的欲望出发，去寻找“有什么是之前的痛点但是没有办法实现的呢？，然后用 AI 解决它。解决的过程，自然就学会了必备知识和技能。</p>
-<p>5、学会 <code>利用ai更快解决自己的问题</code> ，比如后端开发工作中，想想哪些最浪费时间，怎么用ai的方式来解决它（用好ai自动测试&#x2F;文档生成）。</p>
+<p>5、学会 <code>利用ai更快解决自己的问题</code> ，比如后端开发工作中，想想哪些最浪费时间，怎么用ai的方式来解决它（用好ai自动测试/文档生成）。</p>
 <hr>
 <blockquote>
 <p>AI的回答，感觉也很有道理，但很模糊，选择性看吧！</p>
@@ -1319,7 +1250,7 @@
 </ol>
 <p><strong>拓展跨界能力</strong></p>
 <ol>
-<li><p>培养技术判断力：识别何时使用&#x2F;不使用AI，避免技术滥用。</p>
+<li><p>培养技术判断力：识别何时使用/不使用AI，避免技术滥用。</p>
 </li>
 <li><p>增强商业敏感度：理解技术如何转化为商业价值，关注行业需求变化。</p>
 </li>
@@ -1392,222 +1323,258 @@
     <title>实习复盘：遇到问题的分类与总结</title>
     <url>/posts/%E5%AE%9E%E4%B9%A0%E5%A4%8D%E7%9B%98%EF%BC%9A%E9%81%87%E5%88%B0%E9%97%AE%E9%A2%98%E7%9A%84%E5%88%86%E7%B1%BB%E4%B8%8E%E6%80%BB%E7%BB%93/</url>
     <content><![CDATA[<p>下面是我近3个月遇到的问题和解决，根据我的实习日报整理来，按<strong>技术工具类、框架开发类、数据库操作类、项目协作类、业务逻辑类</strong>五大维度进行分类，并提炼对应的思考与解决方案，形成可复用的经验沉淀。分享给大家～</p>
-<h2><span id="一-技术工具类问题">一、 技术工具类问题</span></h2><h3><span id="1-go-语言基础与工具链">1.  Go 语言基础与工具链</span></h3><table>
+<h2><span id="一-技术工具类问题">一、 技术工具类问题</span></h2><h3><span id="1-go-语言基础与工具链">1.  Go 语言基础与工具链</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><code>go path</code>&#x2F;<code>go root</code>&#x2F;<code>go module</code> 概念混淆，环境配置报错</td>
-<td align="left">通过实操踩坑明确三者区别：<code>GOROOT</code> 是 Go 安装路径，<code>GOPATH</code>是工作区路径，<code>Go Module</code>是项目依赖管理工具；后续配置优先使用 <code>Go Module</code>避免路径冲突</td>
+<tbody>
+<tr>
+<td style="text-align:left"><code>go path</code>/<code>go root</code>/<code>go module</code> 概念混淆，环境配置报错</td>
+<td style="text-align:left">通过实操踩坑明确三者区别：<code>GOROOT</code> 是 Go 安装路径，<code>GOPATH</code>是工作区路径，<code>Go Module</code>是项目依赖管理工具；后续配置优先使用 <code>Go Module</code>避免路径冲突</td>
 </tr>
 <tr>
-<td align="left"><code>go get</code>与 <code>go install</code>用法混淆</td>
-<td align="left">区分核心用途：<code>go get</code>下载项目依赖到 <code>$GOPATH/pkg/mod</code>；<code>go install</code>安装全局工具到 <code>$GOPATH/bin</code>；工具安装用 <code>go install</code>，项目依赖用 <code>go get</code></td>
+<td style="text-align:left"><code>go get</code>与 <code>go install</code>用法混淆</td>
+<td style="text-align:left">区分核心用途：<code>go get</code>下载项目依赖到 <code>$GOPATH/pkg/mod</code>；<code>go install</code>安装全局工具到 <code>$GOPATH/bin</code>；工具安装用 <code>go install</code>，项目依赖用 <code>go get</code></td>
 </tr>
 <tr>
-<td align="left">range 遍历值拷贝导致数据异常（如指针遍历返回重复地址）</td>
-<td align="left">理解 range 遍历机制：遍历值类型时是<strong>值拷贝</strong>，遍历指针类型时需注意底层数据共享；解决方法：遍历指针切片时改用索引访问，或使用深拷贝</td>
+<td style="text-align:left">range 遍历值拷贝导致数据异常（如指针遍历返回重复地址）</td>
+<td style="text-align:left">理解 range 遍历机制：遍历值类型时是<strong>值拷贝</strong>，遍历指针类型时需注意底层数据共享；解决方法：遍历指针切片时改用索引访问，或使用深拷贝</td>
 </tr>
 <tr>
-<td align="left">结构体指针空指针解引用 panic</td>
-<td align="left">指针类型使用前必须做非空校验；非必要场景优先使用值类型结构体，减少空指针风险，面对未知类型变量，可用接口接收 + 类型断言转换，替代泛型实现灵活处理</td>
+<td style="text-align:left">结构体指针空指针解引用 panic</td>
+<td style="text-align:left">指针类型使用前必须做非空校验；非必要场景优先使用值类型结构体，减少空指针风险，面对未知类型变量，可用接口接收 + 类型断言转换，替代泛型实现灵活处理</td>
 </tr>
 <tr>
-<td align="left">单元测试无法执行（方法未注册、依赖未注入）</td>
-<td align="left">遵守 Go 测试规范：测试文件以<code>_test.go</code> 结尾，函数名以 <code>Test</code>开头；确保测试方法依赖的服务通过 Wire 正确注入，排查 <code>wire_gen.go</code>是否生成成功，<strong>单元测试覆盖核心接口可提升问题排查效率</strong>，批量测试用例建议用表格定义法</td>
+<td style="text-align:left">单元测试无法执行（方法未注册、依赖未注入）</td>
+<td style="text-align:left">遵守 Go 测试规范：测试文件以<code>_test.go</code> 结尾，函数名以 <code>Test</code>开头；确保测试方法依赖的服务通过 Wire 正确注入，排查 <code>wire_gen.go</code>是否生成成功，<strong>单元测试覆盖核心接口可提升问题排查效率</strong>，批量测试用例建议用表格定义法</td>
 </tr>
-</tbody></table>
-<h3><span id="2-git-与项目构建工具">2. Git 与项目构建工具</span></h3><table>
+</tbody>
+</table>
+</div>
+<h3><span id="2-git-与项目构建工具">2. Git 与项目构建工具</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">Git Submodule 拉取失败、提交权限问题</td>
-<td align="left">掌握子模块操作命令：<code>git clone --recurse-submodules</code>拉取主项目+子模块；<code>git submodule add</code>添加子模块；权限问题需检查子模块仓库的访问权限【项目子模块冲突解决方案：git rm –cached {MOD_NAME} 删除缓存记录 + git submodule add –force 重新绑定】</td>
+<tbody>
+<tr>
+<td style="text-align:left">Git Submodule 拉取失败、提交权限问题</td>
+<td style="text-align:left">掌握子模块操作命令：<code>git clone --recurse-submodules</code>拉取主项目+子模块；<code>git submodule add</code>添加子模块；权限问题需检查子模块仓库的访问权限【项目子模块冲突解决方案：git rm —cached {MOD_NAME} 删除缓存记录 + git submodule add —force 重新绑定】</td>
 </tr>
 <tr>
-<td align="left">代码合并冲突（尤其是多分支协同、子模块冲突）</td>
-<td align="left">合并前先拉取目标分支或者合最新主分支最新代码；子模块冲突需先进入子模块目录解决冲突，再提交主项目；<strong>禁止直接删除冲突代码</strong>，需与团队成员确认逻辑。<strong>合并冲突原则</strong>：不清楚代码归属时保留双方逻辑，删除重复代码但严禁删除缺失代码；基于 master 切出的开发分支合并到 release 时，优先拉取 master 最新代码解决冲突。</td>
+<td style="text-align:left">代码合并冲突（尤其是多分支协同、子模块冲突）</td>
+<td style="text-align:left">合并前先拉取目标分支或者合最新主分支最新代码；子模块冲突需先进入子模块目录解决冲突，再提交主项目；<strong>禁止直接删除冲突代码</strong>，需与团队成员确认逻辑。<strong>合并冲突原则</strong>：不清楚代码归属时保留双方逻辑，删除重复代码但严禁删除缺失代码；基于 master 切出的开发分支合并到 release 时，优先拉取 master 最新代码解决冲突。</td>
 </tr>
 <tr>
-<td align="left">Makefile 构建失败、Wire 依赖注入未生效</td>
-<td align="left">项目根目录 <code>make all</code>失败时，进入对应服务目录手动执行 <code>wire</code>命令生成注入代码；确保 <code>wire.go</code> 中注册了所有需要注入的服务。<strong>子模块项目编译注意事项</strong>：如 duanzhi 项目 v1 是子模块链接，需进入对应子模块目录单独编译，而非根目录统一构建</td>
+<td style="text-align:left">Makefile 构建失败、Wire 依赖注入未生效</td>
+<td style="text-align:left">项目根目录 <code>make all</code>失败时，进入对应服务目录手动执行 <code>wire</code>命令生成注入代码；确保 <code>wire.go</code> 中注册了所有需要注入的服务。<strong>子模块项目编译注意事项</strong>：如 duanzhi 项目 v1 是子模块链接，需进入对应子模块目录单独编译，而非根目录统一构建</td>
 </tr>
 <tr>
-<td align="left">脚本编译运行失败（如通知脚本）</td>
-<td align="left">脚本运行依赖编译后的可执行文件，需执行 <code>make build</code>编译；运行时需传入正确参数，确保脚本代码与主项目代码同步。</td>
+<td style="text-align:left">脚本编译运行失败（如通知脚本）</td>
+<td style="text-align:left">脚本运行依赖编译后的可执行文件，需执行 <code>make build</code>编译；运行时需传入正确参数，确保脚本代码与主项目代码同步。</td>
 </tr>
-</tbody></table>
-<h2><span id="二-框架开发类问题kratos-protobuf-wire">二、 框架开发类问题（Kratos + Protobuf + Wire）</span></h2><h3><span id="1-kratos-框架核心问题">1. Kratos 框架核心问题</span></h3><table>
+</tbody>
+</table>
+</div>
+<h2><span id="二-框架开发类问题kratos-protobuf-wire">二、 框架开发类问题（Kratos + Protobuf + Wire）</span></h2><h3><span id="1-kratos-框架核心问题">1. Kratos 框架核心问题</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">接口注册后无法访问（HTTP 服务未注册）</td>
-<td align="left">接口需在 <code>server/http</code> 中注册；Post 请求需在 Protobuf 的<code>option</code>中添加 <code>body:&quot;*&quot;</code>，否则无法正确接收参数<strong>kratos中间件集成规范</strong>：在 server 层通过 http.Middleware(middleware.Group(“路由地址”).Middleware(“方法”)) 注册，如 Token 解析中间件需绑定指定路由</td>
+<tbody>
+<tr>
+<td style="text-align:left">接口注册后无法访问（HTTP 服务未注册）</td>
+<td style="text-align:left">接口需在 <code>server/http</code> 中注册；Post 请求需在 Protobuf 的<code>option</code>中添加 <code>body:&quot;*&quot;</code>，否则无法正确接收参数<strong>kratos中间件集成规范</strong>：在 server 层通过 http.Middleware(middleware.Group(“路由地址”).Middleware(“方法”)) 注册，如 Token 解析中间件需绑定指定路由</td>
 </tr>
 <tr>
-<td align="left">中间件、组件（MySQL&#x2F;Redis）无法注入</td>
-<td align="left">通过全局配置 + Wire 依赖注入实现组件注册；确保组件的 <code>New</code>方法被<code>wire.NewSet()</code>注册，<code>wire_gen.go</code> 未被误删<strong>wire 注入深层要求</strong>：被注入的方法内部调用的其他方法，也必须完成 Wire 注册，否则会因依赖缺失导致启动失败</td>
+<td style="text-align:left">中间件、组件（MySQL/Redis）无法注入</td>
+<td style="text-align:left">通过全局配置 + Wire 依赖注入实现组件注册；确保组件的 <code>New</code>方法被<code>wire.NewSet()</code>注册，<code>wire_gen.go</code> 未被误删<strong>wire 注入深层要求</strong>：被注入的方法内部调用的其他方法，也必须完成 Wire 注册，否则会因依赖缺失导致启动失败</td>
 </tr>
 <tr>
-<td align="left">自定义错误返回不规范、接口返回格式不一致</td>
-<td align="left">统一封装错误返回结构体，定义标准化错误码；所有接口返回值遵循同一格式，避免直接返回原生错误<strong>接口返回一致性要求</strong>：针对需要数据返回同步的接口，不同接口尽量使用相同的参数传递方式，即使无法复用代码，也要保证入参、出参的命名和格式统一</td>
+<td style="text-align:left">自定义错误返回不规范、接口返回格式不一致</td>
+<td style="text-align:left">统一封装错误返回结构体，定义标准化错误码；所有接口返回值遵循同一格式，避免直接返回原生错误<strong>接口返回一致性要求</strong>：针对需要数据返回同步的接口，不同接口尽量使用相同的参数传递方式，即使无法复用代码，也要保证入参、出参的命名和格式统一</td>
 </tr>
 <tr>
-<td align="left">Kratos 项目启动失败（子模块依赖、编译遗漏）</td>
-<td align="left">检查项目是否包含未初始化的子模块；进入对应服务目录手动执行 wire 和 make build；确保所有依赖的服务都已注册；Kratos <strong>项目启动特殊要求</strong>：不能直接执行 main.go，需点击上级目录启动调试；编译失败时优先检查子模块是否同步更新</td>
+<td style="text-align:left">Kratos 项目启动失败（子模块依赖、编译遗漏）</td>
+<td style="text-align:left">检查项目是否包含未初始化的子模块；进入对应服务目录手动执行 wire 和 make build；确保所有依赖的服务都已注册；Kratos <strong>项目启动特殊要求</strong>：不能直接执行 main.go，需点击上级目录启动调试；编译失败时优先检查子模块是否同步更新</td>
 </tr>
-</tbody></table>
-<h3><span id="2-protobuf-与-wire-依赖注入">2. Protobuf 与 Wire 依赖注入</span></h3><table>
+</tbody>
+</table>
+</div>
+<h3><span id="2-protobuf-与-wire-依赖注入">2. Protobuf 与 Wire 依赖注入</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">同包 Proto 文件重复定义 <code>message</code>报错</td>
-<td align="left">遵守 Proto 命名规范：同包内 <code>message</code> 名称全局唯一；可通过划分不同包路径管理重复的消息定义<strong>Proto 定义避坑点</strong>：规避同级目录下同名 message 定义，Post 请求必须在 option 中配置 body:”*” 才能正确接收参数</td>
+<tbody>
+<tr>
+<td style="text-align:left">同包 Proto 文件重复定义 <code>message</code>报错</td>
+<td style="text-align:left">遵守 Proto 命名规范：同包内 <code>message</code> 名称全局唯一；可通过划分不同包路径管理重复的消息定义<strong>Proto 定义避坑点</strong>：规避同级目录下同名 message 定义，Post 请求必须在 option 中配置 body:”*” 才能正确接收参数</td>
 </tr>
 <tr>
-<td align="left">Wire 注入失败（服务未注册、依赖缺失）</td>
-<td align="left">检查 <code>wire.go</code>中是否包含所有依赖的服务；确保依赖的服务提供了正确的构造函数；手动执行 <code>wire</code>命令排查注入错误</td>
+<td style="text-align:left">Wire 注入失败（服务未注册、依赖缺失）</td>
+<td style="text-align:left">检查 <code>wire.go</code>中是否包含所有依赖的服务；确保依赖的服务提供了正确的构造函数；手动执行 <code>wire</code>命令排查注入错误</td>
 </tr>
 <tr>
-<td align="left">Protobuf 生成代码后字段类型不匹配（如 MySQL int 对应 Protobuf int32）</td>
-<td align="left">保证数据库字段、Proto 字段、Go 结构体字段类型<strong>完全一致</strong>；MySQL INT 类型默认对应 Go <code>int32；</code>避免因类型不匹配引发隐性问题<strong>枚举值定义规范</strong>：基于团队开发项目，已有的枚举值禁止自行定义，可通过前端代码追踪获取统一枚举值</td>
+<td style="text-align:left">Protobuf 生成代码后字段类型不匹配（如 MySQL int 对应 Protobuf int32）</td>
+<td style="text-align:left">保证数据库字段、Proto 字段、Go 结构体字段类型<strong>完全一致</strong>；MySQL INT 类型默认对应 Go <code>int32；</code>避免因类型不匹配引发隐性问题<strong>枚举值定义规范</strong>：基于团队开发项目，已有的枚举值禁止自行定义，可通过前端代码追踪获取统一枚举值</td>
 </tr>
 <tr>
-<td align="left">wire、go generate .&#x2F;.. 、protoc 命令不清</td>
-<td align="left">protoc 是跨语言的协议编译工具，专注于将 .proto 转成业务代码；wire 是Go 专属的依赖注入工具，专注于自动组装 Go 项目的对象依赖；go generate .&#x2F;.. 是代码生成的触发器，本身不生成代码，而是批量执行 protoc&#x2F;wire 等生成指令，简化操作流程。</td>
+<td style="text-align:left">wire、go generate ./.. 、protoc 命令不清</td>
+<td style="text-align:left">protoc 是跨语言的协议编译工具，专注于将 .proto 转成业务代码；wire 是Go 专属的依赖注入工具，专注于自动组装 Go 项目的对象依赖；go generate ./.. 是代码生成的触发器，本身不生成代码，而是批量执行 protoc/wire 等生成指令，简化操作流程。</td>
 </tr>
-</tbody></table>
-<h2><span id="三-数据库操作类问题mysql-redis-gorm">三、 数据库操作类问题（MySQL + Redis + GORM）</span></h2><h3><span id="1-gorm-核心操作问题">1. GORM 核心操作问题</span></h3><table>
+</tbody>
+</table>
+</div>
+<h2><span id="三-数据库操作类问题mysql-redis-gorm">三、 数据库操作类问题（MySQL + Redis + GORM）</span></h2><h3><span id="1-gorm-核心操作问题">1. GORM 核心操作问题</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">Preload 预加载关联数据失败（关联条件错误、数据混乱）</td>
-<td align="left">预加载前明确主&#x2F;子表关联字段；foreignKey和references需要在结构体中tag指定遵循 GORM 预加载语法：<code>Preload(&quot;关联字段&quot;, 条件)</code>；避免盲目预加载，按需加载关联数据<strong>GORM Preload 底层原理</strong>：通过两次查询实现关联数据加载（先查主表，再根据主表 ID 查关联表），关联条件错误会导致数据加载失败</td>
+<tbody>
+<tr>
+<td style="text-align:left">Preload 预加载关联数据失败（关联条件错误、数据混乱）</td>
+<td style="text-align:left">预加载前明确主/子表关联字段；foreignKey和references需要在结构体中tag指定遵循 GORM 预加载语法：<code>Preload(&quot;关联字段&quot;, 条件)</code>；避免盲目预加载，按需加载关联数据<strong>GORM Preload 底层原理</strong>：通过两次查询实现关联数据加载（先查主表，再根据主表 ID 查关联表），关联条件错误会导致数据加载失败</td>
 </tr>
 <tr>
-<td align="left"><code>First</code>方法查询不到数据未处理 <code>ErrRecordNotFound</code>错误</td>
-<td align="left"><code>First</code>方法查询不到会返回<code>gorm.ErrRecordNotFound</code>，必须手动判断该错误；查询时传入<strong>结构体指针</strong>，否则无法赋值<strong>GORM 方法注意事项</strong>：Create 和 First 方法会自动将数据库数据赋值到入参结构体指针，无需二次查询；Find 方法必须在条件之后调用</td>
+<td style="text-align:left"><code>First</code>方法查询不到数据未处理 <code>ErrRecordNotFound</code>错误</td>
+<td style="text-align:left"><code>First</code>方法查询不到会返回<code>gorm.ErrRecordNotFound</code>，必须手动判断该错误；查询时传入<strong>结构体指针</strong>，否则无法赋值<strong>GORM 方法注意事项</strong>：Create 和 First 方法会自动将数据库数据赋值到入参结构体指针，无需二次查询；Find 方法必须在条件之后调用</td>
 </tr>
 <tr>
-<td align="left"><code>Upsert</code>方法冲突键未加索引导致创建失败</td>
-<td align="left">使用 <code>Upsert</code>时，指定的冲突键（如 <code>ON CONFLICT (id)</code>）必须在数据库中创建索引；先创建索引再执行 Upsert 操作<strong>Upsert 坑点</strong>：无法通过 RowsAffected 判断是创建还是更新操作（返回 1 表示两种操作都可能），需先查询再判断</td>
+<td style="text-align:left"><code>Upsert</code>方法冲突键未加索引导致创建失败</td>
+<td style="text-align:left">使用 <code>Upsert</code>时，指定的冲突键（如 <code>ON CONFLICT (id)</code>）必须在数据库中创建索引；先创建索引再执行 Upsert 操作<strong>Upsert 坑点</strong>：无法通过 RowsAffected 判断是创建还是更新操作（返回 1 表示两种操作都可能），需先查询再判断</td>
 </tr>
 <tr>
-<td align="left">连表查询字段歧义报错（两个表存在相同字段）</td>
-<td align="left">连表查询时明确字段归属：<code>SELECT t1.id, t2.name FROM table1 t1 JOIN table2 t2 ON t1.id = t2.tid</code>；避免使用 <code>SELECT *</code></td>
+<td style="text-align:left">连表查询字段歧义报错（两个表存在相同字段）</td>
+<td style="text-align:left">连表查询时明确字段归属：<code>SELECT t1.id, t2.name FROM table1 t1 JOIN table2 t2 ON t1.id = t2.tid</code>；避免使用 <code>SELECT *</code></td>
 </tr>
-</tbody></table>
-<h3><span id="2-数据库性能与逻辑问题">2. 数据库性能与逻辑问题</span></h3><table>
+</tbody>
+</table>
+</div>
+<h3><span id="2-数据库性能与逻辑问题">2. 数据库性能与逻辑问题</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">循环查询数据库导致性能低下</td>
-<td align="left">优先使用<strong>预加载 + 批量查询</strong>替代循环查询；数据量小时可一次性查询后在内存中用 Map 去重，避免多次数据库交互<strong>数据去重策略</strong>：数据量大时必须在数据库层面聚合去重（如 GROUP BY），避免内存溢出；数据量小时可在内存中去重提升效率</td>
+<tbody>
+<tr>
+<td style="text-align:left">循环查询数据库导致性能低下</td>
+<td style="text-align:left">优先使用<strong>预加载 + 批量查询</strong>替代循环查询；数据量小时可一次性查询后在内存中用 Map 去重，避免多次数据库交互<strong>数据去重策略</strong>：数据量大时必须在数据库层面聚合去重（如 GROUP BY），避免内存溢出；数据量小时可在内存中去重提升效率</td>
 </tr>
 <tr>
-<td align="left">字段冗余、数据类型选择不合理（如 varchar(255) 滥用）</td>
-<td align="left">按实际业务需求最小化设置字段类型：如短字符串用 <code>varchar(16)/varchar(32)</code>，整数用 <code>int8/int16</code>替代 <code>int</code>；减少内存占用与 IO 压力<strong>字段设计核心原则</strong>：贴合业务需求，创建时间、更新时间字段放在表结构末尾；优先使用主键 ID 查询，替代名称模糊匹配，利用索引提升性能</td>
+<td style="text-align:left">字段冗余、数据类型选择不合理（如 varchar(255) 滥用）</td>
+<td style="text-align:left">按实际业务需求最小化设置字段类型：如短字符串用 <code>varchar(16)/varchar(32)</code>，整数用 <code>int8/int16</code>替代 <code>int</code>；减少内存占用与 IO 压力<strong>字段设计核心原则</strong>：贴合业务需求，创建时间、更新时间字段放在表结构末尾；优先使用主键 ID 查询，替代名称模糊匹配，利用索引提升性能</td>
 </tr>
 <tr>
-<td align="left">事务未生效（如子表更新未继承主表事务）</td>
-<td align="left">遵循分层原则，<strong>在 Biz 层开启事务</strong>；确保事务覆盖所有相关操作，避免跨层调用导致事务失效</td>
+<td style="text-align:left">事务未生效（如子表更新未继承主表事务）</td>
+<td style="text-align:left">遵循分层原则，<strong>在 Biz 层开启事务</strong>；确保事务覆盖所有相关操作，避免跨层调用导致事务失效</td>
 </tr>
 <tr>
-<td align="left">时间字段格式不统一（如 varchar 存储时间无法转换为 <code>time.Time</code>）</td>
-<td align="left">数据库时间字段优先使用 <code>datetime</code> 类型；若必须用字符串存储，需统一格式（如 <code>2006-01-02 15:04:05</code>），并使用 <code>carbon</code> 包解析<strong>Carbon 包使用坑点</strong>：ToDateTimeString() 格式固定为 2025-01-01，自定义格式需用 ToLayoutString()；计算上个月日期时，需先设置日期再减月份（如 carbon.Now().SetDay(25).SubMonths(1)）</td>
+<td style="text-align:left">时间字段格式不统一（如 varchar 存储时间无法转换为 <code>time.Time</code>）</td>
+<td style="text-align:left">数据库时间字段优先使用 <code>datetime</code> 类型；若必须用字符串存储，需统一格式（如 <code>2006-01-02 15:04:05</code>），并使用 <code>carbon</code> 包解析<strong>Carbon 包使用坑点</strong>：ToDateTimeString() 格式固定为 2025-01-01，自定义格式需用 ToLayoutString()；计算上个月日期时，需先设置日期再减月份（如 carbon.Now().SetDay(25).SubMonths(1)）</td>
 </tr>
 <tr>
-<td align="left">外键约束导致性能开销与操作限制</td>
-<td align="left"><strong>表设计避坑点</strong>：不建议设置外键约束，外键会增加删除 &#x2F; 插入操作的完整性检查开销；数据关联逻辑应放在业务层实现，而非数据库层面</td>
+<td style="text-align:left">外键约束导致性能开销与操作限制</td>
+<td style="text-align:left"><strong>表设计避坑点</strong>：不建议设置外键约束，外键会增加删除 / 插入操作的完整性检查开销；数据关联逻辑应放在业务层实现，而非数据库层面</td>
 </tr>
-</tbody></table>
-<h2><span id="四-项目协作类问题">四、 项目协作类问题</span></h2><h3><span id="1-前后端联调">1. 前后端联调</span></h3><table>
+</tbody>
+</table>
+</div>
+<h2><span id="四-项目协作类问题">四、 项目协作类问题</span></h2><h3><span id="1-前后端联调">1. 前后端联调</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">接口参数类型不匹配（如前端传空字符串给 int 类型字段）</td>
-<td align="left">明确前后端参数类型约定：int 类型不能传 <code>&quot;&quot;</code>，string 类型不能传 <code>0</code>；后端增加参数校验，返回明确错误提示</td>
+<tbody>
+<tr>
+<td style="text-align:left">接口参数类型不匹配（如前端传空字符串给 int 类型字段）</td>
+<td style="text-align:left">明确前后端参数类型约定：int 类型不能传 <code>&quot;&quot;</code>，string 类型不能传 <code>0</code>；后端增加参数校验，返回明确错误提示</td>
 </tr>
 <tr>
-<td align="left">接口返回数据格式不符合前端预期（如字段名不一致、数据未去重）</td>
-<td align="left">联调前同步接口文档，统一字段命名规范（如使用下划线命名）；后端对返回数据进行去重、格式化处理，确保与文档一致</td>
+<td style="text-align:left">接口返回数据格式不符合前端预期（如字段名不一致、数据未去重）</td>
+<td style="text-align:left">联调前同步接口文档，统一字段命名规范（如使用下划线命名）；后端对返回数据进行去重、格式化处理，确保与文档一致</td>
 </tr>
 <tr>
-<td align="left">接口响应速度慢（如视频上传时同步处理视频帧）</td>
-<td align="left">优化接口逻辑：将耗时操作（如视频帧处理）改为异步执行；视频上传时前端同时传递 md5，避免重复上传<strong>第三方集成容灾思维</strong>：第三方接口响应不稳定时，改用异步处理 + 状态回调模式，保障主流程可用性</td>
+<td style="text-align:left">接口响应速度慢（如视频上传时同步处理视频帧）</td>
+<td style="text-align:left">优化接口逻辑：将耗时操作（如视频帧处理）改为异步执行；视频上传时前端同时传递 md5，避免重复上传<strong>第三方集成容灾思维</strong>：第三方接口响应不稳定时，改用异步处理 + 状态回调模式，保障主流程可用性</td>
 </tr>
-</tbody></table>
-<h3><span id="2-测试与线上问题">2. 测试与线上问题</span></h3><table>
+</tbody>
+</table>
+</div>
+<h3><span id="2-测试与线上问题">2. 测试与线上问题</span></h3><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">测试反馈的 Bug 集中在参数校验缺失、数据逻辑不严谨</td>
-<td align="left">开发时明确每个参数的<strong>必填&#x2F;非必填</strong>、<strong>取值范围</strong>；列表数据必须去重，指针遍历避免返回拷贝地址；错误返回需明确提示（如“已选数据内不存在原 id”）<strong>开发自测原则</strong>：尽可能考虑边界情况，通过自测 + 单元测试排查遗漏问题；重点检查参数校验、空指针、数组越界等高频问题</td>
+<tbody>
+<tr>
+<td style="text-align:left">测试反馈的 Bug 集中在参数校验缺失、数据逻辑不严谨</td>
+<td style="text-align:left">开发时明确每个参数的<strong>必填/非必填</strong>、<strong>取值范围</strong>；列表数据必须去重，指针遍历避免返回拷贝地址；错误返回需明确提示（如“已选数据内不存在原 id”）<strong>开发自测原则</strong>：尽可能考虑边界情况，通过自测 + 单元测试排查遗漏问题；重点检查参数校验、空指针、数组越界等高频问题</td>
 </tr>
 <tr>
-<td align="left">灰度环境数据库字段更新失败、数据查询异常</td>
-<td align="left">掌握灰度环境操作流程：更新表字段需提交工单；查询灰度数据需通过未来云平台；确保灰度环境配置与生产环境一致<strong>线上发布关键步骤</strong>：开发分支需合并到 master 分支后再发布；子模块代码需同步更新并提交；分支落后时用 git pull origin&#x2F;master 拉取最新代码</td>
+<td style="text-align:left">灰度环境数据库字段更新失败、数据查询异常</td>
+<td style="text-align:left">掌握灰度环境操作流程：更新表字段需提交工单；查询灰度数据需通过未来云平台；确保灰度环境配置与生产环境一致<strong>线上发布关键步骤</strong>：开发分支需合并到 master 分支后再发布；子模块代码需同步更新并提交；分支落后时用 git pull origin/master 拉取最新代码</td>
 </tr>
 <tr>
-<td align="left">线上问题排查效率低（如日志未打印 SQL、无法定位错误）</td>
-<td align="left"><strong>日志记录核心要求</strong>：打印日志时必须传递 ctx，方便后续链路追踪；日志内容要明确，包含操作类型、入参、错误信息，宁可多打不可少打;关键操作添加日志记录，包含入参、出参、错误信息；排查线上问题时先查日志，再查数据库<strong>线上问题排查技巧</strong>：反馈 Bug 时需标注数据唯一标识（如主键 ID）和关联表名；通过日志中的 SQL 语句模拟执行，定位是代码还是数据问题</td>
+<td style="text-align:left">线上问题排查效率低（如日志未打印 SQL、无法定位错误）</td>
+<td style="text-align:left"><strong>日志记录核心要求</strong>：打印日志时必须传递 ctx，方便后续链路追踪；日志内容要明确，包含操作类型、入参、错误信息，宁可多打不可少打;关键操作添加日志记录，包含入参、出参、错误信息；排查线上问题时先查日志，再查数据库<strong>线上问题排查技巧</strong>：反馈 Bug 时需标注数据唯一标识（如主键 ID）和关联表名；通过日志中的 SQL 语句模拟执行，定位是代码还是数据问题</td>
 </tr>
-</tbody></table>
-<h2><span id="五-业务逻辑类问题">五、 业务逻辑类问题</span></h2><table>
+</tbody>
+</table>
+</div>
+<h2><span id="五-业务逻辑类问题">五、 业务逻辑类问题</span></h2><div class="table-container">
+<table>
 <thead>
 <tr>
-<th align="left">遇到的问题</th>
-<th align="left">思考与解决方案</th>
+<th style="text-align:left">遇到的问题</th>
+<th style="text-align:left">思考与解决方案</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left">模块间联动逻辑不清晰（如模板管理与应用管理的数据依赖）</td>
-<td align="left">设计接口前梳理模块间的数据流转关系，明确依赖字段；参考已有项目的联动逻辑，避免孤立设计接口</td>
+<tbody>
+<tr>
+<td style="text-align:left">模块间联动逻辑不清晰（如模板管理与应用管理的数据依赖）</td>
+<td style="text-align:left">设计接口前梳理模块间的数据流转关系，明确依赖字段；参考已有项目的联动逻辑，避免孤立设计接口</td>
 </tr>
 <tr>
-<td align="left">第三方接口调用问题（如幂等性问题、接口失效）</td>
-<td align="left">调用第三方接口前确认幂等性；接口失效时及时排查网络或接口文档变更；<strong>通过结构体指针传入第三方服务，并确保 Wire 注入</strong></td>
+<td style="text-align:left">第三方接口调用问题（如幂等性问题、接口失效）</td>
+<td style="text-align:left">调用第三方接口前确认幂等性；接口失效时及时排查网络或接口文档变更；<strong>通过结构体指针传入第三方服务，并确保 Wire 注入</strong></td>
 </tr>
 <tr>
-<td align="left">代码逻辑复杂、冗余，维护难度大</td>
-<td align="left">遵循 “单一职责原则”，将复杂函数拆分为不超过 50 行的小函数；重复代码封装为公共方法，业务逻辑与非业务逻辑分离，如果代码越写越复杂，需反思是否逻辑设计有问题，牢记 “大道至简”。</td>
+<td style="text-align:left">代码逻辑复杂、冗余，维护难度大</td>
+<td style="text-align:left">遵循 “单一职责原则”，将复杂函数拆分为不超过 50 行的小函数；重复代码封装为公共方法，业务逻辑与非业务逻辑分离，如果代码越写越复杂，需反思是否逻辑设计有问题，牢记 “大道至简”。</td>
 </tr>
 <tr>
-<td align="left">通用功能重复开发（如操作日志、权限校验）</td>
-<td align="left">封装通用工具类（如操作日志模块），提炼可复用的逻辑；工具类需编写使用文档，方便其他项目接入。<strong>封装思维培养</strong>：保持封装通用工具类的习惯和敏感性，如权限校验、第三方调用、日志记录等，提升后续项目开发效率</td>
+<td style="text-align:left">通用功能重复开发（如操作日志、权限校验）</td>
+<td style="text-align:left">封装通用工具类（如操作日志模块），提炼可复用的逻辑；工具类需编写使用文档，方便其他项目接入。<strong>封装思维培养</strong>：保持封装通用工具类的习惯和敏感性，如权限校验、第三方调用、日志记录等，提升后续项目开发效率</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h1><span id="六-总结">六、总结</span></h1><p>近期实习完整覆盖了 Go 后端开发（基于kratos项目）的全流程，从环境配置、Kratos 框架实操、数据库优化到跨团队协作与线上运维，每一次踩坑、每一次问题排查都沉淀为宝贵的实战经验。记录下这些经历与思考，既是对这段实习的复盘沉淀，也希望能为刚入行的后端开发者提供一点参考。</p>
 <p>于我而言，这段实习最大的成长，莫过于完成了从 “技术实现者” 到 “业务解决者” 的思维转变。不断的踩坑试错到最后的问题解决，让我明白，后端开发绝不是 “CRUD 搬砖”。优秀的技术方案，一定是能精准解决业务问题的方案。脱离业务的代码，再优雅也只是空中楼阁。</p>
 <p>最后，把这段实习的感悟分享给大家：</p>
@@ -1644,40 +1611,26 @@
 <p>3、在数据库中表设计中，不建议设置外键。<br>对记录的删除和插入都会对关联表做数据完整性检查，有的时候这可能是不必要的，这些应该把它暴露到业务逻辑层来做。主要还是增加性能开销。</p>
 <h2><span id="gorm操作mysql-最佳实践设计接口常用">Gorm操作mysql 最佳实践（设计接口常用）</span></h2><h3><span id="场景-1-根据条件查询行记录-select">场景 1: 根据条件查询行记录 (SELECT *)</span></h3><p><strong>Sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span> <span class="keyword">AND</span> grade <span class="operator">=</span> &quot;1年级&quot;;</span><br></pre></td></tr></table></figure>
-
-<p><strong>GORM 操作</strong>	</p>
+<p><strong>GORM 操作</strong>    </p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line">result := db.Where(<span class="string">&quot;age = ? AND grade = ?&quot;</span>, <span class="number">26</span>, <span class="string">&quot;1年级&quot;</span>).Find(&amp;students)</span><br></pre></td></tr></table></figure>
-
 <h3><span id="场景-2-根据条件查询行记录的指定列的值">场景 2: 根据条件查询行记录的指定列的值</span></h3><p><strong>sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, grade, age <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br></pre></td></tr></table></figure>
-
 <p><strong>GORM 操作</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方式一，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">var</span> results []<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">result := db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;results)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">type</span> StudentInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">  ID    <span class="type">uint</span></span><br><span class="line">  Grade <span class="type">string</span></span><br><span class="line">  Age   <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentInfo</span><br><span class="line">db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;infos) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p>注意⚠️：当使用 <code>Find To Map</code>时，一定要在你的查询中包含 <code>Model</code> 或者 <code>Table</code> ，以此来显式地指定表名。 这能确保 GORM 正确的理解哪个表要被查询。<a href="https://gorm.io/zh_CN/docs/advanced_query.html">https://gorm.io/zh_CN/docs/advanced_query.html</a></p>
 <h3><span id="场景-3-根据条件包括关联表的列查询行记录的指定列的值">场景 3: 根据条件（包括关联表的列）查询行记录的指定列的值</span></h3><p><strong>Sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 连表查询</span></span><br><span class="line"><span class="keyword">SELECT</span> s.id, s.grade, s.age, b.name <span class="keyword">as</span> book_name <span class="keyword">FROM</span> student s <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> book b <span class="keyword">ON</span> b.id <span class="operator">=</span> s.book_id <span class="keyword">WHERE</span> s.age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 先查主表，再批量查关联表</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> book  <span class="keyword">WHERE</span> book_id <span class="keyword">IN</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p><strong>GORM 操作</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方法一：使用 Preload (GORM 的推荐方式，先查主表，再批量查关联表)</span></span><br><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line"><span class="comment">// Preload(&quot;Book&quot;) 会自动执行一次 JOIN 或额外的 SELECT 来加载关联的 Book</span></span><br><span class="line">db.Preload(<span class="string">&quot;Book&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;students)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二：使用 Joins + Scan (适用于需要从关联表选择特定列)</span></span><br><span class="line"><span class="keyword">type</span> StudentBookInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID        <span class="type">uint</span></span><br><span class="line">    Grade     <span class="type">string</span></span><br><span class="line">    Age       <span class="type">int</span></span><br><span class="line">    BookName  <span class="type">string</span> <span class="string">`gorm:&quot;column:book_name&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentBookInfo</span><br><span class="line"></span><br><span class="line">db.Table(<span class="string">&quot;students s&quot;</span>).</span><br><span class="line">    Select(<span class="string">&quot;s.id, s.grade, s.age, b.name as book_name&quot;</span>).</span><br><span class="line">    Joins(<span class="string">&quot;LEFT JOIN books b ON b.id = s.book_id&quot;</span>).</span><br><span class="line">    Where(<span class="string">&quot;s.age = ?&quot;</span>, <span class="number">26</span>).</span><br><span class="line">    Scan(&amp;infos)</span><br></pre></td></tr></table></figure>
-
-
-
 <h3><span id="场景-4-根据主键-id-更新指定列的数据并返回更新行的记录">场景 4: 根据主键 ID 更新指定列的数据，并返回更新行的记录</span></h3><p><strong>Sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> student <span class="keyword">SET</span> grade <span class="operator">=</span> &quot;3年级&quot;, age <span class="operator">=</span> <span class="number">27</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-
 <p><strong>GORM 操作</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> updatedStudent Student</span><br><span class="line">db.First(&amp;updatedStudent, studentID)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Updates 只更新指定字段</span></span><br><span class="line">result = db.Model(&amp;updatedStudent).Updates(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">  <span class="string">&quot;grade&quot;</span>: <span class="string">&quot;4年级&quot;</span>,</span><br><span class="line">  <span class="string">&quot;age&quot;</span>:   <span class="number">28</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 或者使用结构体（注意：零值不会被更新，如 int 0, string &quot;&quot;）</span></span><br><span class="line"><span class="comment">// db.Model(&amp;updatedStudent).Updates(Student&#123;Grade: &quot;4年级&quot;, Age: 28&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> result.Error != <span class="literal">nil</span> &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;更新失败: %v\n&quot;</span>, result.Error)</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
 <h3><span id="场景-5-插入一条新数据如果数据已存在则更新upsert">场景 5: 插入一条新数据，如果数据已存在则更新（UPSERT）</span></h3><p><strong>Sql</strong></p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> student (name, age, grade, book_id) </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;张三&#x27;</span>, <span class="number">25</span>, <span class="string">&#x27;2年级&#x27;</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">ON</span> DUPLICATE KEY <span class="keyword">UPDATE</span> </span><br><span class="line">    age <span class="operator">=</span> <span class="keyword">VALUES</span>(age), </span><br><span class="line">    grade <span class="operator">=</span> <span class="keyword">VALUES</span>(grade),</span><br><span class="line">    updated_at <span class="operator">=</span> <span class="built_in">CURRENT_TIMESTAMP</span>;</span><br></pre></td></tr></table></figure>
-
 <p><strong>注意:</strong> 此语句依赖于表上的唯一索引（<code>UNIQUE KEY</code>）。例如，你需要在 <code>name</code> 字段上建立唯一索引，当插入重复的 <code>name</code> 时，<code>ON DUPLICATE KEY</code> 子句才会触发。</p>
 <p><strong>GORM 操作</strong></p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 假设 name 字段是唯一索引</span></span><br><span class="line">student := Student&#123;</span><br><span class="line">  Name:  <span class="string">&quot;张三&quot;</span>, <span class="comment">// 这个名字在数据库中已存在</span></span><br><span class="line">  Age:   <span class="number">26</span>,    <span class="comment">// 新的年龄</span></span><br><span class="line">  Grade: <span class="string">&quot;3年级&quot;</span>, <span class="comment">// 新的年级</span></span><br><span class="line">  BookID: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Clauses 实现 UPSERT</span></span><br><span class="line">result := db.Clauses(clause.OnConflict&#123;</span><br><span class="line">  Columns:   []clause.Column&#123;&#123;Name: <span class="string">&quot;name&quot;</span>&#125;&#125;, <span class="comment">// 唯一索引的列</span></span><br><span class="line">  DoUpdates: clause.Assignments(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">      <span class="string">&quot;age&quot;</span>:   student.Age,</span><br><span class="line">      <span class="string">&quot;grade&quot;</span>: student.Grade,</span><br><span class="line">      <span class="comment">// GORM 会自动处理 updated_at</span></span><br><span class="line">  &#125;),</span><br><span class="line">&#125;).Create(&amp;student)</span><br></pre></td></tr></table></figure>
-
 ]]></content>
       <categories>
         <category>技术</category>
@@ -1695,36 +1648,27 @@
 <p>直到后来遇到一个实际需求，再加上和 GPT 梳理思路，我才恍然大悟：原来 “先定义接口再实现” 的核心，藏着解耦和灵活扩展的大玄机。今天就结合 Go 项目实战和 Wire 依赖注入，跟大家聊聊这个新手必懂的分层设计思路。</p>
 <h2><span id="一-先吐槽后真香为什么-多此一举-的接口很重要">一、先吐槽后真香：为什么 “多此一举” 的接口很重要？</span></h2><p>先说说我最初的困惑：比如要做一个用户数据查询功能，直接写个<code>UserRepo</code>结构体，实现<code>GetUser</code>方法不就完事了？</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 直接写实现（新手初期的写法）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserRepo <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">   db *sql.DB <span class="comment">// 直接依赖MySQL</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserRepo</span><span class="params">(db *sql.DB)</span></span> *UserRepo &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;UserRepo&#123;db: db&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *UserRepo)</span></span> GetUser(id <span class="type">int64</span>) (*User, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// MySQL查询逻辑</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> user User</span><br><span class="line"></span><br><span class="line">   err := r.db.QueryRow(<span class="string">&quot;SELECT id, name FROM users WHERE id = ?&quot;</span>, id).Scan(&amp;user.ID, &amp;user.Name)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;user, err</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 业务层直接依赖具体实现</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserUsecase <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">   repo *UserRepo <span class="comment">// 强依赖UserRepo</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserUsecase</span><span class="params">(repo *UserRepo)</span></span> *UserUsecase &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;UserUsecase&#123;repo: repo&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>这种写法看似简洁，但问题很快就暴露了：如果后续需要把数据库从 MySQL 换成 PostgreSQL，或者要加缓存层，就得修改<code>UserUsecase</code>的代码 —— 因为它直接依赖了<code>*UserRepo</code>这个具体实现。</p>
 <p>而 “先定义接口” 的写法，能完美解决这个问题：</p>
 <h3><span id="第一步在-proto-层定义抽象接口核心">第一步：在 Proto 层定义抽象接口（核心）</span></h3><p>首先在 Proto 里定义数据访问的接口（不管具体用什么数据库）：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// proto/conf/repo.proto</span></span><br><span class="line"></span><br><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> conf;</span><br><span class="line"></span><br><span class="line">option go_package = <span class="string">&quot;internal/conf;conf&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义用户数据访问接口（只声明方法，不关心实现）</span></span><br><span class="line"></span><br><span class="line">service UserRepo &#123;</span><br><span class="line"></span><br><span class="line">   rpc GetUser(<span class="type">int64</span>) returns (*User);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message User &#123;</span><br><span class="line"></span><br><span class="line">   <span class="type">int64</span> id = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">   <span class="type">string</span> name = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>通过<code>protoc</code>编译后，会生成对应的 Go 接口（核心是<code>UserRepo</code>接口）。</p>
 <h3><span id="第二步data-层实现接口mysql-版本">第二步：Data 层实现接口（MySQL 版本）</span></h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// internal/data/repo/user_repo_mysql.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserRepoMysql <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">   db *sql.DB</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现Proto生成的UserRepo接口</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *UserRepoMysql)</span></span> GetUser(id <span class="type">int64</span>) (*conf.User, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// MySQL查询逻辑</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> user conf.User</span><br><span class="line"></span><br><span class="line">   err := r.db.QueryRow(<span class="string">&quot;SELECT id, name FROM users WHERE id = ?&quot;</span>, id).Scan(&amp;user.Id, &amp;user.Name)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;user, err</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserRepoMysql</span><span class="params">(db *sql.DB)</span></span> conf.UserRepo &#123; <span class="comment">// 返回接口类型</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;UserRepoMysql&#123;db: db&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="第三步biz-层依赖接口不依赖具体实现">第三步：Biz 层依赖接口，不依赖具体实现</span></h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// internal/biz/usecase/user_usecase.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserUsecase <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">   repo conf.UserRepo <span class="comment">// 依赖接口，而非具体实现</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserUsecase</span><span class="params">(repo conf.UserRepo)</span></span> *UserUsecase &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;UserUsecase&#123;repo: repo&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 业务逻辑中直接调用接口方法</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(u *UserUsecase)</span></span> GetUserInfo(id <span class="type">int64</span>) (*conf.User, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> u.repo.GetUser(id) <span class="comment">// 不管底层是MySQL还是PostgreSQL，调用方式不变</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="关键差异换数据库时不用改业务代码">关键差异：换数据库时不用改业务代码！</span></h3><p>如果后续要迁移到 PostgreSQL，只需要新增一个实现类：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// internal/data/repo/user_repo_pg.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserRepoPg <span class="keyword">struct</span> &#123;</span><br><span class="line"></span><br><span class="line">   db *pg.DB</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 同样实现UserRepo接口</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *UserRepoPg)</span></span> GetUser(id <span class="type">int64</span>) (*conf.User, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// PostgreSQL查询逻辑</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> user conf.User</span><br><span class="line"></span><br><span class="line">   err := r.db.QueryRow(<span class="string">&quot;SELECT id, name FROM users WHERE id = $1&quot;</span>, id).Scan(&amp;user.Id, &amp;user.Name)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;user, err</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewUserRepoPg</span><span class="params">(db *pg.DB)</span></span> conf.UserRepo &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> &amp;UserRepoPg&#123;db: db&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>此时，Biz 层的<code>UserUsecase</code>完全不用改 —— 因为它依赖的是<code>UserRepo</code>接口，只要新的实现类满足接口契约，就能无缝替换。</p>
 <p>这就是 “接口解耦” 的核心价值：<strong>将 “依赖具体实现” 改成 “依赖抽象接口”</strong>，让业务层和数据层彻底解耦，后续扩展或替换组件时，不用动核心业务代码。</p>
 <h2><span id="二-接口-依赖注入go-中用-wire-让代码更优雅">二、接口 + 依赖注入：Go 中用 Wire 让代码更优雅</span></h2><p>光有接口还不够，怎么让 Biz 层 “拿到” 接口的具体实现？这就需要依赖注入（DI）—— 简单说就是 “不用手动<code>New</code>对象，让框架帮你组装依赖”。</p>
 <p>在 Go 项目中，最常用的依赖注入工具就是 Wire。它的核心作用是：<strong>帮你自动管理对象的创建和依赖关系，不用手动写一堆</strong><code>New</code><strong>代码</strong>。</p>
 <h3><span id="1-wire-的基础使用注册构造函数">1. Wire 的基础使用：注册构造函数</span></h3><p>首先，我们需要把所有接口实现的构造函数，用 Wire 的<code>NewSet</code>分组管理：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// internal/provider/data_provider.go</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/google/wire&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据层的构造函数集合（MySQL版本）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> DataProviderSet = wire.NewSet(</span><br><span class="line"></span><br><span class="line">   NewUserRepoMysql, <span class="comment">// 注册MySQL的实现</span></span><br><span class="line"></span><br><span class="line">   NewDB, <span class="comment">// 数据库连接的构造函数</span></span><br><span class="line"></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果要换PostgreSQL，只需修改这个集合</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// var DataProviderSet = wire.NewSet(</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//     NewUserRepoPg, // 换成PG的实现</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//     NewPgDB,</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// )</span></span><br></pre></td></tr></table></figure>
-
 <h3><span id="2-编写-wire-注入脚本">2. 编写 Wire 注入脚本</span></h3><p>在项目入口的<code>wire.go</code>中，声明需要注入的对象：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// cmd/server/wire.go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// +build wireinject</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line"></span><br><span class="line">   <span class="string">&quot;github.com/google/wire&quot;</span></span><br><span class="line"></span><br><span class="line">   <span class="string">&quot;your-project/internal/biz/usecase&quot;</span></span><br><span class="line"></span><br><span class="line">   <span class="string">&quot;your-project/internal/provider&quot;</span></span><br><span class="line"></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成依赖注入的函数（Wire会自动生成具体实现）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitUserUsecase</span><span class="params">()</span></span> (*usecase.UserUsecase, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   wire.Build(</span><br><span class="line"></span><br><span class="line">       provider.DataProviderSet, <span class="comment">// 引入数据层依赖</span></span><br><span class="line"></span><br><span class="line">       usecase.NewUserUsecase,   <span class="comment">// 引入业务层构造函数</span></span><br><span class="line"></span><br><span class="line">   )</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="3-生成代码并使用">3. 生成代码并使用</span></h3><p>运行<code>go generate ./...</code>，Wire 会自动生成<code>wire_gen.go</code>文件，里面包含了对象组装的具体逻辑。之后在业务代码中，直接调用<code>InitUserUsecase</code>即可：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// cmd/server/main.go</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 不用手动New DB、New UserRepo、New UserUsecase</span></span><br><span class="line"></span><br><span class="line">   userUsecase, err := InitUserUsecase()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">       log.Fatal(err)</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 直接使用，底层实现由Wire帮你绑定</span></span><br><span class="line"></span><br><span class="line">   user, _ := userUsecase.GetUserInfo(<span class="number">123</span>)</span><br><span class="line"></span><br><span class="line">   fmt.Println(user.Name)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3><span id="wire-的核心逻辑编译期生成代码">Wire 的核心逻辑：编译期生成代码</span></h3><p>Wire 和 Java 的 Spring 依赖注入不同，它是<strong>编译期生成代码</strong>，而不是运行时反射。生成的<code>wire_gen.go</code>里，会清晰地展示对象的创建顺序：</p>
 <figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// wire_gen.go（自动生成）</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InitUserUsecase</span><span class="params">()</span></span> (*usecase.UserUsecase, <span class="type">error</span>) &#123;</span><br><span class="line"></span><br><span class="line">   db, err := provider.NewDB()</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   userRepo, err := provider.NewUserRepoMysql(db)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line"></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   userUsecase := usecase.NewUserUsecase(userRepo)</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> userUsecase, <span class="literal">nil</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>相当于 Wire 帮你自动写了手动<code>New</code>对象的代码，既保证了性能，又简化了开发。</p>
 <h2><span id="三-总结新手该如何理解-接口-依赖注入">三、总结：新手该如何理解 “接口 + 依赖注入”？</span></h2><ol>
 <li><p><strong>接口的作用</strong>：定义 “契约”，隔离具体实现和核心业务，实现解耦 —— 就像电源插座，不管是 U 盘还是移动硬盘，只要符合接口标准就能用。</p>
@@ -1748,12 +1692,12 @@
     <title>新手小白也能会！Kratos 框架单元测试从入门到上手</title>
     <url>/posts/%E6%96%B0%E6%89%8B%E5%B0%8F%E7%99%BD%E4%B9%9F%E8%83%BD%E4%BC%9A%EF%BC%81Kratos%20%E6%A1%86%E6%9E%B6%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E4%B8%8A%E6%89%8B/</url>
     <content><![CDATA[<p>作为编程新手，你是不是也有这样的困扰：想验证一个接口功能，总要先把整个项目跑起来，再用 Postman 一遍遍地调试验证？不仅耗时，还得依赖项目完整运行。今天就以 Kratos 框架为例，手把手教你写单元测试——不用启动整个项目，也能精准验证功能逻辑，从小白到「单元测试大佬」（假的🤡）～</p>
-<h2><span id="一-先搞懂单元测试到底解决什么问题">一、先搞懂：单元测试到底解决什么问题？</span></h2><p>单元测试的核心是<strong>测试项目中某个独立的方法&#x2F;函数是否符合预期</strong>，比如一个接口的核心逻辑、一个业务层的处理函数。</p>
+<h2><span id="一-先搞懂单元测试到底解决什么问题">一、先搞懂：单元测试到底解决什么问题？</span></h2><p>单元测试的核心是<strong>测试项目中某个独立的方法/函数是否符合预期</strong>，比如一个接口的核心逻辑、一个业务层的处理函数。</p>
 <p>对比传统调试方式，单元测试的优势：</p>
 <ul>
 <li><p>不依赖项目完整运行：哪怕项目其他模块没写完，也能单独测试目标功能</p>
 </li>
-<li><p>覆盖多场景：可以轻松编写正常&#x2F;异常&#x2F;边界等多种测试用例</p>
+<li><p>覆盖多场景：可以轻松编写正常/异常/边界等多种测试用例</p>
 </li>
 <li><p>节省时间：一次编写，多次运行，改代码后一键验证是否改坏原有逻辑</p>
 </li>
@@ -1764,9 +1708,7 @@
 <h3><span id="第二步依赖注入初始化wirego">第二步：依赖注入初始化（wire.go）</span></h3><p>新建 <code>wire.go</code> 文件，通过 Google Wire 实现依赖注入的初始化，生成可直接调用的「依赖初始化函数」。</p>
 <p>小贴士：Wire 是 Kratos 常用的依赖注入工具，需先安装：<code>go install github.com/google/wire/cmd/wire@latest</code></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//go:build wireinject</span><br><span class="line">// +build wireinject</span><br><span class="line"></span><br><span class="line">package testhelper</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;your-project/internal/conf&quot;  // 配置包路径</span><br><span class="line">    &quot;your-project/internal/server&quot; // 服务注册包路径</span><br><span class="line">    &quot;github.com/google/wire&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// InitializeTestContext 初始化测试上下文（由 Wire 自动生成实现）</span><br><span class="line">// 返回值：测试上下文实例、资源清理函数、错误信息</span><br><span class="line">func InitializeTestContext() (*TestContext, func(), error) &#123;</span><br><span class="line">    wire.Build(</span><br><span class="line">        // 基础配置依赖（需自己实现：读取配置文件）</span><br><span class="line">        provideConfig,        // 提供 conf.Bootstrap 实例</span><br><span class="line">        provideCommonService, // 提供 conf.CommonService 实例</span><br><span class="line">        provideLogger,        // 提供 log.Logger 实例</span><br><span class="line">        </span><br><span class="line">        // Kratos 服务层/数据层/业务层依赖集（项目中已定义）</span><br><span class="line">        server.DataProviderSet,  // 数据层依赖</span><br><span class="line">        server.BizProviderSet,    // 业务层依赖</span><br><span class="line">        server.ServiceProviderSet,// 服务层依赖</span><br><span class="line">        </span><br><span class="line">        // 绑定测试上下文</span><br><span class="line">        NewTestContext,</span><br><span class="line">    )</span><br><span class="line">    return nil, nil, nil // 占位：Wire 会自动生成真实逻辑</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 以下是配置依赖的示例实现（需根据自己项目调整）</span><br><span class="line">func provideConfig() *conf.Bootstrap &#123;</span><br><span class="line">    // 实际项目中：读取 yaml/toml 配置文件，解析为 conf.Bootstrap</span><br><span class="line">    return &amp;conf.Bootstrap&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func provideCommonService(conf *conf.Bootstrap) *conf.CommonService &#123;</span><br><span class="line">    return conf.CommonService</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func provideLogger() log.Logger &#123;</span><br><span class="line">    return log.DefaultLogger</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>写完后，在 <code>testhelper</code> 文件夹下执行终端命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wire</span><br></pre></td></tr></table></figure>
-<p>执行成功后会生成 <code>wire_gen.go</code> 文件——这是单元测试的「核心钥匙」，里面包含了 <code>InitializeTestContext</code> 的真实实现。</p>
+<p>写完后，在 <code>testhelper</code> 文件夹下执行终端命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wire</span><br></pre></td></tr></table></figure><br>执行成功后会生成 <code>wire_gen.go</code> 文件——这是单元测试的「核心钥匙」，里面包含了 <code>InitializeTestContext</code> 的真实实现。</p>
 <h3><span id="第三步编写单元测试用例demo_testgo">第三步：编写单元测试用例（demo_test.go）</span></h3><p>新建测试文件（<strong>文件名必须以 _test 结尾</strong>），比如 <code>demo_test.go</code>，以「测试一个查询接口」为例：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">package testhelper</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;context&quot;</span><br><span class="line">    v1 &quot;your-project/api/v1&quot; // API 定义包路径</span><br><span class="line">    &quot;testing&quot;</span><br><span class="line"></span><br><span class="line">    &quot;github.com/stretchr/testify/assert&quot;</span><br><span class="line">    &quot;github.com/stretchr/testify/require&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">// 测试用例表格：覆盖不同场景（正常/异常/边界）</span><br><span class="line">var testCases = []struct &#123;</span><br><span class="line">    name        string          // 用例名称</span><br><span class="line">    request     v1.DemoRequest  // 测试请求参数</span><br><span class="line">    expectCount int             // 预期返回数据条数</span><br><span class="line">&#125;&#123;</span><br><span class="line">    &#123;</span><br><span class="line">        name: &quot;正常场景：按ID查询&quot;,</span><br><span class="line">        request: v1.DemoRequest&#123;</span><br><span class="line">            Id:      &quot;123456&quot;,</span><br><span class="line">            PageNum: 1,</span><br><span class="line">            PageSize: 10,</span><br><span class="line">        &#125;,</span><br><span class="line">        expectCount: 1,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        name: &quot;边界场景：空ID查询&quot;,</span><br><span class="line">        request: v1.DemoRequest&#123;</span><br><span class="line">            Id:      &quot;&quot;,</span><br><span class="line">            PageNum: 1,</span><br><span class="line">            PageSize: 10,</span><br><span class="line">        &#125;,</span><br><span class="line">        expectCount: 0,</span><br><span class="line">    &#125;,</span><br><span class="line">    // 可继续添加更多用例：比如分页超出范围、参数非法等</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 单元测试函数：必须以 Test 开头，入参为 *testing.T</span><br><span class="line">func TestDemoService_QueryData(t *testing.T) &#123;</span><br><span class="line">    // 1. 初始化测试上下文（核心：从 wire_gen.go 获取依赖）</span><br><span class="line">    ins, cleanup, err := InitializeTestContext()</span><br><span class="line">    require.NoError(t, err, &quot;❌ 初始化测试上下文失败：%v&quot;, err)</span><br><span class="line">    defer cleanup() // 测试结束后清理资源（比如关闭数据库连接）</span><br><span class="line"></span><br><span class="line">    // 2. 构建上下文（可添加用户ID、权限等上下文信息）</span><br><span class="line">    ctx := context.Background()</span><br><span class="line">    ctx = context.WithValue(ctx, &quot;uid&quot;, &quot;10086&quot;) // 模拟请求上下文</span><br><span class="line"></span><br><span class="line">    // 3. 遍历测试用例，逐个执行</span><br><span class="line">    for _, tc := range testCases &#123;</span><br><span class="line">        // t.Run：单独执行每个用例，失败不影响其他用例</span><br><span class="line">        t.Run(tc.name, func(t *testing.T) &#123;</span><br><span class="line">            t.Logf(&quot;🚀 开始执行用例：%s&quot;, tc.name)</span><br><span class="line"></span><br><span class="line">            // 4. 调用待测试的方法</span><br><span class="line">            res, err := ins.DemoService.QueryData(ctx, &amp;tc.request)</span><br><span class="line"></span><br><span class="line">            // 5. 断言验证结果（核心：判断是否符合预期）</span><br><span class="line">            if assert.NoError(t, err, &quot;❌ 接口调用失败：%v&quot;, err) &#123;</span><br><span class="line">                t.Logf(&quot;✅ 接口调用成功&quot;)</span><br><span class="line">                assert.NotNil(t, res, &quot;❌ 响应结果不能为空&quot;)</span><br><span class="line">                </span><br><span class="line">                if tc.expectCount &gt;= 0 &#123;</span><br><span class="line">                    assert.Len(t, res.DataList, tc.expectCount,</span><br><span class="line">                        &quot;❌ 返回数据条数不符预期：预期%d，实际%d&quot;,</span><br><span class="line">                        tc.expectCount, len(res.DataList))</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                t.Logf(&quot;📊 测试通过：返回 %d 条数据&quot;, len(res.DataList))</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3><span id="关键规则提醒">关键规则提醒</span></h3><ol>
@@ -1800,19 +1742,19 @@
     <content><![CDATA[<h2><span id="1-简化根本复杂性消除偶发复杂性">1. 简化根本复杂性，消除偶发复杂性</span></h2><p>根本复杂性指的是问题与生俱来的、无法避免的困难。比如，协调全国的空中交通，必须实时追踪每架飞机的位置、高度、航速、航向、目的地、降落次序等，才能避免空中和地面冲突。以及还要兼顾因天气原因等航班延误导致的变化。</p>
 <p>与之相反，偶发复杂性是解决根本复杂性过程中衍生的，即解决方案本身带来了新问题。比如笨拙的语言语法会导致大家轻易犯错、忘记释放内存导致 <code>OOM</code> 等；比如因为系统设计不佳导致需要更多的对账脚本或监控系统等。</p>
 <p>软件开发是为了解决一套高度错综复杂、环环相扣的概念的全部细节问题。之所以存在根本复杂性，就是因为要和复杂、无序的现实世界对接；要准确、完整的识别依赖关系和例外情况；要设计出<strong>完全正确</strong>而不是大致正确的解决方案。这是完全无法避免的根本复杂度。</p>
-<p><strong>管理复杂性是软件开发最重要的课题</strong>，可以通过划分子模块、拆解子系统甚至到类的定义、子函数的拆分都是为了将复杂度拆解为简单的部分，隐藏细节，暴露简单的接口。各模块&#x2F;类之间不要跟一团毛线一样混乱。这样才能易于理解，方便扩展。不要逼迫大脑去理解高复杂度的东西，而应该逐步拆解、简化复杂度，方便大脑理解。</p>
-<p>我们应该合理划分职责，进而能够编写<strong>高扇入、低扇出</strong>的类。（高扇入表示被很多类依赖，低扇出表示不依赖太多其他类；和高内聚&#x2F;低耦合是一回事儿）</p>
+<p><strong>管理复杂性是软件开发最重要的课题</strong>，可以通过划分子模块、拆解子系统甚至到类的定义、子函数的拆分都是为了将复杂度拆解为简单的部分，隐藏细节，暴露简单的接口。各模块/类之间不要跟一团毛线一样混乱。这样才能易于理解，方便扩展。不要逼迫大脑去理解高复杂度的东西，而应该逐步拆解、简化复杂度，方便大脑理解。</p>
+<p>我们应该合理划分职责，进而能够编写<strong>高扇入、低扇出</strong>的类。（高扇入表示被很多类依赖，低扇出表示不依赖太多其他类；和高内聚/低耦合是一回事儿）</p>
 <p>关注根本复杂性，消除偶发复杂性，抽丝剥茧制定解决方案，才是真正的挑战。</p>
 <blockquote>
 <p>《软件设计的哲学》中对复杂度有更多的讨论</p>
-</blockquote>
-<h2><span id="2-对待技术债务要谨慎">2. 对待技术债务要谨慎</span></h2><p>在一次迭代开始时，各项需求看上去安排的张弛有度，但仍无法避免在某个时间承受巨大的进度压力，当你发现必须在 <strong>干得快</strong> 和 <strong>干得好</strong> 之间选择时候，一般都会选择 <strong>干得快</strong>，并提醒自己将来再回头来返工优化。但实际上下一轮迭代总会有下一个问题，将来永不会来。这类久拖不决的任务就是 <strong>技术债</strong> ，<strong>技术债</strong> 就像贷款，短期能获得好处，但你总要付出利息。时间久了，利息也将是一笔难以偿还的债务。因为有债务的存在，新功能的加入将变得困难，而且这些债务也将是 <code>bug</code> 的滋生地。</p>
+<h2><span id="2-对待技术债务要谨慎">2. 对待技术债务要谨慎</span></h2></blockquote>
+<p>在一次迭代开始时，各项需求看上去安排的张弛有度，但仍无法避免在某个时间承受巨大的进度压力，当你发现必须在 <strong>干得快</strong> 和 <strong>干得好</strong> 之间选择时候，一般都会选择 <strong>干得快</strong>，并提醒自己将来再回头来返工优化。但实际上下一轮迭代总会有下一个问题，将来永不会来。这类久拖不决的任务就是 <strong>技术债</strong> ，<strong>技术债</strong> 就像贷款，短期能获得好处，但你总要付出利息。时间久了，利息也将是一笔难以偿还的债务。因为有债务的存在，新功能的加入将变得困难，而且这些债务也将是 <code>bug</code> 的滋生地。</p>
 <p>我们很容易说服自己，当前变更引入的一点点<strong>技术债</strong>并不算什么大问题。就跟破窗效应一样，只要放开了口子，系统会腐化的很快。变坏容易，变好很难。</p>
 <p>尽量避免拖欠技术债务，应该要采取<strong>零容忍</strong>策略。如果迫不得已，也要在任务卡片上追踪这笔债务，及时偿还，不要遗忘。</p>
 <h2><span id="3-分析需求背后的意义">3. 分析需求背后的意义</span></h2><p>假如用户提出一个需求：设计一架飞行速度在 2.5 马赫(2.5 倍音速)的低成本战斗机。</p>
 <p>因为风阻和速度的平方成正比，从 1 马赫到 2 马赫，需要的动力和机身设计有更严苛的要求。但通过追问为什么需要这种类型的战机时，得到的答案是：<strong>为了快速撤离战场</strong>，因为用户想利用速度优势撤离战场。</p>
 <p>了解需求之后，可以有更好的方案：通过提升推力重量比，改善战机的加速性能和机动变向性能，用灵巧性取代了对速度的需求。</p>
-<p>我们首次遇到的用户需求可能只是用户&#x2F;产品从自己角度想到的一个方案，可能并不是最佳的。可以通过分析用户需求的真正意义，定位真正的问题，尝试提出比用户的建议更好、成本更低的方案。而了解真正需求的办法也很简单：面对用户，不断问为什么。如果用户(也可能是产品)并不能回答你的问题，那么你可以想一下是否需要 <code>Say NO</code>。</p>
+<p>我们首次遇到的用户需求可能只是用户/产品从自己角度想到的一个方案，可能并不是最佳的。可以通过分析用户需求的真正意义，定位真正的问题，尝试提出比用户的建议更好、成本更低的方案。而了解真正需求的办法也很简单：面对用户，不断问为什么。如果用户(也可能是产品)并不能回答你的问题，那么你可以想一下是否需要 <code>Say NO</code>。</p>
 <h2><span id="4-美在于简单">4. 美在于简单</span></h2><p>有些东西是我们在代码中尽力争取的，比如：</p>
 <ul>
 <li><p>可读性</p>
@@ -1824,13 +1766,13 @@
 <li><p>“难以捉摸”的美的追求</p>
 </li>
 </ul>
-<p>对 <strong>美</strong> 我们都有自己的判断，但 <strong>简单</strong> 一定是它的内在品质。一个应用或者系统无论多么复杂，其中每个单独的组成部分都保持着它的简洁性：简单的模块承担了单一的职责，它包含着同样简单的方法，而且方法的功能如同其名称描述的一样，简单且直接。</p>
+<p>对 <strong>美</strong> 我们都有自己的判断，但 <strong>简单</strong> 一定是它的内在品质。一个应用或者系统无论多么复杂，其中每个单独的组成部分都保持着它的简洁性：简单的模块承担了单一的职责，它包含着同样简单的方法，而且方法的功能如同其名称描述的一样，简单且直接。</p>
 <p>不仅每一个组成部分本身的职责要简单，而且与系统其它部分也应该保持着简单的关系。美来自于简单，亦存在于简单。有时因为问题本身很复杂，实现自然也会是复杂的，那就把这些复杂性封装到模块内部，使得模块之间的交互是简单的。</p>
 <blockquote>
-<p>比如文件系统是复杂的，但是作为封装的模块，对外暴露的只有 <code>open</code> <code>read</code> <code>write</code> <code>lseek</code> <code>close</code> 几个方法。所以这是一个好的设计。如果非要选择，模块拥有一个简单的接口比拥有一个简单的实现更重要。<br>对问题最好的解决方案，就是能够满足该问题的所有需求且最为简单的解决方案。如何衡量简单呢？</p>
+<p>比如文件系统是复杂的，但是作为封装的模块，对外暴露的只有 <code>open</code> <code>read</code> <code>write</code> <code>lseek</code> <code>close</code> 几个方法。所以这是一个好的设计。如果非要选择，模块拥有一个简单的接口比拥有一个简单的实现更重要。<br>对问题最好的解决方案，就是能够满足该问题的所有需求且最为简单的解决方案。如何衡量简单呢？</p>
 </blockquote>
 <p>1）是否能快速读懂。</p>
-<p>2）是否易于创建，不只是代码敲出来，而是 <code>debug</code> 并写对的时间，复杂的代码通常需要好一阵才能写对。</p>
+<p>2）是否易于创建，不只是代码敲出来，而是 <code>debug</code> 并写对的时间，复杂的代码通常需要好一阵才能写对。</p>
 <p>3）代码的数量。</p>
 <p>4）新概念的数量。</p>
 <p>简单不是简化，不要把问题想简单了。比如“爬楼梯”算法，递归确实简单，但是当台阶级数比较多时，递归耗时太久，并不是一个好的方案。</p>
@@ -1838,10 +1780,10 @@
 <p><strong>控制复杂度</strong>，是所有编程原则的总则。编程工作的核心就是与复杂度较量。添加功能会让代码复杂，代码复杂，使用起来就困难，项目进展就会变慢。要写好代码，就要尽量拖延代码变复杂的时机，如果非这么做不可的时候再写。即使要写也要尽量消除重复，设法调整架构，使得新添加的功能不会令系统的整体复杂度大幅上升，这才是编程中最难的部分。</p>
 <blockquote>
 <p>思从深而行从简</p>
-</blockquote>
-<h2><span id="5-少即是多">5. 少即是多</span></h2><p><code>Less is More</code>，虽然是一句老掉牙的格言，但也确实是至理名言。</p>
+<h2><span id="5-少即是多">5. 少即是多</span></h2></blockquote>
+<p><code>Less is More</code>，虽然是一句老掉牙的格言，但也确实是至理名言。</p>
 <p>不要过度实现，不要预计将来会用到，不要觉得这里性能可能会有问题而提早优化，不要做现在不需要但你觉得将来需要的工作。<strong>你编写的代码，只应该解决目前确实存在的这些问题，而不是去解决你正在设想的问题，因为你永远不知道接下来会遇到什么问题。</strong></p>
-<p>系统设计应该保留可扩展性，扩展性更多的是在<strong>接口扩展性设计</strong>&#x2F;<strong>外部依赖的可扩展性</strong>等设计层面，这些一般都不需要太早的代码实现。比如接口层面保留引入本地缓存的能力，但先不要写本地缓存的实现代码，因为会增加数据一致性的复杂度和代码复杂度，等以后需要了再添加即可。</p>
+<p>系统设计应该保留可扩展性，扩展性更多的是在<strong>接口扩展性设计</strong>/<strong>外部依赖的可扩展性</strong>等设计层面，这些一般都不需要太早的代码实现。比如接口层面保留引入本地缓存的能力，但先不要写本地缓存的实现代码，因为会增加数据一致性的复杂度和代码复杂度，等以后需要了再添加即可。</p>
 <p><strong>最好的代码是不能再删减一行的代码，哪怕是注释。</strong></p>
 <h2><span id="6-时刻想着删减代码">6. 时刻想着删减代码</span></h2><p>删除一行代码带给我的成就感要多于增加一行代码。<strong>代码是负债，而不是资产</strong>，对于增加代码我们要吝啬，用新增代码量来衡量工作是愚蠢的。新增的代码都需要维护，而且代码都可能会出错，通过删减代码来提升代码质量也是一种尝试，能用 8 行代码实现的就不要用 10 行。</p>
 <p>我们在局部或服务整体重构之后，老代码没有下掉，意味着运维责任多了一倍，这都是负债，我们并没有比重构前变得更轻松。 当然并不是只有重构才能下线代码，冗余的逻辑、无效的代码、不再使用的接口功能等等都是可以删减的代码；实在不济，去掉一些无效或错误的注释也是一份功劳。</p>
@@ -1875,13 +1817,13 @@
 <p>比如最近在业务上，用户反馈购买会员后视频试看结束仍然出蒙层无法播放，分析发现是客户端从后端没有获取到购买成功的信息而拦截，但客户端并没有请求发出和响应的日志。一切都很诡异，如果选择让用户重装一下也是能恢复的。但如果继续追查原因，会发现是客户端对登录态判断逻辑有问题，导致没有发请求。所以用户不能看的根本原因是登录态判断有问题。但凡中间断了没有追查到底，都不能揪出根因。</p>
 <p>如果过往经历中没有抓耳挠腮、茶饭不思的追查过几个问题，是有点不完整的。只有在追查根本原因的过程中，才能学到东西并且印象深刻。</p>
 <h2><span id="10-营地法则要让离开时的营地比进入时干净">10. 营地法则：要让离开时的营地比进入时干净</span></h2><blockquote>
-<p>努力留下一个比你发现时更好的世界 - Robert<br>当你发现地上有脏东西，不管是谁造成的，都要把它清理干净。提交代码时同样如此，只需要 <code>commit</code> 提交时好于 <code>checkout</code> 时即可，你可能仅仅改进了一些变量命名的可读性，或者把长函数拆分成两个短函数；你可以是打破了一个循环依赖，或者增加了一个接口解耦策略和实现细节。</p>
+<p>努力留下一个比你发现时更好的世界 - Robert<br>当你发现地上有脏东西，不管是谁造成的，都要把它清理干净。提交代码时同样如此，只需要 <code>commit</code> 提交时好于 <code>checkout</code> 时即可，你可能仅仅改进了一些变量命名的可读性，或者把长函数拆分成两个短函数；你可以是打破了一个循环依赖，或者增加了一个接口解耦策略和实现细节。</p>
 </blockquote>
 <p>做的事情可大可小，但是要变好。</p>
 <blockquote>
 <p>具体可实施的小步改进可参照《重构》</p>
-</blockquote>
-<h2><span id="11-多问自己用户会怎么做">11. 多问自己：用户会怎么做？</span></h2><p>外网用户没有程序员的意识和能力来解决问题，也不会认可程序员使用的界面模式和提示信息；因此你在界面底部的一次错误提示，用户可能根本就看不见；同时，用户也不会按下 <code>F12</code>看一下接口调用是否正常。</p>
+<h2><span id="11-多问自己用户会怎么做">11. 多问自己：用户会怎么做？</span></h2></blockquote>
+<p>外网用户没有程序员的意识和能力来解决问题，也不会认可程序员使用的界面模式和提示信息；因此你在界面底部的一次错误提示，用户可能根本就看不见；同时，用户也不会按下 <code>F12</code>看一下接口调用是否正常。</p>
 <p>要想知道用户的真实想法，最好就是观察一个用户的完整操作。给他一个 <code>APP</code>，看他完整的操作轨迹。你要一直问自己：为什么他要那样做？为什么他不那样做？</p>
 <p>不要用用户访谈代替观察用户，因为他们访谈的表述和操作之间会有巨大差异。用户在使用你的应用时，在你看来就是个“傻子”。直接观察用户是获取需求的最佳途径，用户到底想要什么？与其闷头猜测，不如花一小时去仔细观察。</p>
 <p>敬畏外网用户的反馈，一条外网反馈意味着 1000 个用户遇到了问题。不要无视他们，他们使用并乐于反馈问题，我们要珍惜并积极响应。每一次用户反馈问题的解决，都是提升用户满意度的最有效举措。</p>
@@ -1889,30 +1831,30 @@
 <blockquote>
 <p>当然，也不可能所有人都去当司机或者抓人过来搞测试，但是总有其他办法：</p>
 <p><em>比如滴滴建设了“听音工具”，让一线研发可以去听客服解决用户进线的录音，知道用户会有哪些问题，客服是如何解决的。</em><br>有千万用户的应用都会建设一个好的埋点系统，好好分析用户点击轨迹行为。这样的边际成本为 0，而且还很客观。</p>
-</blockquote>
-<h2><span id="12-设计两次">12. 设计两次</span></h2><p>软件设计不是一件简单的事情，所以你对如何构建模块的第一个想法不太会是一个好的设计。多做一个备选方案，对比它们，一定会对你有所启发。尝试选择那些彼此截然不同的方法，这样你会学到更多。当然，最重要还是要考虑上层软件的易用性。</p>
+<h2><span id="12-设计两次">12. 设计两次</span></h2></blockquote>
+<p>软件设计不是一件简单的事情，所以你对如何构建模块的第一个想法不太会是一个好的设计。多做一个备选方案，对比它们，一定会对你有所启发。尝试选择那些彼此截然不同的方法，这样你会学到更多。当然，最重要还是要考虑上层软件的易用性。</p>
 <p>对比多个方案，挑选最佳方案，或者整合推动产生最佳方案。多否定自己，多从使用者角度考虑是否合理。设计两次并不会浪费太多时间，设计上浪费的两个小时，相比实现需要的两周而言，不值一提。今天设计好之后，先放在那，切换一下头脑，等待灵光一现看是否有更合理的方案。</p>
 <p>但我们大家都是聪明人，我们会觉得没有必要<strong>设计两次</strong>，因为第一次的设计就是<strong>天才的杰作</strong>。但软件设计是一件很难的事情，没有人第一次就做对，所以：尝试设计两次。</p>
-<h2><span id="13-对代码审查好一点">13. 对代码审查好一点</span></h2><p>你可能不喜欢代码审查 <code>Code Review</code>，就跟不喜欢让别人看到你内裤的颜色一样。但我们应该知道，代码审查不仅仅是更正代码错误，其目的还是<strong>共享知识</strong>、建立统一的代码指导标准。代码审查的时候态度要温和，确保评语是有建设性的，不是刻薄的。同样，对评审意见的回复也不应该是“设计如此”&#x2F;“这次先这样”等无意义的回复。</p>
+<h2><span id="13-对代码审查好一点">13. 对代码审查好一点</span></h2><p>你可能不喜欢代码审查 <code>Code Review</code>，就跟不喜欢让别人看到你内裤的颜色一样。但我们应该知道，代码审查不仅仅是更正代码错误，其目的还是<strong>共享知识</strong>、建立统一的代码指导标准。代码审查的时候态度要温和，确保评语是有建设性的，不是刻薄的。同样，对评审意见的回复也不应该是“设计如此”/“这次先这样”等无意义的回复。</p>
 <p>应该月度组织一场“代码审查会议”，在会议上畅谈“代码为什么这样写”和“怎么写可以更好”，可以针对一个命名、一个范式、一个循环判断、单测是否有效、数据库设计是否合理、领域模型是否正确、代码分层和模块划分是否合适等等问题充分讨论。如果这个过程中有<strong>点心</strong>和<strong>饮料</strong>，那代码审查的过程会充满乐趣，并且值得期待。</p>
 <h2><span id="14-良好的命名就是最佳的文档">14. 良好的命名就是最佳的文档</span></h2><p>编程无非就是在对 26 个字母排列组合，如何能让别人读懂你的代码，除去更大范围的模式设计之外，在一个屏幕可见范围内，良好的变量和函数命名是最有助于让读者看懂你代码的实现。</p>
 <ul>
 <li><p>不要写注释：如果必须添加注释才能说明一段代码的含义，那就拆分成多个子函数，用函数名来表述注释要表达的含义。</p>
 </li>
-<li><p>不要为了少打几个字母而缩减名称。<code>x</code> <code>y</code> <code>xr</code> <code>rn</code> 等，除非它的作用域只有两三行。</p>
+<li><p>不要为了少打几个字母而缩减名称。<code>x</code> <code>y</code> <code>xr</code> <code>rn</code> 等，除非它的作用域只有两三行。</p>
 </li>
-<li><p>不要将多种命名习惯混用，要保持一致，比如昵称不要混用 <code>nick</code> 和 <code>name</code>，在全场景使用一个就好; 另外，符合惯用法，比如 <code>empty()</code> 方法，一般场景用于判断 <strong>是否为空</strong>，那么就不要给这个方法再赋予<strong>清空该容器</strong>的动词含义。</p>
+<li><p>不要将多种命名习惯混用，要保持一致，比如昵称不要混用 <code>nick</code> 和 <code>name</code>，在全场景使用一个就好; 另外，符合惯用法，比如 <code>empty()</code> 方法，一般场景用于判断 <strong>是否为空</strong>，那么就不要给这个方法再赋予<strong>清空该容器</strong>的动词含义。</p>
 </li>
-<li><p>词要达意，存储名称的集合，不要叫 <code>nameList</code>，直接 <code>names</code>就好。尽量不要使用 <code>itemData</code>, <code>userInfo</code> 等含义很广，必需要深入看实现才能懂的命名。</p>
+<li><p>词要达意，存储名称的集合，不要叫 <code>nameList</code>，直接 <code>names</code>就好。尽量不要使用 <code>itemData</code>, <code>userInfo</code> 等含义很广，必需要深入看实现才能懂的命名。</p>
 </li>
 <li><p>名称的长短和名称的作用域成正比。短循环内局部变量就用短命名。整个函数声明周期的命名就要长一些。</p>
 </li>
 </ul>
-<p>命名最重要的就是精确性和一致性。不要过于笼统或者模糊。对重复使用的概念，保持一致的命名。不要一会儿 <code>title</code> 一会儿 <code>name</code></p>
+<p>命名最重要的就是精确性和一致性。不要过于笼统或者模糊。对重复使用的概念，保持一致的命名。不要一会儿 <code>title</code> 一会儿 <code>name</code></p>
 <blockquote>
 <p>对变量的命名要像给自己孩子起名一样慎重，好的名字十分重要，但往往并非唾手可得。</p>
-</blockquote>
-<h2><span id="15-要写注释">15. 要写注释</span></h2><p><strong>注释的目的是补充代码所不能表达的意图。如果能通过调整代码结构、重命名函数和变量就能解释清楚的就不要写注释。代码应该能向下一个接替我的程序员解释自己</strong>，注释并非总是邪恶的，它们和代码结构一样重要。在代码顶部写上注释，用来说明代码要完成什么事情；在代码内部加上注释，可以让其他开发人员知晓如何修复或扩展这些代码。对复杂项目来说，通过阅读代码来了解其行为是不现实的, 注释是快速了解项目的入口。</p>
+<h2><span id="15-要写注释">15. 要写注释</span></h2></blockquote>
+<p><strong>注释的目的是补充代码所不能表达的意图。如果能通过调整代码结构、重命名函数和变量就能解释清楚的就不要写注释。代码应该能向下一个接替我的程序员解释自己</strong>，注释并非总是邪恶的，它们和代码结构一样重要。在代码顶部写上注释，用来说明代码要完成什么事情；在代码内部加上注释，可以让其他开发人员知晓如何修复或扩展这些代码。对复杂项目来说，通过阅读代码来了解其行为是不现实的, 注释是快速了解项目的入口。</p>
 <p>设身处地的为以后的读者或者 15 分钟前的自己想一想：你希望知道什么？</p>
 <p>注释主要将代码中不明显的东西揭示给读者：</p>
 <ul>
@@ -1938,9 +1880,9 @@
 <li><p>耦合严重，很难找到修改切入点。每次的修改都会影响到老功能；</p>
 </li>
 </ul>
-<p>任何作出系统更改的理由都如此痛苦。因为系统病了，它需要一个医生。你知道系统出了问题，但是你会担心你的优化修改是否会引入新的问题，你会秉持 <strong>能用就行</strong> 的原则得过且过。这个时候请大胆一些，不要怕搞砸，就像手术一样，为了治疗疾病总是需要几道切口。切口会愈合，系统也是这样。花在重构&#x2F;优化上的时间能够在项目生命周期里得到数倍的回报。</p>
+<p>任何作出系统更改的理由都如此痛苦。因为系统病了，它需要一个医生。你知道系统出了问题，但是你会担心你的优化修改是否会引入新的问题，你会秉持 <strong>能用就行</strong> 的原则得过且过。这个时候请大胆一些，不要怕搞砸，就像手术一样，为了治疗疾病总是需要几道切口。切口会愈合，系统也是这样。花在重构/优化上的时间能够在项目生命周期里得到数倍的回报。</p>
 <p>重构过程中，你需要重新定义内部接口、重新设计模块，以及采用减少依赖的方式简化代码。通过这些工作，可以显著降低代码的复杂度。</p>
-<p>同时保持 <strong>测试完备</strong>，重构的前提是你有测试用例证明你的重构是安全的，不管是回归测试还是 <code>diff</code>测试，这些重构的改动都应该在可控范围内。</p>
+<p>同时保持 <strong>测试完备</strong>，重构的前提是你有测试用例证明你的重构是安全的，不管是回归测试还是 <code>diff</code>测试，这些重构的改动都应该在可控范围内。</p>
 <p>不要犹豫，如果你觉得系统需要优化，不管大小，请勇敢前行。</p>
 <h2><span id="18-决定重构之前先想想这能不能比原来好一倍">18. 决定重构之前，先想想这能不能比原来好一倍</span></h2><blockquote>
 <p>上一条我们鼓励优化重构，是的，这一条却希望你慎重，这很矛盾<br>简单来看，程序员分为两类：</p>
@@ -1951,8 +1893,8 @@
 <li><p>总喜欢用一个系统解决所有问题，而不只是当前这个问题，因此，只要有机会，他们就想<strong>从头设计</strong>方案</p>
 </li>
 </ul>
-<p>这两种倾向走向极端，都会造成灾难。如果所有修复都是小修小补，那你会将自己困住，无法从更大维度思考问题，他们的说辞总是“不可能”、“时间不够”等。反之，如果所有方案都需要从头开始，仅凭一个单独的用例，就决定重做整个系统那你会将前一套架构带给你的知识丢掉，陷入<strong>原地转圈&#x2F;不断重构</strong>的过程，这类同学只从解决方案出发，来论证需要重构，而没有能够从当前需要解决的问题出发。凡事不从问题出发的提议，都是值得怀疑的。</p>
-<p>如何决定选择<strong>小的优化修复</strong>还是<strong>重构</strong>呢？ 那就是：<strong>重构&#x2F;优化之后能不能比原来好一倍</strong></p>
+<p>这两种倾向走向极端，都会造成灾难。如果所有修复都是小修小补，那你会将自己困住，无法从更大维度思考问题，他们的说辞总是“不可能”、“时间不够”等。反之，如果所有方案都需要从头开始，仅凭一个单独的用例，就决定重做整个系统那你会将前一套架构带给你的知识丢掉，陷入<strong>原地转圈/不断重构</strong>的过程，这类同学只从解决方案出发，来论证需要重构，而没有能够从当前需要解决的问题出发。凡事不从问题出发的提议，都是值得怀疑的。</p>
+<p>如何决定选择<strong>小的优化修复</strong>还是<strong>重构</strong>呢？ 那就是：<strong>重构/优化之后能不能比原来好一倍</strong></p>
 <ul>
 <li><p>研发效能是不是高一倍？</p>
 </li>
@@ -1965,26 +1907,22 @@
 </ul>
 <p>好一倍是对<strong>必须有大幅改变才值得大幅变更</strong>的粗略量化描述，不要因为好一点就换掉现有东西，只有在强很多的情况下才值得去做。</p>
 <p>当我们不知道要还是不要的时候，应该果断的选择不要，至少是暂时不要，直到我们清楚的知道为什么要。</p>
-<h2><span id="19-不要重复你自己">19. 不要重复你自己</span></h2><p>很经典的 <strong>“DRY”原则</strong> ，它可能是所有编程原则里最根本的原则之一。</p>
-<p><strong>重复就是浪费</strong>，每一行代码都会被维护到，而且可能是未来 <code>buy</code> 的潜在来源，重复的代码会带来代码库的膨胀，增加了复杂度，维护成本也会增加。<code>DRY</code>的要求是在一个系统内，每一块知识必须有一个单一的、明确的、权威的表示。</p>
-<p><strong>将重复的过程调用自动化</strong>， 人工测试很慢，所以需要自动化测试。代码集成部署手工完成耗时且容易出错，所以有了流水线。但凡需要重复多次的工作，都需要自动化。如果经常需要处理相同格式的文本，就写一个包含 <code>cut</code> <code>grep</code> <code>sed</code> <code>awk</code> 的脚本帮你完成工作。</p>
+<h2><span id="19-不要重复你自己">19. 不要重复你自己</span></h2><p>很经典的 <strong>“DRY”原则</strong> ，它可能是所有编程原则里最根本的原则之一。</p>
+<p><strong>重复就是浪费</strong>，每一行代码都会被维护到，而且可能是未来 <code>buy</code> 的潜在来源，重复的代码会带来代码库的膨胀，增加了复杂度，维护成本也会增加。<code>DRY</code>的要求是在一个系统内，每一块知识必须有一个单一的、明确的、权威的表示。</p>
+<p><strong>将重复的过程调用自动化</strong>， 人工测试很慢，所以需要自动化测试。代码集成部署手工完成耗时且容易出错，所以有了流水线。但凡需要重复多次的工作，都需要自动化。如果经常需要处理相同格式的文本，就写一个包含 <code>cut</code> <code>grep</code> <code>sed</code> <code>awk</code> 的脚本帮你完成工作。</p>
 <blockquote>
 <p>重复不仅仅指代码的重复，即使代码不同但实现了同样的功能，或者不同代码在描述同一个领域模型概念，都是重复。</p>
-</blockquote>
-<h2><span id="20-没有高手神话请把问题描述清楚">20. 没有高手神话，请把问题描述清楚</span></h2><p>如果有人问你这样一个问题：</p>
+<h2><span id="20-没有高手神话请把问题描述清楚">20. 没有高手神话，请把问题描述清楚</span></h2></blockquote>
+<p>如果有人问你这样一个问题：</p>
 <blockquote>
-<ol>
-<li>我碰到一个 <code>XYZ</code>异常，你知道问题出在哪里吗？</li>
-<li>创作者不能发文了，帮忙看一下吧？</li>
-<li>群里发你一个没有上下文的截图，或者群里@你，帮忙看一下？<br>上面的问题反馈还是一个完整的句子，有的同学在提问问题的时候都没有断句和标点，甚至有错别字和倒装句。遇到这种情况真的是苦不堪言。</li>
-</ol>
+<p>1) 我碰到一个 <code>XYZ</code>异常，你知道问题出在哪里吗？<br>2) 创作者不能发文了，帮忙看一下吧？<br>3) 群里发你一个没有上下文的截图，或者群里@你，帮忙看一下？<br>上面的问题反馈还是一个完整的句子，有的同学在提问问题的时候都没有断句和标点，甚至有错别字和倒装句。遇到这种情况真的是苦不堪言。</p>
 </blockquote>
 <p>你一定会满头问号，心里怒骂：没有堆栈信息、没有错误日志、没有信息上下文、没有 <code>trace</code>链路信息，没有对比截图，仅凭一句话就寻求你的帮助，希望你能看懂并且帮助解决问题。对方真是把你当成神仙高手了。</p>
 <p>提出问题的人可能更适合回答问题，因为他有更多的信息上下文。<strong>所以在对别人提出问题的时候，请把问题使用对方能理解的词汇和方式描述清楚，并且把上下文也要描述清楚</strong></p>
 <blockquote>
 <p>总之一句话：会问问题。</p>
-</blockquote>
-<h2><span id="21-学习新语言">21. 学习新语言</span></h2><p>我们假设一种场景：</p>
+<h2><span id="21-学习新语言">21. 学习新语言</span></h2></blockquote>
+<p>我们假设一种场景：</p>
 <ol>
 <li><p>业务同学讲了十分钟，提出一个需求，期望能对产品做一个改进，进而吸引更多的用户使用</p>
 </li>
@@ -2003,33 +1941,33 @@
 <blockquote>
 <p>新语言并不特指明编程语言，更多的是不同的领域概念。<br>想象一下，如果技术同学能够以业务同学可理解的术语向其解释其中的问题，业务同学以技术能够理解的术语解释业务上的问题，上述情况将会有改观。</p>
 </blockquote>
-<p>同样的道理，如果我们和交易同学有合作就应该去了解交易系统的概念和规则。如果和推荐系统合作就该去了解一下召回&#x2F;倒排等概念，买一本推荐系统的书从头看一下，可以不求甚解。如果和会计系统合作就应该了解“有借必有贷，借贷必相等”，甚至可以去考一些会计基础证书。</p>
+<p>同样的道理，如果我们和交易同学有合作就应该去了解交易系统的概念和规则。如果和推荐系统合作就该去了解一下召回/倒排等概念，买一本推荐系统的书从头看一下，可以不求甚解。如果和会计系统合作就应该了解“有借必有贷，借贷必相等”，甚至可以去考一些会计基础证书。</p>
 <p>问出好问题，很重要。只有先让对方听懂你的问题，你才能有好答案。不要沉浸在自己的世界中和别人沟通，要使用别人能理解的词汇去描述或回答问题，以及描述问题的时候携带必要的上下文，尽量给对方提供舒服的交流环境。</p>
 <blockquote>
 <p>学了新的语言，才能够使用别人能听懂的语言沟通，这样提出的问题才能得到更好的解答</p>
-</blockquote>
-<h2><span id="22-加班加点事倍功半">22. 加班加点，事倍功半</span></h2><p>专业编程不像几公里的全力奔跑，目标就如宽阔马路的尽头一样清晰可见。而更像黑暗中进行的马拉松，你只有一张粗略的地图。如果蒙头奔着一个方向跑下去，则不太可能成功。你需要保持一个可接受的步速，当你对自己所处的位置有了更多了解之后，就调整你的行程。</p>
+<h2><span id="22-加班加点事倍功半">22. 加班加点，事倍功半</span></h2></blockquote>
+<p>专业编程不像几公里的全力奔跑，目标就如宽阔马路的尽头一样清晰可见。而更像黑暗中进行的马拉松，你只有一张粗略的地图。如果蒙头奔着一个方向跑下去，则不太可能成功。你需要保持一个可接受的步速，当你对自己所处的位置有了更多了解之后，就调整你的行程。</p>
 <p>同时，你还需要时间来持续学习，让你的专业领域知识保持最新。因此，你不能把你的晚上、周末、假期都用在加班上。<strong>对工作的准备和持续学习才是职业生涯的核心部分</strong>。</p>
 <p>工作要像一个专业人员一样：充分准备、付诸实施、观察、反省和改变。专注于你的项目，竭尽所能找到灵活的解决方案，提高你的技能，反省思考你正在做的事情，然后调整自己的行为，不要把所有精力都放在全力奔跑上。</p>
-<p><strong>放下鼠标，离开键盘，去走一走，让大脑做一些与创造性相关的事情，听听音乐，休息一下。<strong>只有当你离开电脑之后，你才会发现你解决问题的第一次尝试并不是解决问题的最佳方案。这也是</strong>设计两次</strong>的最佳时机。</p>
+<p><strong>放下鼠标，离开键盘，去走一走，让大脑做一些与创造性相关的事情，听听音乐，休息一下。</strong>只有当你离开电脑之后，你才会发现你解决问题的第一次尝试并不是解决问题的最佳方案。这也是<strong>设计两次</strong>的最佳时机。</p>
 <blockquote>
 <p>在开发项目时，你会对问题领域了解的越来越多，并有望找到更高效的途径。为了避免无效工作，你必须有足够的时间去观察你手头上的工作，思考你所看到的情况，并随时调整你的行为</p>
-</blockquote>
-<h2><span id="23-数据是核心">23. 数据是核心</span></h2><p>从站在更远的角度来看，系统一般都是操作数据的工具而已。无论代码量级有多少，处于核心地位的永远是<strong>数据</strong>。而且相对于繁杂的代码，把注意力集中到底层小的多的基本数据集上，会更容易一些。<strong>数据要比代码更加精炼，也更好理解</strong>。要想读懂程序，最为困难的就是厘清哪些数据之间是相互关联的。</p>
+<h2><span id="23-数据是核心">23. 数据是核心</span></h2></blockquote>
+<p>从站在更远的角度来看，系统一般都是操作数据的工具而已。无论代码量级有多少，处于核心地位的永远是<strong>数据</strong>。而且相对于繁杂的代码，把注意力集中到底层小的多的基本数据集上，会更容易一些。<strong>数据要比代码更加精炼，也更好理解</strong>。要想读懂程序，最为困难的就是厘清哪些数据之间是相互关联的。</p>
 <p>就如同代码的优化升级都还好做一些，但涉及到数据结构的变化，解决起来就会困难得多，要考虑双写、同步、迁移、一致性。数据构成了系统的核心，数据是系统中最重要的部分，代码可以是一坨便便，但数据一定要清晰且合理。所以对数据的设计要给予足够的重视。</p>
 <blockquote>
 <ol>
 <li>系统设计时优先考虑数据模型的设计</li>
-<li>上手新服务时优先查看数据存储的实现。这时候如果是非结构化存储，会有理解成本。</li>
+<li>上手新服务时优先查看数据存储的实现。这时候如果是非结构化存储，会有理解成本。<h2><span id="24-根据投资回报率roi进行决策">24. 根据投资回报率(ROI)进行决策</span></h2></li>
 </ol>
 </blockquote>
-<h2><span id="24-根据投资回报率roi进行决策">24. 根据投资回报率(ROI)进行决策</span></h2><p>测试是一件 <code>ROI</code>很高的事情，投入 4 个小时时间编写测试用例。却可以省下 8 小时的问题排查时间，投资回报率高达 200%。</p>
+<p>测试是一件 <code>ROI</code>很高的事情，投入 4 个小时时间编写测试用例。却可以省下 8 小时的问题排查时间，投资回报率高达 200%。</p>
 <p>如果发布上架对投资方是至关重要的，那么花费半年才能得到的完美系统相比于花费 2 个月的 <code>MVP</code>版本”，<code>ROI</code>就要低很多。发布了能用的版本，根据用户反馈适当调整，更能活得下去。</p>
 <p>系统的升级改造，主要是时间投入和预计收益是否能适当。即使一个系统架构不佳，但是修改频率很低，那么就可以先放置在那里，不去管他。先把时间投入其他重要事情上，如果没有其他事情可做，那另当别论。</p>
 <h2><span id="25-拉伸关键维度发现设计中的不足">25. 拉伸关键维度，发现设计中的不足</span></h2><p>我们的设计一般都是基于当前需求、当前熟悉的技术、预期的数据量和当前性能要求等实现的。</p>
 <p>在设计的时候，我们可以来拉伸解决方案中的关键维度，看看哪些方面会遭到破坏。比如，如果用户量越来越多，当前系统是否能承载；如果每天处理的交易数据量越来越多，是当前的十倍百倍会如何；如果数据必须要保存 6 个月而非一周时，当前存储是否满足；通过这些手段，这样我们就能发现设计的不足。</p>
 <p>我们暂且简称其为<strong>无限法</strong>，即尝试系统中的关键维度扩展到无限大的时候，会发生什么。</p>
-<p>设计归设计，实现归实现。当前数据量少，我们可以用 <code>mysql</code>实现检索，但是要保留以后检索维度或数据增多之后替换成 <code>ES</code>或者搜索中台的能力。对 <code>ES</code>操作的代码在这次实现中可能一行都不会写，但是要保证以后对于扩展来说是易于添加&#x2F;切换的。</p>
+<p>设计归设计，实现归实现。当前数据量少，我们可以用 <code>mysql</code>实现检索，但是要保留以后检索维度或数据增多之后替换成 <code>ES</code>或者搜索中台的能力。对 <code>ES</code>操作的代码在这次实现中可能一行都不会写，但是要保证以后对于扩展来说是易于添加/切换的。</p>
 <p>这就涉及到对好代码(好设计)的标准，就是：<strong>是否能轻而易举的修改它</strong>。主要有两点：</p>
 <ul>
 <li><p>可读性：首先要读懂，才能谈修改</p>
@@ -2052,8 +1990,8 @@
 </ol>
 <blockquote>
 <p>让所有的线上变更都走流程，即使你认为加行日志不会有问题，但是也可能会因为空指针而 <code>core dump</code></p>
-</blockquote>
-<h2><span id="27-靠谱和信用是我们的资产">27. 靠谱和信用是我们的资产</span></h2><p>工作就是树立个人影响力的过程，不管是你写的代码多牛逼，解决了多复杂的问题，这是一方面。但总还是有一些软素质直接影响评价和定位。比如：</p>
+<h2><span id="27-靠谱和信用是我们的资产">27. 靠谱和信用是我们的资产</span></h2></blockquote>
+<p>工作就是树立个人影响力的过程，不管是你写的代码多牛逼，解决了多复杂的问题，这是一方面。但总还是有一些软素质直接影响评价和定位。比如：</p>
 <ul>
 <li><p>问题的解决者和终结者：只会抱怨还是低头去解决问题</p>
 </li>
@@ -2072,7 +2010,7 @@
 </li>
 <li><p><code>KISS</code>原则：<code>Keep it Simple and Stupid</code>、<code>Keep it Short and Simple</code>、<code>Keep it Simple and Straightforward</code></p>
 </li>
-<li><p><code>DRY</code>: <code>Dont Repeat Yourself</code></p>
+<li><p><code>DRY</code>: <code>Dont Repeat Yourself</code></p>
 </li>
 <li><p><code>LoD</code>原则: 最少依赖</p>
 </li>
@@ -2112,24 +2050,24 @@
 </li>
 </ul>
 <h2><span id="30-在责备别人之前先检查自己的代码">30. 在责备别人之前先检查自己的代码</span></h2><p>开发人员通常难以相信自己的代码会出错，绝不可能出错，即使出错了，也必定是编译器出问题了。</p>
-<p>如果我们使用的工具&#x2F;库&#x2F;框架是被广泛使用的，那就几乎没有理由怀疑它会出错。如果发生了不符合预期的表现，那就首先怀疑自己的代码：用桩代码进行调用调试，围绕可疑代码编写测试用例，检查版本库版本号，检查配置是否生效等等。</p>
+<p>如果我们使用的工具/库/框架是被广泛使用的，那就几乎没有理由怀疑它会出错。如果发生了不符合预期的表现，那就首先怀疑自己的代码：用桩代码进行调用调试，围绕可疑代码编写测试用例，检查版本库版本号，检查配置是否生效等等。</p>
 <p>如果其他人报告说有问题，而你无法复现的时候，那就走过去看看他们到底是怎么使用的。他们可能进行了你未曾预料的操作，或者采用了不同的操作次序。排除掉一切不可能之后，剩下的即使多么不可能，即使你的代码看起来没问题，也只能是真相。</p>
 <h2><span id="31-编写具有领域语言的代码">31. 编写具有领域语言的代码</span></h2><p>先看如下代码：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Map&lt;int, Map&lt;int, int&gt;&gt; portfolioIdsByTraderId</span><br><span class="line"></span><br><span class="line">If portfolioIdsByTraderId.get(trader.getId()).containsKey(portfolio.getId()))</span><br><span class="line">&#123;</span><br><span class="line">    …</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>看起来像是从 <code>trader</code>中取 <code>id</code>，然后用它从一个….，最后看起来是判断<code>protfolio</code>的<code>id</code>是否存在于这个<code>map</code>中，那<code>portfolioIdsByTraderId</code> 是什么结构呢？ 奥，它是个嵌套<code>map</code>…<br>从另一份代码中，你看到的是这样：</p>
+<p>看起来像是从 <code>trader</code>中取 <code>id</code>，然后用它从一个….，最后看起来是判断<code>protfolio</code>的<code>id</code>是否存在于这个<code>map</code>中，那<code>portfolioIdsByTraderId</code> 是什么结构呢？ 奥，它是个嵌套<code>map</code>…<br>从另一份代码中，你看到的是这样：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">If trader.canView(portfolio) &#123;…&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>这种情况下就不用挠头，也不需要知道它内部到底嵌套了几层 <code>map</code>，因为那是 <code>trader</code> 的事情，与你无关。<br>我们努力的方向就是将现实世界映射到有限的数据结构中，这就需要用户自定义类型，如果你的代码中包含类似 <code>trader</code> <code>portfolio</code> 这样的概念，你就可以使用他们的名称来建模，而不是使用基本数据类型复杂嵌套表述你的目的。不要有基本类型偏执，不要固执的非要使用基本类型(如 <code>map</code> <code>array</code> <code>int</code>等).</p>
-<p>否则你怎么知道这个 <code>int</code> 代表了 <code>trader</code>，那个 <code>int</code> 代表了 <code>portfolio</code>，这就是在用一种加密的方式在编码，除了你自己，谁都看不懂；可能明天你自己也就看不懂了。</p>
+<p>这种情况下就不用挠头，也不需要知道它内部到底嵌套了几层 <code>map</code>，因为那是 <code>trader</code> 的事情，与你无关。<br>我们努力的方向就是将现实世界映射到有限的数据结构中，这就需要用户自定义类型，如果你的代码中包含类似 <code>trader</code> <code>portfolio</code> 这样的概念，你就可以使用他们的名称来建模，而不是使用基本数据类型复杂嵌套表述你的目的。不要有基本类型偏执，不要固执的非要使用基本类型(如 <code>map</code> <code>array</code> <code>int</code>等).</p>
+<p>否则你怎么知道这个 <code>int</code> 代表了 <code>trader</code>，那个 <code>int</code> 代表了 <code>portfolio</code>，这就是在用一种加密的方式在编码，除了你自己，谁都看不懂；可能明天你自己也就看不懂了。</p>
 <h2><span id="32-最好的注释是软件设计架构文档">32. 最好的注释是软件设计架构文档</span></h2><p>前面有两条我们提到，又要好好写注释，又不要写注释。因为注释和注释是不一样的，有意义的注释永不嫌多。从另一个角度看，代码里的注释都是补丁，是碎片化的，局部的注释很难推导模块整体的顺序及耦合关系。整个项目思路的重要性远甚于穿插在代码中的几行注释。</p>
 <p><strong>文档建设和技术沉淀比我们想象的还重要</strong>，刨除交接困难的影响以外，没有文档建设的项目一般在质量和架构上也会是一团乱麻。就跟没有地图的路径规划一样，没有文档建设的系统发展也会极度追求短期效益，最终走向混乱。</p>
 <p>好好写代码注释，说明你是一个不错的程序员。能够好好写架构设计文档，把各个模块交代清楚，同时代码内也能好好写注释，那应该可以“配享太庙”。</p>
-<h2><span id="33-越早写单元测试越好">33. 越早写单元测试越好</span></h2><p>测试既可以是狭义的单元测试，也可以是广义上的功能回归测试。除了单测对质量的保障之外，单元测试还能够帮助改善设计，因为不好测试的代码一般意味着代码结构不好; 可能是引用了全局变量、也没有使用依赖注入导致难以 <code>mock</code>、也可能是没有针对接口编程；函数内部随意调用 <code>time.Now()</code> 导致测试用例不稳定等等。</p>
+<h2><span id="33-越早写单元测试越好">33. 越早写单元测试越好</span></h2><p>测试既可以是狭义的单元测试，也可以是广义上的功能回归测试。除了单测对质量的保障之外，单元测试还能够帮助改善设计，因为不好测试的代码一般意味着代码结构不好; 可能是引用了全局变量、也没有使用依赖注入导致难以 <code>mock</code>、也可能是没有针对接口编程；函数内部随意调用 <code>time.Now()</code> 导致测试用例不稳定等等。</p>
 <p>问题越早被发现，解决的成本越低。单元测试是最早能发现 <code>bug</code>的手段，同时测试带来的边际成本是很低的，只要写一次，就可以永远为你保驾护航。</p>
 <h2><span id="34-没有什么能够阻止项目成为屎山">34. 没有什么能够阻止项目成为屎山</span></h2><p>你的代码会随着新功能的增加，以及新技术组件的引入，技术债务会逐步推迟并积压，代码也一定会腐化，因此没有什么办法能够阻止项目腐化，最终也一定会变为我们曾经厌恶的屎山。不如我们妥协一些，接受它最终会变烂，只不过要让他腐化的慢一些、再慢一些。以及做好故障隔离，即使部分功能出了问题能够限制影响范围，不要雪崩。</p>
 <p>让服务稳定的跑起来，支撑业务迭代的时间久一些，即使出了问题也能及时发现并解决，把日志打清楚清楚一些，定位能够快一些。做到这些，就善莫大焉了。永远没有正确架构，你永远无法偿还完所有的技术债务，如同你永远不会设计出完美的界面，请避开完美主义的陷阱，永远没有完美的代码，能够满足当前需求，又为未来不管是自己还是他人留有扩展空间，就很好了。</p>
-<p>我们能够做到的就是<strong>减缓复杂度增长的速率</strong>，通过 <strong>《整洁的代码》</strong>、<strong>《整洁的架构》<strong>和持续的</strong>《重构》</strong>，达成写更好的代码的目的。如果项目经过几年不得不重构了，那就大胆推倒重构好了，因为架构都是对过去经验的总结，无法预计业务的发展，站在几年后的时间节点回看，重构也是自然的，要不然怎么创造新的岗位需求呢。</p>
+<p>我们能够做到的就是<strong>减缓复杂度增长的速率</strong>，通过 <strong>《整洁的代码》</strong>、<strong>《整洁的架构》</strong>和持续的<strong>《重构》</strong>，达成写更好的代码的目的。如果项目经过几年不得不重构了，那就大胆推倒重构好了，因为架构都是对过去经验的总结，无法预计业务的发展，站在几年后的时间节点回看，重构也是自然的，要不然怎么创造新的岗位需求呢。</p>
 <h2><span id="35-要不断学习有针对性的勤加练习">35. 要不断学习，有针对性的勤加练习</span></h2><p>互联网唯一不变的就是变化，技术的出现也是层出不穷，知识的边界也是难以触达。唯有不断学习，才能保持竞争力。</p>
-<p>阅读书籍、博客和技术网站，或者为自己找一个导师，可能 <code>Ta</code> 并不承认有你这个学生。导师可能是技术领域的大拿，也可能是网上的技术博主，或者是线下技术分享的讲师，也可能是 <code>B</code>站上的一位 <code>Up</code>主。他是谁并不重要，重要的是你要从他身上学到些什么。</p>
+<p>阅读书籍、博客和技术网站，或者为自己找一个导师，可能 <code>Ta</code> 并不承认有你这个学生。导师可能是技术领域的大拿，也可能是网上的技术博主，或者是线下技术分享的讲师，也可能是 <code>B</code>站上的一位 <code>Up</code>主。他是谁并不重要，重要的是你要从他身上学到些什么。</p>
 <p>了解你使用的框架和库。读懂他们的运作方式，你会使用的更好。这样你也有机会看到那些聪明人写下的并经过审查的代码。</p>
 <p>当你犯错时，或者修复一个 <code>bug</code>，或者遇到问题时，试着真正去了解到底发生了什么。多问几次 <code>Why</code>，多往下追问几层，尝试找出根本原因。</p>
 <p>多分享，只有分享才会让你真正了解底层原理。准备分享的过程就是不断追问自己为什么的过程，正因为你不知道为什么所以才需要查阅更多的资料来搞明白。能讲出来三分，说明你懂了七分。</p>
@@ -2157,7 +2095,6 @@
 <h2><span id="37-使接口易于正确使用难于错误使用">37. 使接口易于正确使用，难于错误使用</span></h2><p>接口的存在是为了方便使用者，而不是接口实现者。如果一个接口需要在<strong>好实现但是不好使用</strong>和<strong>好使用但是不好实现</strong>上选择的话，请毫不犹豫的选择后者。</p>
 <p>比如输入框需要用户输入日期，用户怎么知道输入格式呢，用户输入错误该怎么提醒呢？ 更合理的应该提供一个日历组件，用户直接选择就好了，不需要输入。</p>
 <p>一个功能需要调用方必须先调用 A()初始化，再调用 B()，最后再调用 C()清理。那何不如把这些步骤封装起来直接暴露一个接口呢。</p>
-<p> </p>
 <h2><span id="38-编写代码就像余生都要对他负责一样">38. 编写代码就像余生都要对他负责一样</span></h2><blockquote>
 <p>想象一个场景：你已经跳槽来公司 3 年了，一个工作日的下午你正在会议室开会，突然接到了上家公司的一个电话，需要你解释一下你所设计的系统架构决策点是什么，以及这个函数为什么要这样写。<br>是不是会很痛苦也会很无奈</p>
 </blockquote>
