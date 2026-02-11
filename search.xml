@@ -68,6 +68,78 @@
       </tags>
   </entry>
   <entry>
+    <title>Git合并冲突解决与操作逻辑（AI版）</title>
+    <url>/posts/Git%E5%90%88%E5%B9%B6%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E4%B8%8E%E6%93%8D%E4%BD%9C%E9%80%BB%E8%BE%91%EF%BC%88AI%E7%89%88%EF%BC%89/</url>
+    <content><![CDATA[<blockquote>
+<p>基于自己的思考结合AI给我梳理的总结，强烈建议看，真的非常条理性，易读也易懂。</p>
+</blockquote>
+<p>在多人协作的 Git 开发流程中，代码冲突是不可避免的场景。如何优雅地解决冲突并确保本地修改不丢失，需要一套清晰的操作逻辑。以下是对冲突解决思路的梳理与优化：</p>
+<h3><span id="一-冲突场景的核心矛盾">一、冲突场景的核心矛盾</span></h3><p>当多人基于同一分支开发时，若远程分支已存在他人提交的新内容，而你的本地修改基于旧版本进行，此时无论是直接 <code>git push</code>（因版本不一致被拒绝），还是先 <code>git pull</code> 再提交（触发合并冲突），都会面临冲突问题。核心矛盾在于：<strong>本地修改与远程最新版本存在差异，需要通过合并整合，但过程中需避免本地内容意外丢失</strong>。</p>
+<h3><span id="二-两种经典解决方案的细节与适用场景">二、两种经典解决方案的细节与适用场景</span></h3><p>针对不同开发状态（如代码是否完成、是否愿意提交半成品），可采用以下两种方案：</p>
+<h4><span id="方案一用-git-stash-暂存中间状态推荐未完成开发时使用">方案一：用 <code>git stash</code> 暂存中间状态（推荐未完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git stash</code> → <code>git pull</code> → <code>git stash pop</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><code>git stash</code> 会将<strong>工作区和暂存区的所有修改</strong>（包括未提交的代码）临时保存到 Git 的「 stash 栈」中，并将工作区和暂存区恢复到本地最近一次提交的干净状态。若需保存未跟踪的文件（如新建但未 <code>git add</code> 的文件），可使用 <code>git stash -u</code>（<code>-u</code> 即 <code>--include-untracked</code>）。</li>
+<li><code>git pull</code> 此时可顺利拉取远程最新代码（因本地已无未提交修改，避免了合并冲突的前置阻碍）。</li>
+<li><code>git stash pop</code> 将暂存的修改恢复到工作区，此时本地代码相当于「远程最新版本 + 你的本地修改」，若存在冲突，Git 会在工作区标记冲突位置。</li>
+<li>手动解决冲突后，通过 <code>git add</code> 和 <code>git commit</code> 整合修改，最终推送到远程。</li>
+</ol>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>无需提交「半成品代码」，保持提交记录的整洁性（最终仅生成一次包含完整修改的提交）。</p>
+</li>
+<li><p>适合开发到中途需同步远程代码的场景，既保证本地修改不丢失，又能基于最新版本继续开发。</p>
+</li>
+</ul>
+<h4><span id="方案二先提交本地修改再合并远程代码推荐已完成开发时使用">方案二：先提交本地修改，再合并远程代码（推荐已完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
+<p><code>git add .</code> → <code>git commit -m &quot;描述修改内容&quot;</code> → <code>git pull</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
+<p><strong>核心原理</strong>：</p>
+<ol>
+<li><p>先通过 <code>git commit</code> 将本地修改固化为一个正式版本，确保工作区和暂存区干净。</p>
+</li>
+<li><p><code>git pull</code> 实际包含 <code>git fetch</code>（拉取远程最新提交记录到本地）和 <code>git merge</code>（将本地提交与远程最新版本合并）：</p>
+</li>
+</ol>
+<ul>
+<li><p>若合并无冲突，Git 会自动生成一个「合并提交」，整合双方修改。</p>
+</li>
+<li><p>若有冲突，Git 会在工作区标记冲突文件，需手动解决后再次提交。</p>
+</li>
+</ul>
+<p><strong>优势</strong>：</p>
+<ul>
+<li><p>步骤直观，适合已完成开发、确认本地修改无误的场景。</p>
+</li>
+<li><p>所有修改都有明确的提交记录，便于后续追溯和回滚。</p>
+</li>
+</ul>
+<h3><span id="三-关键原则避免冲突的核心是及时同步">三、关键原则：避免冲突的核心是「及时同步」</span></h3><p>无论采用哪种方案，核心逻辑都是<strong>让本地修改基于远程最新版本进行整合</strong>。冲突的本质是「同一部分代码被多人修改」，因此：</p>
+<ol>
+<li><p>开发过程中应频繁 <code>git pull</code> 同步远程更新，减少冲突概率；</p>
+</li>
+<li><p>解决冲突时需仔细比对双方修改，确保业务逻辑正确；</p>
+</li>
+<li><p>永远不要用 <code>--force</code> 强制推送（可能覆盖他人代码），除非明确知道自己在做什么。</p>
+</li>
+</ol>
+<h3><span id="总结">总结</span></h3><p>冲突是 Git 协作的正常现象，两种方案各有侧重：</p>
+<ul>
+<li><p>未完成开发时，用 <code>git stash</code> 暂存修改，同步后继续开发，保持提交整洁；</p>
+</li>
+<li><p>已完成开发时，先提交本地修改，再合并远程更新，明确记录变更。</p>
+</li>
+</ul>
+<p>记住：<strong>冲突一定可以解决，关键是通过规范操作避免内容丢失</strong>。</p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>git</tag>
+      </tags>
+  </entry>
+  <entry>
     <title> Gorm Preload 核心用法与避坑指南 </title>
     <url>/posts/Gorm%20Preload%20%E6%A0%B8%E5%BF%83%E7%94%A8%E6%B3%95%E4%B8%8E%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/</url>
     <content><![CDATA[<blockquote>
@@ -145,78 +217,6 @@
       </categories>
       <tags>
         <tag>后端</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Git合并冲突解决与操作逻辑（AI版）</title>
-    <url>/posts/Git%E5%90%88%E5%B9%B6%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E4%B8%8E%E6%93%8D%E4%BD%9C%E9%80%BB%E8%BE%91%EF%BC%88AI%E7%89%88%EF%BC%89/</url>
-    <content><![CDATA[<blockquote>
-<p>基于自己的思考结合AI给我梳理的总结，强烈建议看，真的非常条理性，易读也易懂。</p>
-</blockquote>
-<p>在多人协作的 Git 开发流程中，代码冲突是不可避免的场景。如何优雅地解决冲突并确保本地修改不丢失，需要一套清晰的操作逻辑。以下是对冲突解决思路的梳理与优化：</p>
-<h3><span id="一-冲突场景的核心矛盾">一、冲突场景的核心矛盾</span></h3><p>当多人基于同一分支开发时，若远程分支已存在他人提交的新内容，而你的本地修改基于旧版本进行，此时无论是直接 <code>git push</code>（因版本不一致被拒绝），还是先 <code>git pull</code> 再提交（触发合并冲突），都会面临冲突问题。核心矛盾在于：<strong>本地修改与远程最新版本存在差异，需要通过合并整合，但过程中需避免本地内容意外丢失</strong>。</p>
-<h3><span id="二-两种经典解决方案的细节与适用场景">二、两种经典解决方案的细节与适用场景</span></h3><p>针对不同开发状态（如代码是否完成、是否愿意提交半成品），可采用以下两种方案：</p>
-<h4><span id="方案一用-git-stash-暂存中间状态推荐未完成开发时使用">方案一：用 <code>git stash</code> 暂存中间状态（推荐未完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
-<p><code>git stash</code> → <code>git pull</code> → <code>git stash pop</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
-<p><strong>核心原理</strong>：</p>
-<ol>
-<li><code>git stash</code> 会将<strong>工作区和暂存区的所有修改</strong>（包括未提交的代码）临时保存到 Git 的「 stash 栈」中，并将工作区和暂存区恢复到本地最近一次提交的干净状态。若需保存未跟踪的文件（如新建但未 <code>git add</code> 的文件），可使用 <code>git stash -u</code>（<code>-u</code> 即 <code>--include-untracked</code>）。</li>
-<li><code>git pull</code> 此时可顺利拉取远程最新代码（因本地已无未提交修改，避免了合并冲突的前置阻碍）。</li>
-<li><code>git stash pop</code> 将暂存的修改恢复到工作区，此时本地代码相当于「远程最新版本 + 你的本地修改」，若存在冲突，Git 会在工作区标记冲突位置。</li>
-<li>手动解决冲突后，通过 <code>git add</code> 和 <code>git commit</code> 整合修改，最终推送到远程。</li>
-</ol>
-<p><strong>优势</strong>：</p>
-<ul>
-<li><p>无需提交「半成品代码」，保持提交记录的整洁性（最终仅生成一次包含完整修改的提交）。</p>
-</li>
-<li><p>适合开发到中途需同步远程代码的场景，既保证本地修改不丢失，又能基于最新版本继续开发。</p>
-</li>
-</ul>
-<h4><span id="方案二先提交本地修改再合并远程代码推荐已完成开发时使用">方案二：先提交本地修改，再合并远程代码（推荐已完成开发时使用）</span></h4><p><strong>操作流程</strong>：</p>
-<p><code>git add .</code> → <code>git commit -m &quot;描述修改内容&quot;</code> → <code>git pull</code> → 解决冲突 → <code>git add</code> → <code>git commit</code> → <code>git push</code></p>
-<p><strong>核心原理</strong>：</p>
-<ol>
-<li><p>先通过 <code>git commit</code> 将本地修改固化为一个正式版本，确保工作区和暂存区干净。</p>
-</li>
-<li><p><code>git pull</code> 实际包含 <code>git fetch</code>（拉取远程最新提交记录到本地）和 <code>git merge</code>（将本地提交与远程最新版本合并）：</p>
-</li>
-</ol>
-<ul>
-<li><p>若合并无冲突，Git 会自动生成一个「合并提交」，整合双方修改。</p>
-</li>
-<li><p>若有冲突，Git 会在工作区标记冲突文件，需手动解决后再次提交。</p>
-</li>
-</ul>
-<p><strong>优势</strong>：</p>
-<ul>
-<li><p>步骤直观，适合已完成开发、确认本地修改无误的场景。</p>
-</li>
-<li><p>所有修改都有明确的提交记录，便于后续追溯和回滚。</p>
-</li>
-</ul>
-<h3><span id="三-关键原则避免冲突的核心是及时同步">三、关键原则：避免冲突的核心是「及时同步」</span></h3><p>无论采用哪种方案，核心逻辑都是<strong>让本地修改基于远程最新版本进行整合</strong>。冲突的本质是「同一部分代码被多人修改」，因此：</p>
-<ol>
-<li><p>开发过程中应频繁 <code>git pull</code> 同步远程更新，减少冲突概率；</p>
-</li>
-<li><p>解决冲突时需仔细比对双方修改，确保业务逻辑正确；</p>
-</li>
-<li><p>永远不要用 <code>--force</code> 强制推送（可能覆盖他人代码），除非明确知道自己在做什么。</p>
-</li>
-</ol>
-<h3><span id="总结">总结</span></h3><p>冲突是 Git 协作的正常现象，两种方案各有侧重：</p>
-<ul>
-<li><p>未完成开发时，用 <code>git stash</code> 暂存修改，同步后继续开发，保持提交整洁；</p>
-</li>
-<li><p>已完成开发时，先提交本地修改，再合并远程更新，明确记录变更。</p>
-</li>
-</ul>
-<p>记住：<strong>冲突一定可以解决，关键是通过规范操作避免内容丢失</strong>。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>git</tag>
       </tags>
   </entry>
   <entry>
@@ -413,59 +413,6 @@
       </tags>
   </entry>
   <entry>
-    <title>k8s是什么？</title>
-    <url>/posts/k8s%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/</url>
-    <content><![CDATA[<blockquote>
-<p>网上对 k8s 含糊不清，以下是我对其的理解，分享给大家</p>
-<p>背景介绍：假设公司有一个超大的 web 应用，其中有很多服务，比如 mysql、redis、日志收集服务、web 服务等等，每个服务都可以用一个容器单独运行起来。突然来了泼天的流量，这个应用火了！，大量的用户请求造成了极大的数据库读写压力，原来一个容器可以扛住，现在快扛不住了，有没有一种办法，可以根据请求量多少自动增加容器数量来应对这样的读写压力来避免这样的问题，然后用户量请求下来的时候又恢复到原来的梳理呢?嗯！这时 k8s 就闪亮登场！</p>
-</blockquote>
-<h2><span id="k8s-是什么">k8s 是什么？</span></h2><p>全程 Kubernetes，是一个开源的容器编排引擎，用来对容器化应用进行自动部署、扩缩和管理。</p>
-<p>更大白话一点，它介于客户端和服务端之间，通过策略，协调和管理多个应用服务（容器），只需要一个 yaml 文件配置，定义应用的部署顺序等信息，就能自动部署应用到各个服务器上，还能让它们挂了自动重启，自动扩缩容。</p>
-<h2><span id="k8s-怎么管理容器">k8s 怎么管理容器？</span></h2><p>那就不得不提 k8s 的内部实现，它包括两个部分，master 节点和 work 节点，每个节点可视为一个物理机，具体而言：</p>
-<p><code>master 节点</code> 用于存储集群的所有数据、常规的 api 请求操作、后台任务调度、pod 的调度。<code>work 节点</code> 用于管理容器给容器提供工作环境。</p>
-<p>再为具体一点：</p>
-<p>Master 节点（控制台）用于管理容器：</p>
-<ul>
-<li>API Server：处理 REST 操作，提供集群的管理接口。</li>
-<li>etcd：分布式键值存储，用于存储集群的所有数据。</li>
-<li>Controller Manager：负责集群的常规后台任务。</li>
-<li>Scheduler：负责将 Pod 调度到合适的节点上。</li>
-</ul>
-<p>Worker 节点用于运行容器：</p>
-<ul>
-<li>Kubelet：负责与 Master 节点通信，管理 Pod 的生命周期。</li>
-<li>Kube-proxy：负责网络代理和负载均衡。</li>
-<li>Container Runtime：如 Docker、containerd，负责运行容器。</li>
-</ul>
-<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
-<center>图片来源：小白 debug</center>
-
-
-<h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
-<p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
-<h2><span id="k8s-怎么使用">K8s 怎么使用？</span></h2><p>先写一个 yaml 文件，这个文件用来告诉 k8s 应该创建和管理哪容器，容器上的文件映射、端口映射、持久化位置、最多可以有多少个副本、可占有的资源等等，这个文件将通过 kubectl 命令行工具执行：<code>kubectl apply -f xx.yaml</code>，k8s 控制台会暴露接口让 kubectl 对齐操控。</p>
-<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="kubectl操控k8s示例"></p>
-<center>图片来源：小白 debug</center>
-
-<p>下面的概率会在撰写 yaml 文件时经常接触到，建议熟悉并背诵：</p>
-<ul>
-<li>namespace：虚拟集群，将 k8s 集群的资源分隔</li>
-<li>node：工作节点，通常是一个物理服务器，pod 的载体，一个 pod 只能工作在一个 node</li>
-<li>deployment：管理 Pod 副本的控制器，k8s 会在集群中保持制定数量的 Pod 副本</li>
-<li>service：暴露应用的抽象对象，通过稳定的 IP 地址和 DNS 来访问 pod</li>
-<li>pod：k8s 最小单位，可以有多个容器，共同组成一套服务</li>
-</ul>
-<h2><span id="k8s-的本质是什么">k8s 的本质是什么？</span></h2><p>用户请求到实际应用的中间层，简化服务的部署运维流程，它可以作为代理对请求进行转发，也可以分布式管理实际应用，使业务更加高可用更好管理，节省复杂的人工管理。</p>
-<p><a href="https://golangguide.top/架构/云原生/核心知识点/k8s到底是什么.html#cluster">参考链接</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>云原生</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kafka的理解？</title>
     <url>/posts/kafka%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>Kafka 本质上是一个消息队列中间件，经常在高并发的场景下我们会见到它，那顾名思义它就是面向于高并发的场景。下面我们来简单了解一下它吧～</p>
@@ -509,28 +456,6 @@
       </categories>
       <tags>
         <tag>大数据</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>万米跑后的流水账</title>
-    <url>/posts/%E4%B8%87%E7%B1%B3%E8%B7%91%E5%90%8E%E7%9A%84%E6%B5%81%E6%B0%B4%E8%B4%A6/</url>
-    <content><![CDATA[<p>今天参加公司的万米跑，很开心拿到了这次比赛的女子第一名，这份成就感永远铭记，虽然成绩并不是很优秀（没有突破自己的个人最好成绩），但是这个过程是让人时刻兴奋的，关键是，在跑步的过程中认识了跟跑的高中生，试着影响他去了解学习ai和计算机。在这个过程中，我反复强调兴趣和做热爱的事情，实际上也是在说给自己，做热爱的喜欢的事情，然后不顾一切后果～</p>
-<p><img src="/images/image-20251021222136416.png" alt="image-20251021222136416"></p>
-<p>而现在，我认为我在做我感兴趣的事情，就是后端开发，写代码的过程是享受，比如写示例时可以开发自己的脑洞，自己就像扮演造物主，程序是我的创造物，另外学习技术也像是读幻想小说、读诗，让我看到还有这么般神奇的想象实践，惊叹于人类大脑的无限可能。</p>
-<p>这是我对后端的想象，发出这样的感想，我想我很幸运，我看到过也体验过一个价值观和我相匹配的公司，保持热爱和激情，保持好奇心，但我相信我也是配得的，或许悲观的看，让员工打鸡血，好像是一种公司pua员工的口号，但个人观点如果公司以单纯提这样的口号但是不给资源也不给更多实质上的激励，那才是pua, 在几段的实习中，从小到大，不断让我感受到不同规模不同行业的公司的做事风格，我意识到，资源受限的情况下很难有想象力，我想只有看到坏的才会更好的让我珍惜当下好的，看到更好的，也让我知道当下还有更多进步的空间。</p>
-<p>如今的秋招让我表现得麻木和对未来的迷茫，做不完的测评，做不完的笔试，仿佛让我回到高考的行测。</p>
-<p>但是我不是超人，我不是什么都会，我也没有必要什么都会。</p>
-<p>我能规避吗，当然能，重新思考自己想要的，针对性的投简历而不是海投可能会让我更加轻松，先好好评估公司然后想象自己是否值得付诸努力去投递，这才是最重要的，不能既要又要，不能为了所谓的机会去广撒网。</p>
-<p>测评换个角度想，也不是单方面公司筛选自己，也是自己筛选公司，测评不通过笔试不通过，不代表自己能力差，只能代表当下我不适合，国内公司千千万万，何必认为是丧失机会然后气馁和怀疑自己？</p>
-<p>但体会到这样的秋招，也是打破我过往对社会的认知和想象。</p>
-<p>口水话这么多，就是想告诉自己，一切都是有希望的，无论是之后的面试还是之后的组会、毕业论文等等，认真的诚实的耐心的应对，除此之外好好的生活，保持身心健康，没有过不去的坎，只有可恶的心魔。</p>
-<p>没有什么可以限制自己，除了自己限制自己，是吧，我想是的。</p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-      <tags>
-        <tag>流水账</tag>
       </tags>
   </entry>
   <entry>
@@ -606,6 +531,28 @@
       </tags>
   </entry>
   <entry>
+    <title>万米跑后的流水账</title>
+    <url>/posts/%E4%B8%87%E7%B1%B3%E8%B7%91%E5%90%8E%E7%9A%84%E6%B5%81%E6%B0%B4%E8%B4%A6/</url>
+    <content><![CDATA[<p>今天参加公司的万米跑，很开心拿到了这次比赛的女子第一名，这份成就感永远铭记，虽然成绩并不是很优秀（没有突破自己的个人最好成绩），但是这个过程是让人时刻兴奋的，关键是，在跑步的过程中认识了跟跑的高中生，试着影响他去了解学习ai和计算机。在这个过程中，我反复强调兴趣和做热爱的事情，实际上也是在说给自己，做热爱的喜欢的事情，然后不顾一切后果～</p>
+<p><img src="/images/image-20251021222136416.png" alt="image-20251021222136416"></p>
+<p>而现在，我认为我在做我感兴趣的事情，就是后端开发，写代码的过程是享受，比如写示例时可以开发自己的脑洞，自己就像扮演造物主，程序是我的创造物，另外学习技术也像是读幻想小说、读诗，让我看到还有这么般神奇的想象实践，惊叹于人类大脑的无限可能。</p>
+<p>这是我对后端的想象，发出这样的感想，我想我很幸运，我看到过也体验过一个价值观和我相匹配的公司，保持热爱和激情，保持好奇心，但我相信我也是配得的，或许悲观的看，让员工打鸡血，好像是一种公司pua员工的口号，但个人观点如果公司以单纯提这样的口号但是不给资源也不给更多实质上的激励，那才是pua, 在几段的实习中，从小到大，不断让我感受到不同规模不同行业的公司的做事风格，我意识到，资源受限的情况下很难有想象力，我想只有看到坏的才会更好的让我珍惜当下好的，看到更好的，也让我知道当下还有更多进步的空间。</p>
+<p>如今的秋招让我表现得麻木和对未来的迷茫，做不完的测评，做不完的笔试，仿佛让我回到高考的行测。</p>
+<p>但是我不是超人，我不是什么都会，我也没有必要什么都会。</p>
+<p>我能规避吗，当然能，重新思考自己想要的，针对性的投简历而不是海投可能会让我更加轻松，先好好评估公司然后想象自己是否值得付诸努力去投递，这才是最重要的，不能既要又要，不能为了所谓的机会去广撒网。</p>
+<p>测评换个角度想，也不是单方面公司筛选自己，也是自己筛选公司，测评不通过笔试不通过，不代表自己能力差，只能代表当下我不适合，国内公司千千万万，何必认为是丧失机会然后气馁和怀疑自己？</p>
+<p>但体会到这样的秋招，也是打破我过往对社会的认知和想象。</p>
+<p>口水话这么多，就是想告诉自己，一切都是有希望的，无论是之后的面试还是之后的组会、毕业论文等等，认真的诚实的耐心的应对，除此之外好好的生活，保持身心健康，没有过不去的坎，只有可恶的心魔。</p>
+<p>没有什么可以限制自己，除了自己限制自己，是吧，我想是的。</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>流水账</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用 Air 实现 Go 程序热启动</title>
     <url>/posts/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0Go%E7%A8%8B%E5%BA%8F%E7%83%AD%E5%90%AF%E5%8A%A8/</url>
     <content><![CDATA[<blockquote>
@@ -620,21 +567,6 @@
       </categories>
       <tags>
         <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>关于转正失败我做对了哪些事情</title>
-    <url>/posts/%E5%85%B3%E4%BA%8E%E8%BD%AC%E6%AD%A3%E5%A4%B1%E8%B4%A5%E6%88%91%E5%81%9A%E5%AF%B9%E4%BA%86%E5%93%AA%E4%BA%9B%E4%BA%8B%E6%83%85/</url>
-    <content><![CDATA[<p>实习三个月，朝九晚十，依旧换来失败的解决，结果很意外，首先自己自认为在实习工作中做了充分的工作，4个上线项目，6个需求，3个月内完成，且在项目中也使用了ai做了提效工具，沉淀了十几篇的技术文档，认真写日报周报，认真的写述职文档，准备述职答辩，但还是换来并不好看答辩结果，问原因，总结两个：一个是技术的思考不够深入，对于他们看来，ai时代我所做的工作无论多少都是份内之事的，答辩中对项目的介绍不够体现对项目的思考深度，另一个问题，我在答辩的过程中始终以一个学生的思维低姿态面对评审的问题，表现出自己的潜力不够大，其中我介绍到自己的基础如go并发方面有待加强，需要承接更多项目熟悉项目组的业务，另外还有一个雷点是我介绍的一个技术点时我说出这是metor做的不是我做的，让他们质疑的解决问题能力，在他们的眼中只是一个只能crud的程序员。</p>
-<p>所以很遗憾，哪怕做了充分的准备，认为做了十足的努力，但是还是以失败告终，说实话心不甘有很多，但也必须冷静应对，第一个教训就是，进入职场，就不能过分放低自己的姿态，谦逊的同时也需要外显自己的价值，在答辩过程中我就踩了归纳自己的问题时基础有待提升的雷点，哪怕自认为自己实际工作中做了很多工作但不能用语言凸显出来就等于没做，第二个教训是重视对项目的思考和延展能力，以及言语表达能力，我在答辩过程中这一步确实没有做好，包括在回顾曾经面试阶段，也没有很好讲清楚自己亲手做的的项目经历，或许确实没有仔细自己对项目的延展性思考，或许是因为只思考但并不总结（归纳总结能力），更或许就是随机应变的能力，导致口头表达出现问题，而这确实实习公司非常重视的，而我展示出了自己的弱项。</p>
-<p>实习结果的残酷带来的是更深层次的反思，不乏也是一种好事，告诉我所谓的努力和工作对于互联网公司对人才的要求来说连及格线也算不上，它不仅需要你踏实卖力做事也需要你会说话会处事，更要求你有创新能力，他们需要的是一个又聪明又踏实的人，而当下的我表现得太过谦卑也不够聪明，让他们觉得不合适，感谢让我意识这个社会的生存之道之一，不仅会做更会说，我败在了后者，也败在了我的懒惰（认为只要努力就会得到回报的思维惯性）。</p>
-<p>Anyway,一直会行动起来，在后端的进阶之路上，依旧保持小孩儿般的天真和心中的烂漫，去做去想去感悟，同时享受生活，无论酸甜苦辣，共勉～</p>
-]]></content>
-      <categories>
-        <category>经验</category>
-      </categories>
-      <tags>
-        <tag>感想</tag>
       </tags>
   </entry>
   <entry>
@@ -752,6 +684,21 @@
       </categories>
       <tags>
         <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于转正失败我做对了哪些事情</title>
+    <url>/posts/%E5%85%B3%E4%BA%8E%E8%BD%AC%E6%AD%A3%E5%A4%B1%E8%B4%A5%E6%88%91%E5%81%9A%E5%AF%B9%E4%BA%86%E5%93%AA%E4%BA%9B%E4%BA%8B%E6%83%85/</url>
+    <content><![CDATA[<p>实习三个月，朝九晚十，依旧换来失败的解决，结果很意外，首先自己自认为在实习工作中做了充分的工作，4个上线项目，6个需求，3个月内完成，且在项目中也使用了ai做了提效工具，沉淀了十几篇的技术文档，认真写日报周报，认真的写述职文档，准备述职答辩，但还是换来并不好看答辩结果，问原因，总结两个：一个是技术的思考不够深入，对于他们看来，ai时代我所做的工作无论多少都是份内之事的，答辩中对项目的介绍不够体现对项目的思考深度，另一个问题，我在答辩的过程中始终以一个学生的思维低姿态面对评审的问题，表现出自己的潜力不够大，其中我介绍到自己的基础如go并发方面有待加强，需要承接更多项目熟悉项目组的业务，另外还有一个雷点是我介绍的一个技术点时我说出这是metor做的不是我做的，让他们质疑的解决问题能力，在他们的眼中只是一个只能crud的程序员。</p>
+<p>所以很遗憾，哪怕做了充分的准备，认为做了十足的努力，但是还是以失败告终，说实话心不甘有很多，但也必须冷静应对，第一个教训就是，进入职场，就不能过分放低自己的姿态，谦逊的同时也需要外显自己的价值，在答辩过程中我就踩了归纳自己的问题时基础有待提升的雷点，哪怕自认为自己实际工作中做了很多工作但不能用语言凸显出来就等于没做，第二个教训是重视对项目的思考和延展能力，以及言语表达能力，我在答辩过程中这一步确实没有做好，包括在回顾曾经面试阶段，也没有很好讲清楚自己亲手做的的项目经历，或许确实没有仔细自己对项目的延展性思考，或许是因为只思考但并不总结（归纳总结能力），更或许就是随机应变的能力，导致口头表达出现问题，而这确实实习公司非常重视的，而我展示出了自己的弱项。</p>
+<p>实习结果的残酷带来的是更深层次的反思，不乏也是一种好事，告诉我所谓的努力和工作对于互联网公司对人才的要求来说连及格线也算不上，它不仅需要你踏实卖力做事也需要你会说话会处事，更要求你有创新能力，他们需要的是一个又聪明又踏实的人，而当下的我表现得太过谦卑也不够聪明，让他们觉得不合适，感谢让我意识这个社会的生存之道之一，不仅会做更会说，我败在了后者，也败在了我的懒惰（认为只要努力就会得到回报的思维惯性）。</p>
+<p>Anyway,一直会行动起来，在后端的进阶之路上，依旧保持小孩儿般的天真和心中的烂漫，去做去想去感悟，同时享受生活，无论酸甜苦辣，共勉～</p>
+]]></content>
+      <categories>
+        <category>经验</category>
+      </categories>
+      <tags>
+        <tag>感想</tag>
       </tags>
   </entry>
   <entry>
@@ -892,107 +839,6 @@
       <tags>
         <tag>Go</tag>
         <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在AI时代，程序员该怎么学习，哪些核心技能AI没法代替？</title>
-    <url>/posts/%E5%9C%A8AI%E6%97%B6%E4%BB%A3%EF%BC%8C%E7%A8%8B%E5%BA%8F%E5%91%98%E8%AF%A5%E6%80%8E%E4%B9%88%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E6%8A%80%E8%83%BDAI%E6%B2%A1%E6%B3%95%E4%BB%A3%E6%9B%BF%EF%BC%9F/</url>
-    <content><![CDATA[<blockquote>
-<p>先说说自己的思考</p>
-<h3><span id="0-说在前面">0、说在前面</span></h3></blockquote>
-<p>1、 <code>系统学习计算机基础</code> 、底层设计、设计思想，学习技术实现思想比会一门技术更重要！</p>
-<p>2、沟通能力，团队协作能力， <code>与人打交道的能力</code> ,学会说清楚问题的能力</p>
-<p>3、aI是工具，它不能创造，但是人类有，最重要是发现问题、提出问题，那么一定要 <code>锻炼好自己提示词撰写</code> 的能力。</p>
-<p>4、发挥 <code>个人想象力</code> ，从自身的欲望出发，去寻找“有什么是之前的痛点但是没有办法实现的呢？，然后用 AI 解决它。解决的过程，自然就学会了必备知识和技能。</p>
-<p>5、学会 <code>利用ai更快解决自己的问题</code> ，比如后端开发工作中，想想哪些最浪费时间，怎么用ai的方式来解决它（用好ai自动测试/文档生成）。</p>
-<hr>
-<blockquote>
-<p>AI的回答，感觉也很有道理，但很模糊，选择性看吧！</p>
-</blockquote>
-<h3><span id="1-程序员的学习方向">1、程序员的学习方向</span></h3><p>个人总结：学习架构设计、掌握ai工具、问题驱动学习、眼光不只局限于技术</p>
-<p><strong>与AI深度协作</strong></p>
-<ol>
-<li><p>让AI处理80%的常规代码，专注解决20%的架构设计、复杂系统集成等核心问题。</p>
-</li>
-<li><p>掌握主流AI工具（如GitHub Copilot、AI代码审查工具等），提升开发效率。</p>
-</li>
-</ol>
-<p><strong>聚焦技术本质</strong></p>
-<ol>
-<li><p>系统性学习编程语言底层原理（如内存管理、并发机制）。</p>
-</li>
-<li><p>以问题驱动学习：结合实际业务场景，深挖技术原理而非机械式啃书。</p>
-</li>
-</ol>
-<p><strong>拓展跨界能力</strong></p>
-<ol>
-<li><p>培养技术判断力：识别何时使用/不使用AI，避免技术滥用。</p>
-</li>
-<li><p>增强商业敏感度：理解技术如何转化为商业价值，关注行业需求变化。</p>
-</li>
-</ol>
-<hr>
-<h3><span id="2-ai难以替代的核心技能">2、AI难以替代的核心技能</span></h3><p>个人总结：系统设计（需要各种开发经验）、创新性思考、沟通能力、价值判断（需要哲学人文思考）</p>
-<p><strong>系统架构设计能力</strong></p>
-<ol>
-<li><p>复杂系统的抽象建模、模块拆分与集成设计。</p>
-</li>
-<li><p>平衡性能、可维护性、扩展性等非功能性需求。</p>
-</li>
-</ol>
-<p><strong>问题抽象与创新思维</strong></p>
-<ol>
-<li><p>将模糊需求转化为技术方案，设计AI工具无法预见的解决路径。</p>
-</li>
-<li><p>突破常规逻辑的创新性思考（如算法优化、新技术应用场景探索）。</p>
-</li>
-</ol>
-<p><strong>技术判断与决策能力</strong></p>
-<ol>
-<li><p>评估技术选型的合理性（如分布式架构 vs 单体架构）。</p>
-</li>
-<li><p>风险预判与容灾设计（如分布式系统的一致性保障）。</p>
-</li>
-</ol>
-<p><strong>跨领域协作能力</strong></p>
-<ol>
-<li><p>与非技术人员沟通需求（如产品经理、业务方）。</p>
-</li>
-<li><p>协调多团队资源推进复杂项目落地。</p>
-</li>
-</ol>
-<p><strong>价值判断与伦理思考</strong></p>
-<ol>
-<li><p>技术方案的道德边界把控（如隐私保护、算法公平性）。</p>
-</li>
-<li><p>业务场景的合理性评估（避免”技术滥用”）。</p>
-</li>
-</ol>
-<hr>
-<h3><span id="3-学习建议">3、学习建议</span></h3><p><strong>时间分配</strong></p>
-<ol>
-<li><p>每周20%时间探索前沿技术（如AI工程化、新型编程范式）。</p>
-</li>
-<li><p>通过实践项目验证技术方案（例如性能优化、系统重构）。</p>
-</li>
-</ol>
-<p><strong>能力验证指标</strong></p>
-<ol>
-<li><p>能否独立设计可扩展的复杂系统架构。</p>
-</li>
-<li><p>是否具备将业务需求转化为技术架构的”翻译能力”。</p>
-</li>
-<li><p>是否可以快速描述需求，抓住本质，说清楚问题。（个人补充）</p>
-</li>
-</ol>
-<hr>
-<p>最后我想说，AI的加持，我们想要学习知识变得触手可及，它的出现让敢想到敢做的门槛变得非常低，但是很多人却缺乏这样的勇气，事实上也包括我自己，个人感觉花点时间想想自己想要什么非常重要，而不是人云亦云，多看点书多与人交流，开阔视野，也能够更好洞察事情的本质，减少无效努力的发生。专注于自己的生活。</p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>技术思考</tag>
       </tags>
   </entry>
   <entry>
@@ -1320,47 +1166,104 @@
       </tags>
   </entry>
   <entry>
-    <title>接口设计场景下数据层的最佳实践</title>
-    <url>/posts/%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E5%9C%BA%E6%99%AF%E4%B8%8B%E6%95%B0%E6%8D%AE%E5%B1%82%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</url>
-    <content><![CDATA[<h2><span id="设计数据库的小tips">设计数据库的小tips</span></h2><p>1、数据库表字段不建议设置值时允许为null。</p>
-<ul>
-<li><p><strong><code>NULL</code> 的比较特性</strong>：任何与 <code>NULL</code> 的比较（<code>=</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>）结果都不是 <code>TRUE</code> 或 <code>FALSE</code>，而是 <code>UNKNOWN</code>。这使得 <code>WHERE</code> 子句的行为变得难以预测。</p>
+    <title>在AI时代，程序员该怎么学习，哪些核心技能AI没法代替？</title>
+    <url>/posts/%E5%9C%A8AI%E6%97%B6%E4%BB%A3%EF%BC%8C%E7%A8%8B%E5%BA%8F%E5%91%98%E8%AF%A5%E6%80%8E%E4%B9%88%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%93%AA%E4%BA%9B%E6%A0%B8%E5%BF%83%E6%8A%80%E8%83%BDAI%E6%B2%A1%E6%B3%95%E4%BB%A3%E6%9B%BF%EF%BC%9F/</url>
+    <content><![CDATA[<blockquote>
+<p>先说说自己的思考</p>
+<h3><span id="0-说在前面">0、说在前面</span></h3></blockquote>
+<p>1、 <code>系统学习计算机基础</code> 、底层设计、设计思想，学习技术实现思想比会一门技术更重要！</p>
+<p>2、沟通能力，团队协作能力， <code>与人打交道的能力</code> ,学会说清楚问题的能力</p>
+<p>3、aI是工具，它不能创造，但是人类有，最重要是发现问题、提出问题，那么一定要 <code>锻炼好自己提示词撰写</code> 的能力。</p>
+<p>4、发挥 <code>个人想象力</code> ，从自身的欲望出发，去寻找“有什么是之前的痛点但是没有办法实现的呢？，然后用 AI 解决它。解决的过程，自然就学会了必备知识和技能。</p>
+<p>5、学会 <code>利用ai更快解决自己的问题</code> ，比如后端开发工作中，想想哪些最浪费时间，怎么用ai的方式来解决它（用好ai自动测试/文档生成）。</p>
+<hr>
+<blockquote>
+<p>AI的回答，感觉也很有道理，但很模糊，选择性看吧！</p>
+</blockquote>
+<h3><span id="1-程序员的学习方向">1、程序员的学习方向</span></h3><p>个人总结：学习架构设计、掌握ai工具、问题驱动学习、眼光不只局限于技术</p>
+<p><strong>与AI深度协作</strong></p>
+<ol>
+<li><p>让AI处理80%的常规代码，专注解决20%的架构设计、复杂系统集成等核心问题。</p>
 </li>
-<li><p><strong>函数与运算的行为不确定</strong>：大多数聚合函数（如 <code>SUM</code>, <code>AVG</code>, <code>COUNT</code>）会忽略 <code>NULL</code> 值，这可能与开发者的直觉不符。</p>
+<li><p>掌握主流AI工具（如GitHub Copilot、AI代码审查工具等），提升开发效率。</p>
 </li>
-<li><p><strong><code>NULL</code> 值会增加存储开销</strong>，为null它代表的是数据未知，他会在数据的行数据中单独用一列来表示哪些列是空的（用位图表示，如00010，表示第3行（以0为开始）表示为null），不过数据部分就不占用空间了。</p>
+</ol>
+<p><strong>聚焦技术本质</strong></p>
+<ol>
+<li><p>系统性学习编程语言底层原理（如内存管理、并发机制）。</p>
 </li>
-</ul>
-<p>2、将数据库查询逻辑显示暴露到逻辑上而避免使用复杂的sql语句<br>方便后续定位问题。</p>
-<p>3、在数据库中表设计中，不建议设置外键。<br>对记录的删除和插入都会对关联表做数据完整性检查，有的时候这可能是不必要的，这些应该把它暴露到业务逻辑层来做。主要还是增加性能开销。</p>
-<h2><span id="gorm操作mysql-最佳实践设计接口常用">Gorm操作mysql 最佳实践（设计接口常用）</span></h2><h3><span id="场景-1-根据条件查询行记录-select">场景 1: 根据条件查询行记录 (SELECT *)</span></h3><p><strong>Sql</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span> <span class="keyword">AND</span> grade <span class="operator">=</span> &quot;1年级&quot;;</span><br></pre></td></tr></table></figure>
-<p><strong>GORM 操作</strong>    </p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line">result := db.Where(<span class="string">&quot;age = ? AND grade = ?&quot;</span>, <span class="number">26</span>, <span class="string">&quot;1年级&quot;</span>).Find(&amp;students)</span><br></pre></td></tr></table></figure>
-<h3><span id="场景-2-根据条件查询行记录的指定列的值">场景 2: 根据条件查询行记录的指定列的值</span></h3><p><strong>sql</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, grade, age <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br></pre></td></tr></table></figure>
-<p><strong>GORM 操作</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方式一，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">var</span> results []<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">result := db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;results)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">type</span> StudentInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">  ID    <span class="type">uint</span></span><br><span class="line">  Grade <span class="type">string</span></span><br><span class="line">  Age   <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentInfo</span><br><span class="line">db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;infos) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>注意⚠️：当使用 <code>Find To Map</code>时，一定要在你的查询中包含 <code>Model</code> 或者 <code>Table</code> ，以此来显式地指定表名。 这能确保 GORM 正确的理解哪个表要被查询。<a href="https://gorm.io/zh_CN/docs/advanced_query.html">https://gorm.io/zh_CN/docs/advanced_query.html</a></p>
-<h3><span id="场景-3-根据条件包括关联表的列查询行记录的指定列的值">场景 3: 根据条件（包括关联表的列）查询行记录的指定列的值</span></h3><p><strong>Sql</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 连表查询</span></span><br><span class="line"><span class="keyword">SELECT</span> s.id, s.grade, s.age, b.name <span class="keyword">as</span> book_name <span class="keyword">FROM</span> student s <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> book b <span class="keyword">ON</span> b.id <span class="operator">=</span> s.book_id <span class="keyword">WHERE</span> s.age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 先查主表，再批量查关联表</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> book  <span class="keyword">WHERE</span> book_id <span class="keyword">IN</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>GORM 操作</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方法一：使用 Preload (GORM 的推荐方式，先查主表，再批量查关联表)</span></span><br><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line"><span class="comment">// Preload(&quot;Book&quot;) 会自动执行一次 JOIN 或额外的 SELECT 来加载关联的 Book</span></span><br><span class="line">db.Preload(<span class="string">&quot;Book&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;students)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二：使用 Joins + Scan (适用于需要从关联表选择特定列)</span></span><br><span class="line"><span class="keyword">type</span> StudentBookInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID        <span class="type">uint</span></span><br><span class="line">    Grade     <span class="type">string</span></span><br><span class="line">    Age       <span class="type">int</span></span><br><span class="line">    BookName  <span class="type">string</span> <span class="string">`gorm:&quot;column:book_name&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentBookInfo</span><br><span class="line"></span><br><span class="line">db.Table(<span class="string">&quot;students s&quot;</span>).</span><br><span class="line">    Select(<span class="string">&quot;s.id, s.grade, s.age, b.name as book_name&quot;</span>).</span><br><span class="line">    Joins(<span class="string">&quot;LEFT JOIN books b ON b.id = s.book_id&quot;</span>).</span><br><span class="line">    Where(<span class="string">&quot;s.age = ?&quot;</span>, <span class="number">26</span>).</span><br><span class="line">    Scan(&amp;infos)</span><br></pre></td></tr></table></figure>
-<h3><span id="场景-4-根据主键-id-更新指定列的数据并返回更新行的记录">场景 4: 根据主键 ID 更新指定列的数据，并返回更新行的记录</span></h3><p><strong>Sql</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> student <span class="keyword">SET</span> grade <span class="operator">=</span> &quot;3年级&quot;, age <span class="operator">=</span> <span class="number">27</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-<p><strong>GORM 操作</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> updatedStudent Student</span><br><span class="line">db.First(&amp;updatedStudent, studentID)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Updates 只更新指定字段</span></span><br><span class="line">result = db.Model(&amp;updatedStudent).Updates(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">  <span class="string">&quot;grade&quot;</span>: <span class="string">&quot;4年级&quot;</span>,</span><br><span class="line">  <span class="string">&quot;age&quot;</span>:   <span class="number">28</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 或者使用结构体（注意：零值不会被更新，如 int 0, string &quot;&quot;）</span></span><br><span class="line"><span class="comment">// db.Model(&amp;updatedStudent).Updates(Student&#123;Grade: &quot;4年级&quot;, Age: 28&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> result.Error != <span class="literal">nil</span> &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;更新失败: %v\n&quot;</span>, result.Error)</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3><span id="场景-5-插入一条新数据如果数据已存在则更新upsert">场景 5: 插入一条新数据，如果数据已存在则更新（UPSERT）</span></h3><p><strong>Sql</strong></p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> student (name, age, grade, book_id) </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;张三&#x27;</span>, <span class="number">25</span>, <span class="string">&#x27;2年级&#x27;</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">ON</span> DUPLICATE KEY <span class="keyword">UPDATE</span> </span><br><span class="line">    age <span class="operator">=</span> <span class="keyword">VALUES</span>(age), </span><br><span class="line">    grade <span class="operator">=</span> <span class="keyword">VALUES</span>(grade),</span><br><span class="line">    updated_at <span class="operator">=</span> <span class="built_in">CURRENT_TIMESTAMP</span>;</span><br></pre></td></tr></table></figure>
-<p><strong>注意:</strong> 此语句依赖于表上的唯一索引（<code>UNIQUE KEY</code>）。例如，你需要在 <code>name</code> 字段上建立唯一索引，当插入重复的 <code>name</code> 时，<code>ON DUPLICATE KEY</code> 子句才会触发。</p>
-<p><strong>GORM 操作</strong></p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 假设 name 字段是唯一索引</span></span><br><span class="line">student := Student&#123;</span><br><span class="line">  Name:  <span class="string">&quot;张三&quot;</span>, <span class="comment">// 这个名字在数据库中已存在</span></span><br><span class="line">  Age:   <span class="number">26</span>,    <span class="comment">// 新的年龄</span></span><br><span class="line">  Grade: <span class="string">&quot;3年级&quot;</span>, <span class="comment">// 新的年级</span></span><br><span class="line">  BookID: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Clauses 实现 UPSERT</span></span><br><span class="line">result := db.Clauses(clause.OnConflict&#123;</span><br><span class="line">  Columns:   []clause.Column&#123;&#123;Name: <span class="string">&quot;name&quot;</span>&#125;&#125;, <span class="comment">// 唯一索引的列</span></span><br><span class="line">  DoUpdates: clause.Assignments(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">      <span class="string">&quot;age&quot;</span>:   student.Age,</span><br><span class="line">      <span class="string">&quot;grade&quot;</span>: student.Grade,</span><br><span class="line">      <span class="comment">// GORM 会自动处理 updated_at</span></span><br><span class="line">  &#125;),</span><br><span class="line">&#125;).Create(&amp;student)</span><br></pre></td></tr></table></figure>
+<li><p>以问题驱动学习：结合实际业务场景，深挖技术原理而非机械式啃书。</p>
+</li>
+</ol>
+<p><strong>拓展跨界能力</strong></p>
+<ol>
+<li><p>培养技术判断力：识别何时使用/不使用AI，避免技术滥用。</p>
+</li>
+<li><p>增强商业敏感度：理解技术如何转化为商业价值，关注行业需求变化。</p>
+</li>
+</ol>
+<hr>
+<h3><span id="2-ai难以替代的核心技能">2、AI难以替代的核心技能</span></h3><p>个人总结：系统设计（需要各种开发经验）、创新性思考、沟通能力、价值判断（需要哲学人文思考）</p>
+<p><strong>系统架构设计能力</strong></p>
+<ol>
+<li><p>复杂系统的抽象建模、模块拆分与集成设计。</p>
+</li>
+<li><p>平衡性能、可维护性、扩展性等非功能性需求。</p>
+</li>
+</ol>
+<p><strong>问题抽象与创新思维</strong></p>
+<ol>
+<li><p>将模糊需求转化为技术方案，设计AI工具无法预见的解决路径。</p>
+</li>
+<li><p>突破常规逻辑的创新性思考（如算法优化、新技术应用场景探索）。</p>
+</li>
+</ol>
+<p><strong>技术判断与决策能力</strong></p>
+<ol>
+<li><p>评估技术选型的合理性（如分布式架构 vs 单体架构）。</p>
+</li>
+<li><p>风险预判与容灾设计（如分布式系统的一致性保障）。</p>
+</li>
+</ol>
+<p><strong>跨领域协作能力</strong></p>
+<ol>
+<li><p>与非技术人员沟通需求（如产品经理、业务方）。</p>
+</li>
+<li><p>协调多团队资源推进复杂项目落地。</p>
+</li>
+</ol>
+<p><strong>价值判断与伦理思考</strong></p>
+<ol>
+<li><p>技术方案的道德边界把控（如隐私保护、算法公平性）。</p>
+</li>
+<li><p>业务场景的合理性评估（避免”技术滥用”）。</p>
+</li>
+</ol>
+<hr>
+<h3><span id="3-学习建议">3、学习建议</span></h3><p><strong>时间分配</strong></p>
+<ol>
+<li><p>每周20%时间探索前沿技术（如AI工程化、新型编程范式）。</p>
+</li>
+<li><p>通过实践项目验证技术方案（例如性能优化、系统重构）。</p>
+</li>
+</ol>
+<p><strong>能力验证指标</strong></p>
+<ol>
+<li><p>能否独立设计可扩展的复杂系统架构。</p>
+</li>
+<li><p>是否具备将业务需求转化为技术架构的”翻译能力”。</p>
+</li>
+<li><p>是否可以快速描述需求，抓住本质，说清楚问题。（个人补充）</p>
+</li>
+</ol>
+<hr>
+<p>最后我想说，AI的加持，我们想要学习知识变得触手可及，它的出现让敢想到敢做的门槛变得非常低，但是很多人却缺乏这样的勇气，事实上也包括我自己，个人感觉花点时间想想自己想要什么非常重要，而不是人云亦云，多看点书多与人交流，开阔视野，也能够更好洞察事情的本质，减少无效努力的发生。专注于自己的生活。</p>
 ]]></content>
       <categories>
         <category>技术</category>
       </categories>
       <tags>
-        <tag>后端</tag>
+        <tag>技术思考</tag>
       </tags>
   </entry>
   <entry>
@@ -1640,6 +1543,50 @@
       </tags>
   </entry>
   <entry>
+    <title>接口设计场景下数据层的最佳实践</title>
+    <url>/posts/%E6%8E%A5%E5%8F%A3%E8%AE%BE%E8%AE%A1%E5%9C%BA%E6%99%AF%E4%B8%8B%E6%95%B0%E6%8D%AE%E5%B1%82%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<h2><span id="设计数据库的小tips">设计数据库的小tips</span></h2><p>1、数据库表字段不建议设置值时允许为null。</p>
+<ul>
+<li><p><strong><code>NULL</code> 的比较特性</strong>：任何与 <code>NULL</code> 的比较（<code>=</code>, <code>!=</code>, <code>&lt;</code>, <code>&gt;</code>）结果都不是 <code>TRUE</code> 或 <code>FALSE</code>，而是 <code>UNKNOWN</code>。这使得 <code>WHERE</code> 子句的行为变得难以预测。</p>
+</li>
+<li><p><strong>函数与运算的行为不确定</strong>：大多数聚合函数（如 <code>SUM</code>, <code>AVG</code>, <code>COUNT</code>）会忽略 <code>NULL</code> 值，这可能与开发者的直觉不符。</p>
+</li>
+<li><p><strong><code>NULL</code> 值会增加存储开销</strong>，为null它代表的是数据未知，他会在数据的行数据中单独用一列来表示哪些列是空的（用位图表示，如00010，表示第3行（以0为开始）表示为null），不过数据部分就不占用空间了。</p>
+</li>
+</ul>
+<p>2、将数据库查询逻辑显示暴露到逻辑上而避免使用复杂的sql语句<br>方便后续定位问题。</p>
+<p>3、在数据库中表设计中，不建议设置外键。<br>对记录的删除和插入都会对关联表做数据完整性检查，有的时候这可能是不必要的，这些应该把它暴露到业务逻辑层来做。主要还是增加性能开销。</p>
+<h2><span id="gorm操作mysql-最佳实践设计接口常用">Gorm操作mysql 最佳实践（设计接口常用）</span></h2><h3><span id="场景-1-根据条件查询行记录-select">场景 1: 根据条件查询行记录 (SELECT *)</span></h3><p><strong>Sql</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span> <span class="keyword">AND</span> grade <span class="operator">=</span> &quot;1年级&quot;;</span><br></pre></td></tr></table></figure>
+<p><strong>GORM 操作</strong>    </p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line">result := db.Where(<span class="string">&quot;age = ? AND grade = ?&quot;</span>, <span class="number">26</span>, <span class="string">&quot;1年级&quot;</span>).Find(&amp;students)</span><br></pre></td></tr></table></figure>
+<h3><span id="场景-2-根据条件查询行记录的指定列的值">场景 2: 根据条件查询行记录的指定列的值</span></h3><p><strong>sql</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id, grade, age <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>GORM 操作</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方式一，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">var</span> results []<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">result := db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;results)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 方式二，注意一定要用.Model(&amp;Student&#123;&#125;)！！否则不生效</span></span><br><span class="line"><span class="keyword">type</span> StudentInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">  ID    <span class="type">uint</span></span><br><span class="line">  Grade <span class="type">string</span></span><br><span class="line">  Age   <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentInfo</span><br><span class="line">db.Model(&amp;Student&#123;&#125;).Select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;grade&quot;</span>, <span class="string">&quot;age&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;infos) </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注意⚠️：当使用 <code>Find To Map</code>时，一定要在你的查询中包含 <code>Model</code> 或者 <code>Table</code> ，以此来显式地指定表名。 这能确保 GORM 正确的理解哪个表要被查询。<a href="https://gorm.io/zh_CN/docs/advanced_query.html">https://gorm.io/zh_CN/docs/advanced_query.html</a></p>
+<h3><span id="场景-3-根据条件包括关联表的列查询行记录的指定列的值">场景 3: 根据条件（包括关联表的列）查询行记录的指定列的值</span></h3><p><strong>Sql</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 连表查询</span></span><br><span class="line"><span class="keyword">SELECT</span> s.id, s.grade, s.age, b.name <span class="keyword">as</span> book_name <span class="keyword">FROM</span> student s <span class="keyword">LEFT</span> <span class="keyword">JOIN</span> book b <span class="keyword">ON</span> b.id <span class="operator">=</span> s.book_id <span class="keyword">WHERE</span> s.age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 先查主表，再批量查关联表</span></span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> student <span class="keyword">WHERE</span> age <span class="operator">=</span> <span class="number">26</span>;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> book  <span class="keyword">WHERE</span> book_id <span class="keyword">IN</span> (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>GORM 操作</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 方法一：使用 Preload (GORM 的推荐方式，先查主表，再批量查关联表)</span></span><br><span class="line"><span class="keyword">var</span> students []Student</span><br><span class="line"><span class="comment">// Preload(&quot;Book&quot;) 会自动执行一次 JOIN 或额外的 SELECT 来加载关联的 Book</span></span><br><span class="line">db.Preload(<span class="string">&quot;Book&quot;</span>).Where(<span class="string">&quot;age = ?&quot;</span>, <span class="number">26</span>).Find(&amp;students)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法二：使用 Joins + Scan (适用于需要从关联表选择特定列)</span></span><br><span class="line"><span class="keyword">type</span> StudentBookInfo <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID        <span class="type">uint</span></span><br><span class="line">    Grade     <span class="type">string</span></span><br><span class="line">    Age       <span class="type">int</span></span><br><span class="line">    BookName  <span class="type">string</span> <span class="string">`gorm:&quot;column:book_name&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> infos []StudentBookInfo</span><br><span class="line"></span><br><span class="line">db.Table(<span class="string">&quot;students s&quot;</span>).</span><br><span class="line">    Select(<span class="string">&quot;s.id, s.grade, s.age, b.name as book_name&quot;</span>).</span><br><span class="line">    Joins(<span class="string">&quot;LEFT JOIN books b ON b.id = s.book_id&quot;</span>).</span><br><span class="line">    Where(<span class="string">&quot;s.age = ?&quot;</span>, <span class="number">26</span>).</span><br><span class="line">    Scan(&amp;infos)</span><br></pre></td></tr></table></figure>
+<h3><span id="场景-4-根据主键-id-更新指定列的数据并返回更新行的记录">场景 4: 根据主键 ID 更新指定列的数据，并返回更新行的记录</span></h3><p><strong>Sql</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> student <span class="keyword">SET</span> grade <span class="operator">=</span> &quot;3年级&quot;, age <span class="operator">=</span> <span class="number">27</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>GORM 操作</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> updatedStudent Student</span><br><span class="line">db.First(&amp;updatedStudent, studentID)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Updates 只更新指定字段</span></span><br><span class="line">result = db.Model(&amp;updatedStudent).Updates(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">  <span class="string">&quot;grade&quot;</span>: <span class="string">&quot;4年级&quot;</span>,</span><br><span class="line">  <span class="string">&quot;age&quot;</span>:   <span class="number">28</span>,</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 或者使用结构体（注意：零值不会被更新，如 int 0, string &quot;&quot;）</span></span><br><span class="line"><span class="comment">// db.Model(&amp;updatedStudent).Updates(Student&#123;Grade: &quot;4年级&quot;, Age: 28&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> result.Error != <span class="literal">nil</span> &#123;</span><br><span class="line">  fmt.Printf(<span class="string">&quot;更新失败: %v\n&quot;</span>, result.Error)</span><br><span class="line">  <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3><span id="场景-5-插入一条新数据如果数据已存在则更新upsert">场景 5: 插入一条新数据，如果数据已存在则更新（UPSERT）</span></h3><p><strong>Sql</strong></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT INTO</span> student (name, age, grade, book_id) </span><br><span class="line"><span class="keyword">VALUES</span> (<span class="string">&#x27;张三&#x27;</span>, <span class="number">25</span>, <span class="string">&#x27;2年级&#x27;</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">ON</span> DUPLICATE KEY <span class="keyword">UPDATE</span> </span><br><span class="line">    age <span class="operator">=</span> <span class="keyword">VALUES</span>(age), </span><br><span class="line">    grade <span class="operator">=</span> <span class="keyword">VALUES</span>(grade),</span><br><span class="line">    updated_at <span class="operator">=</span> <span class="built_in">CURRENT_TIMESTAMP</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>注意:</strong> 此语句依赖于表上的唯一索引（<code>UNIQUE KEY</code>）。例如，你需要在 <code>name</code> 字段上建立唯一索引，当插入重复的 <code>name</code> 时，<code>ON DUPLICATE KEY</code> 子句才会触发。</p>
+<p><strong>GORM 操作</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 假设 name 字段是唯一索引</span></span><br><span class="line">student := Student&#123;</span><br><span class="line">  Name:  <span class="string">&quot;张三&quot;</span>, <span class="comment">// 这个名字在数据库中已存在</span></span><br><span class="line">  Age:   <span class="number">26</span>,    <span class="comment">// 新的年龄</span></span><br><span class="line">  Grade: <span class="string">&quot;3年级&quot;</span>, <span class="comment">// 新的年级</span></span><br><span class="line">  BookID: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Clauses 实现 UPSERT</span></span><br><span class="line">result := db.Clauses(clause.OnConflict&#123;</span><br><span class="line">  Columns:   []clause.Column&#123;&#123;Name: <span class="string">&quot;name&quot;</span>&#125;&#125;, <span class="comment">// 唯一索引的列</span></span><br><span class="line">  DoUpdates: clause.Assignments(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">      <span class="string">&quot;age&quot;</span>:   student.Age,</span><br><span class="line">      <span class="string">&quot;grade&quot;</span>: student.Grade,</span><br><span class="line">      <span class="comment">// GORM 会自动处理 updated_at</span></span><br><span class="line">  &#125;),</span><br><span class="line">&#125;).Create(&amp;student)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>新手也能懂的分层设计：为什么项目里要先定义接口再实现</title>
     <url>/posts/%E6%96%B0%E6%89%8B%E4%B9%9F%E8%83%BD%E6%87%82%E7%9A%84%E5%88%86%E5%B1%82%E8%AE%BE%E8%AE%A1%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%A1%B9%E7%9B%AE%E9%87%8C%E8%A6%81%E5%85%88%E5%AE%9A%E4%B9%89%E6%8E%A5%E5%8F%A3%E5%86%8D%E5%AE%9E%E7%8E%B0%EF%BC%9F/</url>
     <content><![CDATA[<blockquote>
@@ -1686,6 +1633,59 @@
       </categories>
       <tags>
         <tag>后端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s是什么？</title>
+    <url>/posts/k8s%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/</url>
+    <content><![CDATA[<blockquote>
+<p>网上对 k8s 含糊不清，以下是我对其的理解，分享给大家</p>
+<p>背景介绍：假设公司有一个超大的 web 应用，其中有很多服务，比如 mysql、redis、日志收集服务、web 服务等等，每个服务都可以用一个容器单独运行起来。突然来了泼天的流量，这个应用火了！，大量的用户请求造成了极大的数据库读写压力，原来一个容器可以扛住，现在快扛不住了，有没有一种办法，可以根据请求量多少自动增加容器数量来应对这样的读写压力来避免这样的问题，然后用户量请求下来的时候又恢复到原来的梳理呢?嗯！这时 k8s 就闪亮登场！</p>
+</blockquote>
+<h2><span id="k8s-是什么">k8s 是什么？</span></h2><p>全程 Kubernetes，是一个开源的容器编排引擎，用来对容器化应用进行自动部署、扩缩和管理。</p>
+<p>更大白话一点，它介于客户端和服务端之间，通过策略，协调和管理多个应用服务（容器），只需要一个 yaml 文件配置，定义应用的部署顺序等信息，就能自动部署应用到各个服务器上，还能让它们挂了自动重启，自动扩缩容。</p>
+<h2><span id="k8s-怎么管理容器">k8s 怎么管理容器？</span></h2><p>那就不得不提 k8s 的内部实现，它包括两个部分，master 节点和 work 节点，每个节点可视为一个物理机，具体而言：</p>
+<p><code>master 节点</code> 用于存储集群的所有数据、常规的 api 请求操作、后台任务调度、pod 的调度。<code>work 节点</code> 用于管理容器给容器提供工作环境。</p>
+<p>再为具体一点：</p>
+<p>Master 节点（控制台）用于管理容器：</p>
+<ul>
+<li>API Server：处理 REST 操作，提供集群的管理接口。</li>
+<li>etcd：分布式键值存储，用于存储集群的所有数据。</li>
+<li>Controller Manager：负责集群的常规后台任务。</li>
+<li>Scheduler：负责将 Pod 调度到合适的节点上。</li>
+</ul>
+<p>Worker 节点用于运行容器：</p>
+<ul>
+<li>Kubelet：负责与 Master 节点通信，管理 Pod 的生命周期。</li>
+<li>Kube-proxy：负责网络代理和负载均衡。</li>
+<li>Container Runtime：如 Docker、containerd，负责运行容器。</li>
+</ul>
+<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
+<center>图片来源：小白 debug</center>
+
+
+<h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
+<p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
+<h2><span id="k8s-怎么使用">K8s 怎么使用？</span></h2><p>先写一个 yaml 文件，这个文件用来告诉 k8s 应该创建和管理哪容器，容器上的文件映射、端口映射、持久化位置、最多可以有多少个副本、可占有的资源等等，这个文件将通过 kubectl 命令行工具执行：<code>kubectl apply -f xx.yaml</code>，k8s 控制台会暴露接口让 kubectl 对齐操控。</p>
+<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="kubectl操控k8s示例"></p>
+<center>图片来源：小白 debug</center>
+
+<p>下面的概率会在撰写 yaml 文件时经常接触到，建议熟悉并背诵：</p>
+<ul>
+<li>namespace：虚拟集群，将 k8s 集群的资源分隔</li>
+<li>node：工作节点，通常是一个物理服务器，pod 的载体，一个 pod 只能工作在一个 node</li>
+<li>deployment：管理 Pod 副本的控制器，k8s 会在集群中保持制定数量的 Pod 副本</li>
+<li>service：暴露应用的抽象对象，通过稳定的 IP 地址和 DNS 来访问 pod</li>
+<li>pod：k8s 最小单位，可以有多个容器，共同组成一套服务</li>
+</ul>
+<h2><span id="k8s-的本质是什么">k8s 的本质是什么？</span></h2><p>用户请求到实际应用的中间层，简化服务的部署运维流程，它可以作为代理对请求进行转发，也可以分布式管理实际应用，使业务更加高可用更好管理，节省复杂的人工管理。</p>
+<p><a href="https://golangguide.top/架构/云原生/核心知识点/k8s到底是什么.html#cluster">参考链接</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>云原生</tag>
       </tags>
   </entry>
   <entry>
