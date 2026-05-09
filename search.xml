@@ -413,6 +413,59 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s是什么？</title>
+    <url>/posts/k8s%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/</url>
+    <content><![CDATA[<blockquote>
+<p>网上对 k8s 含糊不清，以下是我对其的理解，分享给大家</p>
+<p>背景介绍：假设公司有一个超大的 web 应用，其中有很多服务，比如 mysql、redis、日志收集服务、web 服务等等，每个服务都可以用一个容器单独运行起来。突然来了泼天的流量，这个应用火了！，大量的用户请求造成了极大的数据库读写压力，原来一个容器可以扛住，现在快扛不住了，有没有一种办法，可以根据请求量多少自动增加容器数量来应对这样的读写压力来避免这样的问题，然后用户量请求下来的时候又恢复到原来的梳理呢?嗯！这时 k8s 就闪亮登场！</p>
+</blockquote>
+<h2><span id="k8s-是什么">k8s 是什么？</span></h2><p>全程 Kubernetes，是一个开源的容器编排引擎，用来对容器化应用进行自动部署、扩缩和管理。</p>
+<p>更大白话一点，它介于客户端和服务端之间，通过策略，协调和管理多个应用服务（容器），只需要一个 yaml 文件配置，定义应用的部署顺序等信息，就能自动部署应用到各个服务器上，还能让它们挂了自动重启，自动扩缩容。</p>
+<h2><span id="k8s-怎么管理容器">k8s 怎么管理容器？</span></h2><p>那就不得不提 k8s 的内部实现，它包括两个部分，master 节点和 work 节点，每个节点可视为一个物理机，具体而言：</p>
+<p><code>master 节点</code> 用于存储集群的所有数据、常规的 api 请求操作、后台任务调度、pod 的调度。<code>work 节点</code> 用于管理容器给容器提供工作环境。</p>
+<p>再为具体一点：</p>
+<p>Master 节点（控制台）用于管理容器：</p>
+<ul>
+<li>API Server：处理 REST 操作，提供集群的管理接口。</li>
+<li>etcd：分布式键值存储，用于存储集群的所有数据。</li>
+<li>Controller Manager：负责集群的常规后台任务。</li>
+<li>Scheduler：负责将 Pod 调度到合适的节点上。</li>
+</ul>
+<p>Worker 节点用于运行容器：</p>
+<ul>
+<li>Kubelet：负责与 Master 节点通信，管理 Pod 的生命周期。</li>
+<li>Kube-proxy：负责网络代理和负载均衡。</li>
+<li>Container Runtime：如 Docker、containerd，负责运行容器。</li>
+</ul>
+<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
+<center>图片来源：小白 debug</center>
+
+
+<h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
+<p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
+<h2><span id="k8s-怎么使用">K8s 怎么使用？</span></h2><p>先写一个 yaml 文件，这个文件用来告诉 k8s 应该创建和管理哪容器，容器上的文件映射、端口映射、持久化位置、最多可以有多少个副本、可占有的资源等等，这个文件将通过 kubectl 命令行工具执行：<code>kubectl apply -f xx.yaml</code>，k8s 控制台会暴露接口让 kubectl 对齐操控。</p>
+<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="kubectl操控k8s示例"></p>
+<center>图片来源：小白 debug</center>
+
+<p>下面的概率会在撰写 yaml 文件时经常接触到，建议熟悉并背诵：</p>
+<ul>
+<li>namespace：虚拟集群，将 k8s 集群的资源分隔</li>
+<li>node：工作节点，通常是一个物理服务器，pod 的载体，一个 pod 只能工作在一个 node</li>
+<li>deployment：管理 Pod 副本的控制器，k8s 会在集群中保持制定数量的 Pod 副本</li>
+<li>service：暴露应用的抽象对象，通过稳定的 IP 地址和 DNS 来访问 pod</li>
+<li>pod：k8s 最小单位，可以有多个容器，共同组成一套服务</li>
+</ul>
+<h2><span id="k8s-的本质是什么">k8s 的本质是什么？</span></h2><p>用户请求到实际应用的中间层，简化服务的部署运维流程，它可以作为代理对请求进行转发，也可以分布式管理实际应用，使业务更加高可用更好管理，节省复杂的人工管理。</p>
+<p><a href="https://golangguide.top/架构/云原生/核心知识点/k8s到底是什么.html#cluster">参考链接</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>云原生</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Kafka的理解？</title>
     <url>/posts/kafka%E7%9A%84%E7%90%86%E8%A7%A3/</url>
     <content><![CDATA[<p>Kafka 本质上是一个消息队列中间件，经常在高并发的场景下我们会见到它，那顾名思义它就是面向于高并发的场景。下面我们来简单了解一下它吧～</p>
@@ -528,6 +581,102 @@
       </categories>
       <tags>
         <tag>分享</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一文讲透 Go map 底层：哈希、bucket、扩容与并发？</title>
+    <url>/posts/%E4%B8%80%E6%96%87%E8%AE%B2%E9%80%8F%20Go%20map%20%E5%BA%95%E5%B1%82%EF%BC%9A%E5%93%88%E5%B8%8C%E3%80%81bucket%E3%80%81%E6%89%A9%E5%AE%B9%E4%B8%8E%E5%B9%B6%E5%8F%91/</url>
+    <content><![CDATA[<blockquote>
+<p>本文使用ai辅助创作，具体而言不断和他提问、追问，然后使用提示词：“重新整理我提过的问题，简单点整理成博客的形式，分享出来同时让我复盘，希望内容不用很长，但能够把底层说透”，共勉～</p>
+</blockquote>
+<p>Go 的 <code>map</code> 用起来很简单，但它的底层设计其实非常精妙。本文只讲最核心的几个问题，帮你真正理解它。</p>
+<hr>
+<h1><span id="一-map-的-key-到底是什么">一、map 的 key 到底是什么？</span></h1><p>先纠正一个常见误区：</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">name := <span class="string">&quot;Tom&quot;</span></span><br><span class="line">m[name] = <span class="number">18</span></span><br></pre></td></tr></table></figure>
+<p>参与哈希的是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">&quot;Tom&quot;</span><br></pre></td></tr></table></figure>
+<p>不是变量名 <code>name</code>。</p>
+<p>👉 map 的本质是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">hash(key 的值) → 定位数据</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="二-数据是怎么定位到-bucket-的">二、数据是怎么定位到 bucket 的？</span></h1><p>核心公式：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">bucketIndex = hash &amp; (2^B - 1)</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">2^B = bucket 数量</span><br></pre></td></tr></table></figure>
+<p>👉 也就是说：</p>
+<ul>
+<li>hash 的低 B 位 → 决定在哪个 bucket</li>
+<li>bucket 是一段连续内存</li>
+</ul>
+<hr>
+<h1><span id="三-bucket-结构关键">三、bucket 结构（关键）</span></h1><p>一个 bucket 不是一个键值对，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">tophash[8]</span><br><span class="line">keys[8]</span><br><span class="line">values[8]</span><br><span class="line">overflow pointer</span><br></pre></td></tr></table></figure>
+<p>特点：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">1. 一个 bucket 最多 8 个元素</span><br><span class="line">2. key/value 分开存</span><br><span class="line">3. 满了用 overflow 串起来</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="四-为什么要-tophash">四、为什么要 tophash？</span></h1><p>查找流程是三层：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">1. 找 bucket（低 B 位）</span><br><span class="line">2. 比 tophash（高 8 位）</span><br><span class="line">3. 比 key（最终判断）</span><br></pre></td></tr></table></figure>
+<p>👉 tophash 的作用：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">用 1 byte 快速过滤，减少昂贵的 key 比较</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="五-冲突怎么处理">五、冲突怎么处理？</span></h1><p>如果出现：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">不同 key → 同 bucket → tophash 也一样</span><br></pre></td></tr></table></figure>
+<p>最终仍然：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">逐个 key 比较</span><br></pre></td></tr></table></figure>
+<p>👉 map 永远正确，只是性能可能下降。</p>
+<hr>
+<h1><span id="六-bucket-不会变大">六、bucket 不会变大</span></h1><p>重要设计：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">bucket 大小固定（8 个槽位）</span><br></pre></td></tr></table></figure>
+<p>不会扩容 bucket，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">1. 挂 overflow bucket</span><br><span class="line">2. 或增加 bucket 数量</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="七-扩容渐进式迁移">七、扩容：渐进式迁移</span></h1><p>扩容时：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">buckets    → 新桶</span><br><span class="line">oldbuckets → 旧桶</span><br></pre></td></tr></table></figure>
+<p>不会一次搬完，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">边用边搬（渐进式）</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="查找逻辑关键">查找逻辑（关键）</span></h2><figure class="highlight text"><table><tr><td class="code"><pre><span class="line">1. 算 old bucket index</span><br><span class="line">2. 判断这个 bucket 是否已迁移</span><br><span class="line"></span><br><span class="line">没迁移 → 查 oldbuckets</span><br><span class="line">已迁移 → 查 buckets</span><br></pre></td></tr></table></figure>
+<hr>
+<h2><span id="数据如何分裂">数据如何分裂？</span></h2><figure class="highlight text"><table><tr><td class="code"><pre><span class="line">old bucket[i]</span><br><span class="line">   ↓</span><br><span class="line">new bucket[i]</span><br><span class="line">new bucket[i + oldSize]</span><br></pre></td></tr></table></figure>
+<p>本质原因：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">扩容后多看了一位 hash</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="八-same-size-grow同尺寸扩容">八、same-size grow（同尺寸扩容）</span></h1><p>有时候不会增加 bucket 数量，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">重新分布数据（rehash）</span><br></pre></td></tr></table></figure>
+<p>触发原因：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">overflow 太多 → 分布不均</span><br></pre></td></tr></table></figure>
+<p>做法：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">换 hash 种子 → 打散 key</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="九-为什么遍历是随机的">九、为什么遍历是“随机”的？</span></h1><p>遍历顺序不是固定的，原因有三：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">1. hash0（随机种子）影响分布</span><br><span class="line">2. 从随机 bucket 开始</span><br><span class="line">3. bucket 内有偏移</span><br></pre></td></tr></table></figure>
+<p>👉 目的只有一个：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">防止你依赖顺序</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="十-map-如何知道遍历结束">十、map 如何知道遍历结束？</span></h1><p>不是靠元素个数，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">遍历所有 bucket + 每个 bucket 的槽位</span><br></pre></td></tr></table></figure>
+<p>当：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">所有 bucket 扫完一轮 → 结束</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="十一-并发为什么会-panic">十一、并发为什么会 panic？</span></h1><p>Go map 不是并发安全的：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">只要有写操作，就必须加锁</span><br></pre></td></tr></table></figure>
+<p>原因不是“同一个 key”，而是：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">写操作可能修改整个 map 结构（bucket、扩容、迁移等）</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="十二-syncmap-为什么适合读多写少">十二、sync.Map 为什么适合读多写少？</span></h1><p>核心结构：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">read  → 无锁读</span><br><span class="line">dirty → 加锁写</span><br></pre></td></tr></table></figure>
+<p>所以：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">读多 → 命中 read → 很快</span><br><span class="line">写多 → 操作 dirty → 频繁加锁 → 性能下降</span><br></pre></td></tr></table></figure>
+<hr>
+<h1><span id="总结">总结</span></h1><figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Go map = 哈希表 + 固定 bucket + overflow 链 + 渐进扩容 + 三层查找</span><br></pre></td></tr></table></figure>
+<p>设计核心：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">不是避免冲突，而是在冲突存在时依然保持高性能</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>技术思考</tag>
       </tags>
   </entry>
   <entry>
@@ -1633,59 +1782,6 @@
       </categories>
       <tags>
         <tag>后端</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s是什么？</title>
-    <url>/posts/k8s%20%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F/</url>
-    <content><![CDATA[<blockquote>
-<p>网上对 k8s 含糊不清，以下是我对其的理解，分享给大家</p>
-<p>背景介绍：假设公司有一个超大的 web 应用，其中有很多服务，比如 mysql、redis、日志收集服务、web 服务等等，每个服务都可以用一个容器单独运行起来。突然来了泼天的流量，这个应用火了！，大量的用户请求造成了极大的数据库读写压力，原来一个容器可以扛住，现在快扛不住了，有没有一种办法，可以根据请求量多少自动增加容器数量来应对这样的读写压力来避免这样的问题，然后用户量请求下来的时候又恢复到原来的梳理呢?嗯！这时 k8s 就闪亮登场！</p>
-</blockquote>
-<h2><span id="k8s-是什么">k8s 是什么？</span></h2><p>全程 Kubernetes，是一个开源的容器编排引擎，用来对容器化应用进行自动部署、扩缩和管理。</p>
-<p>更大白话一点，它介于客户端和服务端之间，通过策略，协调和管理多个应用服务（容器），只需要一个 yaml 文件配置，定义应用的部署顺序等信息，就能自动部署应用到各个服务器上，还能让它们挂了自动重启，自动扩缩容。</p>
-<h2><span id="k8s-怎么管理容器">k8s 怎么管理容器？</span></h2><p>那就不得不提 k8s 的内部实现，它包括两个部分，master 节点和 work 节点，每个节点可视为一个物理机，具体而言：</p>
-<p><code>master 节点</code> 用于存储集群的所有数据、常规的 api 请求操作、后台任务调度、pod 的调度。<code>work 节点</code> 用于管理容器给容器提供工作环境。</p>
-<p>再为具体一点：</p>
-<p>Master 节点（控制台）用于管理容器：</p>
-<ul>
-<li>API Server：处理 REST 操作，提供集群的管理接口。</li>
-<li>etcd：分布式键值存储，用于存储集群的所有数据。</li>
-<li>Controller Manager：负责集群的常规后台任务。</li>
-<li>Scheduler：负责将 Pod 调度到合适的节点上。</li>
-</ul>
-<p>Worker 节点用于运行容器：</p>
-<ul>
-<li>Kubelet：负责与 Master 节点通信，管理 Pod 的生命周期。</li>
-<li>Kube-proxy：负责网络代理和负载均衡。</li>
-<li>Container Runtime：如 Docker、containerd，负责运行容器。</li>
-</ul>
-<p><img src="https://uploader.shimo.im/f/7hh0JSYWYzHlhDLT.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="k8s的架构"></p>
-<center>图片来源：小白 debug</center>
-
-
-<h2><span id="k8s-怎么工作">k8s 怎么工作？</span></h2><p>以前我们的服务会上传到服务器，用户请求经过服务器上的 nginx 转发到我们服务暴露的接口上进行处理，</p>
-<p>现在我们会将业务代码先打包成镜像，然后基于它创建容器并统一交给 k8s 进行管理，当用户请求来临，先通过 k8s 对请求进行转发，k8s 会在自己的master节点（控制台）查找到该请求应该访问的哪一个工作节点的哪一个 pod, 然后找到可以处理这个请求的容器，同时 k8s 会根据请求量大小，通过自身预设的规则和算法自动创建 pod 资源和销毁 pod 资源、迁移。</p>
-<h2><span id="k8s-怎么使用">K8s 怎么使用？</span></h2><p>先写一个 yaml 文件，这个文件用来告诉 k8s 应该创建和管理哪容器，容器上的文件映射、端口映射、持久化位置、最多可以有多少个副本、可占有的资源等等，这个文件将通过 kubectl 命令行工具执行：<code>kubectl apply -f xx.yaml</code>，k8s 控制台会暴露接口让 kubectl 对齐操控。</p>
-<p><img src="https://uploader.shimo.im/f/CX11lR9RMpzKmAgr.png!thumbnail?accessToken=eyJhbGciOiJIUzI1NiIsImtpZCI6ImRlZmF1bHQiLCJ0eXAiOiJKV1QifQ.eyJleHAiOjE3NTQwOTI4NDksImZpbGVHVUlEIjoibThBWk03QlFPRUlHMkxrYiIsImlhdCI6MTc1NDA5MjU0OSwiaXNzIjoidXBsb2FkZXJfYWNjZXNzX3Jlc291cmNlIiwicGFhIjoiYWxsOmFsbDoiLCJ1c2VySWQiOjc1NDYzMzIxfQ.CueXxgPDmdJOpm6GPkK7oUMdbJp3hDjfBHIA_BV2-7M" alt="kubectl操控k8s示例"></p>
-<center>图片来源：小白 debug</center>
-
-<p>下面的概率会在撰写 yaml 文件时经常接触到，建议熟悉并背诵：</p>
-<ul>
-<li>namespace：虚拟集群，将 k8s 集群的资源分隔</li>
-<li>node：工作节点，通常是一个物理服务器，pod 的载体，一个 pod 只能工作在一个 node</li>
-<li>deployment：管理 Pod 副本的控制器，k8s 会在集群中保持制定数量的 Pod 副本</li>
-<li>service：暴露应用的抽象对象，通过稳定的 IP 地址和 DNS 来访问 pod</li>
-<li>pod：k8s 最小单位，可以有多个容器，共同组成一套服务</li>
-</ul>
-<h2><span id="k8s-的本质是什么">k8s 的本质是什么？</span></h2><p>用户请求到实际应用的中间层，简化服务的部署运维流程，它可以作为代理对请求进行转发，也可以分布式管理实际应用，使业务更加高可用更好管理，节省复杂的人工管理。</p>
-<p><a href="https://golangguide.top/架构/云原生/核心知识点/k8s到底是什么.html#cluster">参考链接</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>云原生</tag>
       </tags>
   </entry>
   <entry>
