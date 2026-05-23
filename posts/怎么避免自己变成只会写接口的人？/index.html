@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="这是一个个人博客，记录技术学习和生活感悟"><title>怎么避免自己变成只会写接口的人 | RenaXu 's Wonderland</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/custom-icons.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/toc.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/pure-min.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://unpkg.com/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="https://unpkg.com/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="https://unpkg.com/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://unpkg.com/toastr/build/toastr.min.css"><div class="darkmode-toggle">🌓</div><script>var prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+var toggle = document.querySelector('.darkmode-toggle');
+var html = document.querySelector('html');
+
+html.dataset.dark = localStorage.dark || prefersDarkMode.matches;
+
+toggle.addEventListener('click', () => {
+localStorage.dark = !(html.dataset.dark == 'true');
+html.dataset.dark = localStorage.dark;
+});</script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">怎么避免自己变成只会写接口的人</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">怎么避免自己变成只会写接口的人</h1><div class="post-meta">2026-05-23<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 732</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 2</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-text">怎么避免自己变成只会写接口的人？</span></a></li></ol></div></div><div class="post-content"><h1><span id="怎么避免自己变成只会写接口的人">怎么避免自己变成只会写接口的人？</span></h1><p>1、做需求时，多想多问“这个需求在整个系统里是怎么流动的？”</p>
+<ul>
+<li>请求怎么来，为什么这么设计，数据库为什么这么设计，数据为什么这么存？为什么拆服务？为什么要这样设计缓存</li>
+</ul>
+<p>2、主动理解“系统边界”，比如系统之间如何协作，比如模块是怎么交互的？多花一些系统图，进行理解</p>
+<ul>
+<li>请求流向-&gt;服务关系-&gt;数据流-&gt;缓存层-&gt;网关-&gt;MQ</li>
+</ul>
+<p>3、多看线上真实问题</p>
+<ul>
+<li>处理真实复杂性、比如Redis击穿、数据不一致、死锁、慢SQL、服务雪崩、并发问题、MQ重复消费这些是怎么解决的</li>
+<li>参与：故障分析、线上问题、性能优化、监控</li>
+</ul>
+<p>4、别只学框架，要学“为什么？“</p>
+<ul>
+<li>这个东西解决什么问题？Redis为什么快？MQ为什么存在？微服务为什么复杂？为什么最终一致性？形成架构思维</li>
+</ul>
+<p>5、做“自己的系统项目”，把握整体的流程</p>
+<ul>
+<li>只有一个完整系统，才会理解为什么重要和需要</li>
+</ul>
+<p>6、不要只做“功能实现者”，要学会理解“业务”</p>
+<ul>
+<li>技术最终是在服务业务。系统设计，本质上不是“技术最优”，而是：业务、成本、性能、时间”的平衡</li>
+</ul>
+<p>7、学会关注“系统的代价”</p>
+<ul>
+<li>架构从来不是越高级越好，而是当前阶段最好</li>
+<li>成本是多少？运维复杂度？学习成本？排障难度？扩展性？团队能不能驾驭？</li>
+</ul>
+<p>8、学会“观察复杂性从哪里产生”？</p>
+<ul>
+<li>看到一个复杂系统，不要先想：怎么这么乱？而是想：“它为什么会演化成现在这样？”</li>
+</ul>
+<p>9、学会阅读“真实工程”</p>
+<ul>
+<li><p>开源项目源码、公司线上项目、故障复盘、技术博客、GitHub issue、架构演进文章</p>
+</li>
+<li><p>“为什么这么改”</p>
+</li>
+</ul>
+<p>10、不要把“技术成长”理解成“知识收集”</p>
+<ul>
+<li><p>真正的成长来自：理解 -&gt; 动手 -&gt; 出问题 -&gt; 调试 -&gt; 重构 -&gt; 复盘</p>
+</li>
+<li><p>一定要持续输出。比如：小项目、博客、技术总结、系统图、Demo</p>
+</li>
+</ul>
+<p>11、工程师真正的成长，是开始理解“权衡”</p>
+<ul>
+<li><p>没有“最好的方案”，只有“时间、人力、成本、性能、风险”，之间的“权衡”</p>
+</li>
+<li><p>工程不是数学题，而是在有限资源里的持续平衡。</p>
+</li>
+</ul>
+<p>12、尽量进入“真实复杂系统”环境。</p>
+<ul>
+<li>关注看有没有：1）真线上环境2）真用户3）真问题4）真压力5）真协作</li>
+<li>真实世界的复杂性，才是工程师成长最快的老师。</li>
+</ul>
+<p>最后需要记住，当遇到项目的时候，应该反复问自己：1、系统怎么运作？瓶颈在哪里？为什么这样设计？未来怎么演化。</p>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%86%E4%BA%AB/" rel="tag">分享</a></li></ul></div><div class="post-nav"><a class="next" href="/posts/%E4%B8%80%E6%96%87%E8%AE%B2%E9%80%8F%20Go%20map%20%E5%BA%95%E5%B1%82%EF%BC%9A%E5%93%88%E5%B8%8C%E3%80%81bucket%E3%80%81%E6%89%A9%E5%AE%B9%E4%B8%8E%E5%B9%B6%E5%8F%91/">一文讲透 Go map 底层：哈希、bucket、扩容与并发？</a></div></div></div></div><div class="pure-u-1 pure-u-md-4-4"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">RenaXu 's Wonderland.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+  search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js?v=1.0.0" successtext="复制成功！"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css?v=1.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script></div></body></html>
