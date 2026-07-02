@@ -736,23 +736,6 @@
       </tags>
   </entry>
   <entry>
-    <title>使用 Air 实现 Go 程序热启动</title>
-    <url>/posts/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0Go%E7%A8%8B%E5%BA%8F%E7%83%AD%E5%90%AF%E5%8A%A8/</url>
-    <content><![CDATA[<blockquote>
-<p>热启动的意义在于，当你更改了代码，不用自己手动的编译，系统检查到代码的变化，自动重启，大大提高开发效率！下面是安装步骤，非常简单~</p>
-</blockquote>
-<p>1、安装 air</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/air-verse/air</span><br></pre></td></tr></table></figure>
-<p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure><br>3、根据实际项目，调整.air.toml 中的内容，air 将按照下面规则热重启，建议理解每个参数的意思<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root = &quot;D:/project/your-project-name&quot;  # 项目根目录位置</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line">  pre_cmd = [&quot;source pre_env.sh&quot;,&quot;bee generate docs&quot;] # 在 go buid 前的命令，这里第一个是导入环境变量，第二个是更新 swagger 接口文档和路由</span><br><span class="line">  args_bin = []</span><br><span class="line">  bin = &quot;./tmp/main.exe&quot;  # 运行编译好的文件命令</span><br><span class="line">  cmd = &quot;go build -o ./tmp/main.exe your-project-name&quot; #构建项目命令</span><br><span class="line">  delay = 1000</span><br><span class="line">  exclude_dir = [&quot;tmp&quot;, &quot;vendor&quot;, &quot;testdata&quot; ,&quot;logs&quot; ,&quot;.idea&quot;,&quot;.git&quot;,&quot;docker&quot;] # 排除这些文件</span><br><span class="line">  exclude_file = []</span><br><span class="line">  exclude_regex = [&quot;_test.go&quot;]</span><br><span class="line">  exclude_unchanged = false</span><br><span class="line">  follow_symlink = false</span><br><span class="line">  full_bin = &quot;&quot;</span><br><span class="line">  include_dir = []</span><br><span class="line">  include_ext = [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot; ,&quot;ini&quot; ,&quot;conf&quot;] # 这些文件一旦变化并保存就会触发重新构建并启动</span><br><span class="line">  include_file = []</span><br><span class="line">  kill_delay = &quot;1s&quot;</span><br><span class="line">  log = &quot;build-errors.log&quot;  #生成的日志名</span><br><span class="line">  poll = false</span><br><span class="line">  poll_interval = 0</span><br><span class="line">  post_cmd = []</span><br><span class="line">  pre_cmd = []</span><br><span class="line">  rerun = false</span><br><span class="line">  rerun_delay = 500</span><br><span class="line">  send_interrupt = false</span><br><span class="line">  stop_on_error = false</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure><br>4、在项目根目录下，终端执行 air，便可实现使用 Air 实现 Go 程序热启动<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">air</span></span><br></pre></td></tr></table></figure><br><a href="https://www.liwenzhou.com/posts/Go/live-reload-with-air/">参考</a></p>
-]]></content>
-      <categories>
-        <category>技术</category>
-      </categories>
-      <tags>
-        <tag>Go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>像做蛋糕一样写Makefile:后端自动化工具入门</title>
     <url>/posts/%E5%83%8F%E5%81%9A%E8%9B%8B%E7%B3%95%E4%B8%80%E6%A0%B7%E5%86%99Makefile_%E5%90%8E%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E5%B7%A5%E5%85%B7%E5%85%A5%E9%97%A8/</url>
     <content><![CDATA[<p>作为后端开发者，你是不是每天都在重复敲这些命令：<code>go build</code> 编译代码、<code>go test</code> 跑单元测试、手动清理编译产物…… 不仅麻烦，还容易输错参数？</p>
@@ -882,6 +865,23 @@
       </categories>
       <tags>
         <tag>感想</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 Air 实现 Go 程序热启动</title>
+    <url>/posts/%E4%BD%BF%E7%94%A8Air%E5%AE%9E%E7%8E%B0Go%E7%A8%8B%E5%BA%8F%E7%83%AD%E5%90%AF%E5%8A%A8/</url>
+    <content><![CDATA[<blockquote>
+<p>热启动的意义在于，当你更改了代码，不用自己手动的编译，系统检查到代码的变化，自动重启，大大提高开发效率！下面是安装步骤，非常简单~</p>
+</blockquote>
+<p>1、安装 air</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get -u github.com/air-verse/air</span><br></pre></td></tr></table></figure>
+<p>2、进入到项目的根目录，在终端执行下面的命令，得到.air.toml<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">air init</span><br></pre></td></tr></table></figure><br>3、根据实际项目，调整.air.toml 中的内容，air 将按照下面规则热重启，建议理解每个参数的意思<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">root = &quot;D:/project/your-project-name&quot;  # 项目根目录位置</span><br><span class="line"></span><br><span class="line">[build]</span><br><span class="line">  pre_cmd = [&quot;source pre_env.sh&quot;,&quot;bee generate docs&quot;] # 在 go buid 前的命令，这里第一个是导入环境变量，第二个是更新 swagger 接口文档和路由</span><br><span class="line">  args_bin = []</span><br><span class="line">  bin = &quot;./tmp/main.exe&quot;  # 运行编译好的文件命令</span><br><span class="line">  cmd = &quot;go build -o ./tmp/main.exe your-project-name&quot; #构建项目命令</span><br><span class="line">  delay = 1000</span><br><span class="line">  exclude_dir = [&quot;tmp&quot;, &quot;vendor&quot;, &quot;testdata&quot; ,&quot;logs&quot; ,&quot;.idea&quot;,&quot;.git&quot;,&quot;docker&quot;] # 排除这些文件</span><br><span class="line">  exclude_file = []</span><br><span class="line">  exclude_regex = [&quot;_test.go&quot;]</span><br><span class="line">  exclude_unchanged = false</span><br><span class="line">  follow_symlink = false</span><br><span class="line">  full_bin = &quot;&quot;</span><br><span class="line">  include_dir = []</span><br><span class="line">  include_ext = [&quot;go&quot;, &quot;tpl&quot;, &quot;tmpl&quot;, &quot;html&quot; ,&quot;ini&quot; ,&quot;conf&quot;] # 这些文件一旦变化并保存就会触发重新构建并启动</span><br><span class="line">  include_file = []</span><br><span class="line">  kill_delay = &quot;1s&quot;</span><br><span class="line">  log = &quot;build-errors.log&quot;  #生成的日志名</span><br><span class="line">  poll = false</span><br><span class="line">  poll_interval = 0</span><br><span class="line">  post_cmd = []</span><br><span class="line">  pre_cmd = []</span><br><span class="line">  rerun = false</span><br><span class="line">  rerun_delay = 500</span><br><span class="line">  send_interrupt = false</span><br><span class="line">  stop_on_error = false</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure><br>4、在项目根目录下，终端执行 air，便可实现使用 Air 实现 Go 程序热启动<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">air</span></span><br></pre></td></tr></table></figure><br><a href="https://www.liwenzhou.com/posts/Go/live-reload-with-air/">参考</a></p>
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>Go</tag>
       </tags>
   </entry>
   <entry>
@@ -1452,22 +1452,24 @@
   <entry>
     <title>如何借助AI快速写有人味的博客</title>
     <url>/posts/%E5%A6%82%E4%BD%95%E5%80%9F%E5%8A%A9AI%E5%BF%AB%E9%80%9F%E5%86%99%E6%9C%89%E4%BA%BA%E5%91%B3%E7%9A%84%E5%8D%9A%E5%AE%A2/</url>
-    <content><![CDATA[<p>一直觉得现在的 AI 说话太过规整、结构性太重，哪怕逻辑严密周全，总少了几分人味。<strong>我理解的人味是：表达不必面面完美，能拎住核心、语句连贯自然，不会通篇堆砌小点、二级标题或是各类图表</strong>。由此衍生出两个值得琢磨的问题：<strong>为什么 AI 很难做到这种松弛自然的表达？</strong>倘若<strong>未来 AI 真的拥有了十足人味，人类输出观点又还具备什么吸引力和价值</strong>？</p>
-<p>除此之外，自己手写代码确实能深挖技术底层逻辑，但还有个很有意思的难题：<strong>我和 AI 的对话内容，该怎么归纳梳理成可用的知识要点？</strong>一方面，梳理归纳的过程需要自己主动思考，吃透内容后才能顺畅转述给他人；另一方面，又要保证信息准确。其实也可直接让 AI 全权总结，但看似省事，成品却往往读着很生硬，满是浓浓的 AI 模板感，让人抵触。所以学习过程中和 AI 沟通时，<strong>如何自主高效整理、留存内容形成文档，不全盘依赖 AI，也是值得深思的一点。</strong></p>
+    <content><![CDATA[<p>一直觉得现在的 AI 说话太过规整、结构性太重，哪怕逻辑严密周全，总少了几分人味。<strong>我理解的人味是：表达不必面面完美，能拎住核心、语句连贯自然，不会通篇堆砌小点、二级标题或是各类图表。</strong>由此衍生出两个值得琢磨的问题：<strong>为什么 AI 很难做到这种松弛自然的表达？</strong>倘若未来 AI 真的拥有了十足人味，<strong>人类输出观点又还具备什么吸引力和价值？</strong></p>
+<p>除此之外，自己手写代码确实能深挖技术底层逻辑，但还有个很有意思的难题：我和 AI 的对话内容，该怎么归纳梳理成可用的知识要点？一方面，梳理归纳的过程需要自己主动思考，吃透内容后才能顺畅转述给他人；另一方面，又要保证信息准确。其实也可直接让 AI 全权总结，但看似省事，成品却往往读着很生硬，满是浓浓的 AI 模板感，让人抵触。所以学习过程中和 AI 沟通时，<strong>如何自主高效整理、留存内容形成文档，不全盘依赖 AI，也是值得深思的一点。</strong></p>
 <p>我把这些问题抛给 AI 后，得到的几点解答让我豁然开朗：</p>
 <ol>
-<li><em>AI 很难产出松弛、有真人气息的表达，根源在于大模型的训练素材本身大多是高度结构化的文本；</em></li>
-<li><em>人类的观点永远无法被替代，每个人都有独一无二的人生经历，观点里自然带着独有的取舍、偏向与立场，不会像 AI 那般一味中立平淡，看不出真实思考。人脑发散思考的特质更容易碰撞出有启发的内容，很多新奇独到的想法，往往都藏在零碎的对话或是一段随性的表述里；</em></li>
-<li><em>和 AI 沟通后，想要吃透知识、产出可供分享的观点，可以把自身的疑问、思路、猜想当作主干，AI 给出的回答只当作补充素材，再用自己的语言重新复述，最后一定要附上自己的评价与感悟。</em></li>
+<li>AI 很难产出松弛、有真人气息的表达，根源在于<strong>大模型的训练素材本身大多是高度结构化的文本；</strong></li>
+<li>人类的观点永远无法被替代，<strong>每个人都有独一无二的人生经历，</strong>观点里自然带着独有的取舍、偏向与立场，不会像 AI 那般一味中立平淡，看不出真实思考<strong>。人脑发散思考的特质更容易碰撞出有启发的内容，</strong>很多新奇独到的想法，往往都藏在零碎的对话或是一段随性的表述里；</li>
+<li>和 AI 沟通后，想要吃透知识、产出可供分享的观点，可以把自身的疑问、思路、猜想当作主干，AI 给出的回答只当作补充素材，再用自己的语言重新复述，最后一定要附上自己的评价与感悟。</li>
 </ol>
-<p>细化来说：<br>AI 很难拥有松弛真实的人味，一方面训练数据集本身就偏向规整结构化，另一方面人类表达的鲜活感，来源于我们有限且流动的注意力，脑海里同时盘旋多个思绪，想到什么说什么，抓得住重点，也会夹杂几句无关的闲话，允许局部逻辑不那么严谨。<br>归根结底，AI 的回答只是海量数据归纳出来的经验集合，没有真实情绪，很难产出真正具备启发性的独到看法。就算刻意模仿真人语气，也始终显得生硬刻意。也正因人类表达里这份不完美，才显得鲜活亲切，容易拉近彼此距离、建立信任；反观 AI，就像做工精致却毫无瑕疵的工业芭比，仿真度再高，极致的完美反而透着虚假和疏离。</p>
-<p>想要和 AI 对话时，不完全交由 AI 总结梳理知识，又能快速自主整理成文档，有一套<strong>实操思路</strong>：</p>
+<p>细化来说：</p>
+<p>AI 很难拥有松弛真实的人味，一方面训练数据集本身就偏向规整结构化，另一方面人类表达的鲜活感，来源于我们有限且流动的注意力，脑海里同时盘旋多个思绪，想到什么说什么，抓得住重点，也会夹杂几句无关的闲话，允许局部逻辑不那么严谨。</p>
+<p>归根结底，AI 的回答只是海量数据归纳出来的经验集合，没有真实情绪，很难产出真正具备启发性的独到看法。就算刻意模仿真人语气，也始终显得生硬刻意。也正因人类表达里这份不完美，才显得鲜活亲切，容易拉近彼此距离、建立信任；反观 AI，就像做工精致却毫无瑕疵的工业芭比，仿真度再高，极致的完美反而透着虚假和疏离。</p>
+<p>想要和 AI 对话时，不完全交由 AI 总结梳理知识，又能快速自主整理成文档，有<strong>一套实操思路：</strong></p>
 <ol>
 <li>提问时提前给 AI 定下严格限制：禁止输出分点、标题、模板化内容，只输出连贯完整的段落素材，仅用来补充细节、解答疑惑，不做归纳提炼，让 AI 只充当单纯的信息资料库；</li>
 <li>不要等整段对话结束再统一整理，浏览 AI 回复的同时随手记录，摘抄有价值、有意思的内容，只用简短的个人化语句，只留存对自己有用的信息。可以准备备忘录，单独划分「对话碎片」板块，记下自身疑问、理解卡点、解决办法、核心原理，倒逼自己同步思考；</li>
 <li>收尾整理时，以自己最初的疑问作为开篇，顺着自己理解的逻辑串联核心内容，不必刻意拆分条目，文末附上专属思考。全程以自身问题、原始想法为骨架，AI 内容仅作补充，最后简单写下自身感受，既能加深自身理解，文字读起来也更贴近读者，更有温度。</li>
 </ol>
-<p>所以总结下来ai生成的话带着刻意的完美源于训练数据和训练方式，如何借助ai快速理解知识和输出，本质上还是ai作为知识补充，自己花时间归纳总结，这个过程也倒闭自己刻意去训练结构化的表达，也不防是件好事情。</p>
+<p>所以总结下来 AI 生成的话带着刻意的完美源于训练数据和训练方式，如何借助 AI 快速理解知识和输出，本质上还是 AI 作为知识补充，自己花时间归纳总结，这个过程也倒闭自己刻意去训练结构化的表达，也不妨是件好事情。</p>
 <p>以上记录自己的思考，共勉。</p>
 ]]></content>
       <categories>
