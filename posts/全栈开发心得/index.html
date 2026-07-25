@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="这是一个个人博客，记录技术学习和生活感悟"><title>全栈开发心得 | RenaXu 's Wonderland</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/custom-icons.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="/css/toc.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/pure-min.css"><link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="https://unpkg.com/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="https://unpkg.com/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="https://unpkg.com/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="https://unpkg.com/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="https://unpkg.com/toastr/build/toastr.min.css"><div class="darkmode-toggle">🌓</div><script>var prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+var toggle = document.querySelector('.darkmode-toggle');
+var html = document.querySelector('html');
+
+html.dataset.dark = localStorage.dark || prefersDarkMode.matches;
+
+toggle.addEventListener('click', () => {
+localStorage.dark = !(html.dataset.dark == 'true');
+html.dataset.dark = localStorage.dark;
+});</script><meta name="generator" content="Hexo 8.1.1"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">全栈开发心得</h1><a id="logo" href="/.">RenaXu 's Wonderland</a><p class="description">分享技术与生活</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-4-4"><div class="content_container"><div class="post"><h1 class="post-title">全栈开发心得</h1><div class="post-meta">2026-07-25<span> | </span><span class="category"><a href="/categories/%E6%8A%80%E6%9C%AF/">技术</a></span><script src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span><span class="post-time"><span class="post-meta-item-text"> | </span><span class="post-meta-item-icon"><i class="fa fa-keyboard-o"></i><span class="post-count"> 1.5k</span><span class="post-meta-item-text"> 字</span></span></span><span class="post-time"> | <span class="post-meta-item-icon"><i class="fa fa-clock-o"></i><span class="post-count"> 4</span><span class="post-meta-item-text"> 分钟</span></span></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">需求，先自己想清楚</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">接口文档，别让它变成“吵架文档”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">写后端代码，结构清晰是王道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">前端开发，流程对了效率翻倍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">另外前端上线前，推荐按这个清单让ai过一遍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-text">数据库设计，性能和安全放第一位</span></a></li></ol></div></div><div class="post-content"><blockquote>
+<p>工作一个月就开始接触全栈开发，从需求到实现遇到的问题再总结一遍，一部分也是自己踩过的一些坑，和觉得好用的法子，希望对你有点用。</p>
+</blockquote>
+<h2><span id="需求先自己想清楚">需求，先自己想清楚</span></h2><p>拿到需求文档，首先想清楚为什么要实现这个需求，然后根据需求文档，花点时间自己捋清出逻辑，<strong>画图</strong>是特别好用的方式，复杂逻辑用流程图、时序图画出来，一眼就能看出哪里逻辑不通、哪里还有分支没考虑，后面实现代码的时候也更加清晰和快捷，也更好描述。图形化的梳理方式，比对着纯文字看，漏掉关键点的概率小得多。</p>
+<h2><span id="接口文档别让它变成吵架文档">接口文档，别让它变成“吵架文档”</span></h2><p>写接口文档也是个容易踩坑的地方，我的习惯是先分析需求写一个接口文档草稿，然后让ai帮我润色和优化补充细节，但注意有个坑，直接让ai润色优化，写出来并不清晰，会写一些前后端的实现细节，但这些压根不重要，说白了，一份能用的接口文档，我认为核心就两件事：</p>
+<ol>
+<li><strong>表设计</strong>：数据库表长什么样，有哪些字段，后端设计有谱。</li>
+<li><strong>接口定义</strong>：接口名（URL）、用什么方法（GET/POST）、传哪些参数、返回什么数据，最好再给个调用示例，前端更好拿数据</li>
+</ol>
+<p>至于具体业务逻辑怎么实现，那是后端自己的事，文档里不用写。文档的唯一目的，就是让前后端能对上话，别各干各的，而不给ai这样的约束他就会写得复杂。</p>
+<p>几个小建议：</p>
+<ul>
+<li><strong>标准</strong>：让ai润色前让它按照统一的接口文档版本生成。</li>
+<li><strong>命名</strong>：URL用短横线，数据库字段用下划线，JSON字段用小驼峰，保持统一就好。</li>
+<li><strong>风格</strong>：尽量按RESTful来，大家都习惯。</li>
+<li><strong>版本</strong>：接口路径里加上版本号，万一中途要改，也不至于一团乱。</li>
+</ul>
+<h2><span id="写后端代码结构清晰是王道">写后端代码，结构清晰是王道</span></h2><p>后端这块，我推崇<strong>三层架构</strong>，也就是控制层、服务层、数据层分开。控制层就管收参数、校验、返回包装；脏活累活、核心业务逻辑都丢给服务层；数据层只和数据库打交道。各层干各层的活，别越界，代码会干净很多。</p>
+<p>编码时也有几个我自己的习惯：</p>
+<ul>
+<li><strong>一个方法只干一件事</strong>，要么是流程编排，要么是实现细节，别混在一起。</li>
+<li><strong>变量别重复声明用，看着乱。</strong></li>
+<li>参数太多（超过3个）就包成结构体，传起来方便。</li>
+<li>别直接用数字字面量，定义成常量，意思明确。</li>
+<li>JSON格式统一用小驼峰，和前端的约定。</li>
+<li>方法逻辑拒绝过度封装，几行代码也单独提个函数，除非真的多处用到，否者让代码更加抽象和难以理解。</li>
+<li>将事务暴露在服务层，尽量少用复杂的查询逻辑，将逻辑暴露在服务层中，更好维护。</li>
+<li>重构代码或者需求变化，接口参数建议新增而非删除，给前端一个缓冲期。</li>
+</ul>
+<h2><span id="前端开发流程对了效率翻倍">前端开发，流程对了效率翻倍</span></h2><p>前端开发前，确保接口路径和命名和后端都对齐了，然后切到新分支再动手。每做完一个小功能，就 <code>git add .</code> 一下，这样改动了什么一目了然。</p>
+<p>我的流程一般是：</p>
+<ol>
+<li>拿到接口文档，先在API层把请求函数定义好。</li>
+<li>然后再去写页面组件。</li>
+</ol>
+<p>这样做的好处是，数据和视图一开始就分离了，逻辑更清晰。几个容易忘的细节：</p>
+<ul>
+<li><strong>操作（增删改）成功后，</strong>&#x6BD4;如页面新建数据、更新数据，<strong>记得刷新，别让用户手动刷新</strong>。</li>
+<li><strong>弹窗关了，里面的数据一定得清空，不然下次打开可能还是旧数据。</strong></li>
+<li><strong>检查import</strong>，别少了哪个依赖导致运行时报错。</li>
+<li>和后端一样，一些公用方法可以抽象起来，避免代码重复。</li>
+</ul>
+<h2><span id="另外前端上线前推荐按这个清单让ai过一遍">另外前端上线前，推荐按这个清单让ai过一遍</span></h2><ul>
+<li><p>[ ] 接口请求参数是否与接口文档对齐(非常重要)</p>
+</li>
+<li><p>[ ] 返回数据解析逻辑是否兼容不同格式</p>
+</li>
+<li><p>[ ] 操作成功后是否刷新了相关数据</p>
+</li>
+<li><p>[ ] 弹窗关闭时是否重置了数据</p>
+</li>
+<li>[ ] 新增的组件是否注册/导入</li>
+<li>[ ] 样式是否与项目现有风格一致</li>
+<li>[ ] 搜索/筛选功能是否正常工作</li>
+<li>[ ] 所有 props 是否设置了默认值</li>
+<li>[ ] 异步请求是否存在竞态问题</li>
+<li>[ ] 表单提交前做乐观校验（前端校验 + 后端二次校验），减少无效请求</li>
+</ul>
+<h2><span id="数据库设计性能和安全放第一位">数据库设计，性能和安全放第一位</span></h2><p>表设计这块，我的原则是<strong>够用就好</strong>。字段类型按业务需要来，能设小就别设大。外键依赖我一般能不用就不用，上线后维护起来麻烦。</p>
+<p>还有一点很关键：<strong>不要用ORM（比如Gorm）的自动迁移功能去动生产环境的数据库</strong>，手动维护DDL脚本更可控。涉及到关联查询或者跨表操作时，可以先测试一下性能（设计前可以用ai写个脚本测试下，其实很快的没有那么复杂），一定先想想性能扛不扛得住。</p>
+<p>以上就是我的一点经验之谈，比较零碎，但都是实战里总结的。技术规范说到底，是为了让协作更顺畅，代码更好维护，自己写着也舒服。希望能帮你少走点弯路。</p>
+</div><div class="tags"><ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%85%A8%E6%A0%88/" rel="tag">全栈</a></li></ul></div><div class="post-nav"><a class="next" href="/posts/%E5%A6%82%E4%BD%95%E5%80%9F%E5%8A%A9AI%E5%BF%AB%E9%80%9F%E5%86%99%E6%9C%89%E4%BA%BA%E5%91%B3%E7%9A%84%E5%8D%9A%E5%AE%A2/">如何借助AI快速写有人味的博客</a></div></div></div></div><div class="pure-u-1 pure-u-md-4-4"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">RenaXu 's Wonderland.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="https://unpkg.com/@fancyapps/fancybox/dist/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+  search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js?v=1.0.0" successtext="复制成功！"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css?v=1.0.0"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script><script type="text/javascript" src="/js/toc.js?v=1.0.0"></script></div></body></html>
